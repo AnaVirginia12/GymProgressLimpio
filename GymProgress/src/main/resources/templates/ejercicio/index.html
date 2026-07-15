@@ -16,17 +16,102 @@
 
         <main class="page-content">
 
-            <h1 class="page-title">Ejercicios</h1>
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Ejercicios</h1>
+                    <p class="page-subtitle">
+                        Consulta, busca y administra el catálogo de ejercicios.
+                    </p>
+                </div>
 
-            <p class="page-subtitle">
-                Esta sección será desarrollada por el módulo correspondiente.
-            </p>
+                <a class="button-primary" th:href="@{/ejercicios/nuevo}">
+                    Nuevo ejercicio
+                </a>
+            </div>
 
-            <section class="empty-state">
-                <h2>Vista en construcción</h2>
-                <p>
-                    La navegación ya está disponible, pero aún no se ha conectado la lógica.
-                </p>
+            <div class="alert-success" th:if="${mensaje}" th:text="${mensaje}"></div>
+
+            <form class="search-bar" method="get" th:action="@{/ejercicios}">
+
+                <input type="text"
+                       name="q"
+                       placeholder="Buscar por nombre o grupo muscular..."
+                       th:value="${q}">
+
+                <select name="tipo">
+                    <option value="" th:selected="${tipoSeleccionado == null}">Todos los tipos</option>
+                    <option th:each="t : ${tipos}"
+                            th:value="${t}"
+                            th:text="${t}"
+                            th:selected="${t == tipoSeleccionado}">
+                    </option>
+                </select>
+
+                <button type="submit" class="button-secondary">Buscar</button>
+
+            </form>
+
+            <section class="empty-state" th:if="${#lists.isEmpty(ejercicios)}">
+                <h2>No se encontraron ejercicios</h2>
+                <p>Probá con otro nombre, grupo muscular o tipo de entrenamiento.</p>
+            </section>
+
+            <section class="exercise-grid" th:unless="${#lists.isEmpty(ejercicios)}">
+
+                <article class="exercise-card" th:each="ejercicio : ${ejercicios}">
+
+                    <img th:if="${ejercicio.mediaUrl != null and !ejercicio.mediaUrl.isBlank()}"
+                         th:src="${ejercicio.mediaUrl}"
+                         alt="Demostración del ejercicio"
+                         class="exercise-card__media">
+
+                    <div th:unless="${ejercicio.mediaUrl != null and !ejercicio.mediaUrl.isBlank()}"
+                         class="exercise-card__media exercise-card__media--placeholder">
+                        Sin imagen
+                    </div>
+
+                    <div class="exercise-card__body">
+
+                        <div class="exercise-card__header">
+                            <h2 th:text="${ejercicio.nombre}">Nombre del ejercicio</h2>
+
+                            <form method="post" th:action="@{/ejercicios/{id}/favorito(id=${ejercicio.id})}">
+                                <button type="submit"
+                                        class="favorite-btn"
+                                        th:classappend="${ejercicio.favorito ? 'favorite-btn--active' : ''}"
+                                        th:text="${ejercicio.favorito ? '★' : '☆'}">
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="exercise-card__tags">
+                            <span class="program-card__tag" th:text="${ejercicio.tipoEntrenamiento}">Gimnasio</span>
+
+                            <span class="program-card__tag"
+                                  th:each="g : ${#strings.arraySplit(ejercicio.grupoMuscular, ',')}"
+                                  th:text="${#strings.trim(g)}">
+                                Pecho
+                            </span>
+                        </div>
+
+                        <p th:text="${ejercicio.descripcion}">Descripción del ejercicio.</p>
+
+                        <div class="exercise-card__actions">
+                            <a class="button-secondary" th:href="@{/ejercicios/{id}/editar(id=${ejercicio.id})}">
+                                Editar
+                            </a>
+
+                            <form method="post"
+                                  th:action="@{/ejercicios/{id}/eliminar(id=${ejercicio.id})}"
+                                  onsubmit="return confirm('¿Eliminar este ejercicio?');">
+                                <button type="submit" class="button-secondary">Eliminar</button>
+                            </form>
+                        </div>
+
+                    </div>
+
+                </article>
+
             </section>
 
         </main>

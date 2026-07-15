@@ -11,11 +11,6 @@ public class NavegacionController {
         return "historial/index";
     }
 
-    @GetMapping("/ejercicios")
-    public String ejercicios() {
-        return "ejercicio/index";
-    }
-
     @GetMapping("/progreso")
     public String progreso() {
         return "progreso/index";
