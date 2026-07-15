@@ -1,15 +1,113 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head('Resumen del entrenamiento')}"></head>
+
+<body>
+
+<div class="app-shell">
+
+    <aside th:replace="~{general/fragmentos :: sidebar('historial')}"></aside>
+
+    <div class="app-content">
+
+        <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+
+        <main class="page-content">
+
+            <h1 class="page-title">¡Entrenamiento completado!</h1>
+            <p class="page-subtitle">
+                Aquí tienes el resumen de tu sesión de hoy.
+            </p>
+
+            <!-- HU — Resumen: volumen, tiempo, número de series -->
+            <div class="summary-grid">
+
+                <div class="summary-card">
+                    <span class="summary-card__label">Volumen total</span>
+                    <strong class="summary-card__value"
+                            th:text="${volumenTotal} + ' kg'">
+                        2 400 kg
+                    </strong>
+                </div>
+
+                <div class="summary-card">
+                    <span class="summary-card__label">Duración</span>
+                    <strong class="summary-card__value"
+                            th:text="${duracionMinutos} + ' min'">
+                        55 min
+                    </strong>
+                </div>
+
+                <div class="summary-card">
+                    <span class="summary-card__label">Series completadas</span>
+                    <strong class="summary-card__value"
+                            th:text="${totalSeries}">
+                        12
+                    </strong>
+                </div>
+
+            </div>
+
+            <!-- HU — PRs (Récords personales) alcanzados -->
+            <section th:if="${prs != null and !prs.isEmpty()}"
+                     class="prs-section">
+                <h2>🏆 Récords personales</h2>
+                <p class="page-subtitle">¡Superaste tu mejor marca en estos ejercicios!</p>
+                <div class="prs-list">
+                    <div th:each="pr : ${prs}" class="pr-card">
+                        <strong th:text="${pr.key}">Press banca</strong>
+                        <span th:text="${pr.value} + ' kg'">100 kg</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detalle de todas las series -->
+            <section th:if="${sesion != null and !#lists.isEmpty(sesion.series)}"
+                     class="session-detail">
+                <h2>Detalle de series</h2>
+                <div class="session-table-wrapper">
+                    <table class="session-table">
+                        <thead>
+                            <tr>
+                                <th>Ejercicio</th>
+                                <th>Serie</th>
+                                <th>Peso (kg)</th>
+                                <th>Reps</th>
+                                <th>Volumen</th>
+                                <th>Fallo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="s : ${sesion.series}"
+                                th:classappend="${s.falloMuscular} ? 'row--fallo' : ''">
+                                <td th:text="${s.ejercicioNombre}">Press banca</td>
+                                <td th:text="${s.numeroSerie}">1</td>
+                                <td th:text="${s.pesoKg}">80</td>
+                                <td th:text="${s.repeticiones}">10</td>
+                                <td th:text="${s.volumen} + ' kg'">800 kg</td>
+                                <td>
+                                    <span th:if="${s.falloMuscular}" class="badge badge--fallo">Fallo</span>
+                                    <span th:unless="${s.falloMuscular}" class="badge badge--ok">—</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <div class="summary-actions">
+                <a th:href="@{/}" class="button-secondary">Ir al inicio</a>
+                <a th:href="@{/historial}" class="button-primary">Ver historial</a>
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+
+</body>
 </html>

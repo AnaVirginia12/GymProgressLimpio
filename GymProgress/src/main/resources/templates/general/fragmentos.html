@@ -59,6 +59,11 @@
             Progreso
         </a>
 
+        <a th:href="@{/peso}"
+           th:classappend="${seccionActiva == 'peso' ? 'active' : ''}">
+            Registrar peso
+        </a>
+
         <a th:href="@{/perfil}"
            th:classappend="${seccionActiva == 'perfil' ? 'active' : ''}">
             Perfil

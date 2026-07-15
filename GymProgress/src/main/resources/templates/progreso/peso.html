@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head('Registrar peso')}"></head>
+
+<body>
+
+<div class="app-shell">
+
+    <aside th:replace="~{general/fragmentos :: sidebar('progreso')}"></aside>
+
+    <div class="app-content">
+
+        <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+
+        <main class="page-content">
+
+            <h1 class="page-title">Registrar peso</h1>
+            <p class="page-subtitle">
+                Lleva el seguimiento de tu peso corporal.
+            </p>
+
+            <!-- Mensajes de feedback -->
+            <div th:if="${mensaje}" class="alert-success" th:text="${mensaje}"></div>
+
+            <!-- HU2 + HU3 — Formulario con toggle de unidad -->
+            <section class="weight-form-card">
+
+                <form method="post" th:action="@{/peso}" class="weight-form" id="weightForm">
+
+                    <!-- HU3 — Toggle rápido kg / lb -->
+                    <div class="unit-toggle unit-toggle--inline">
+                        <span class="unit-toggle__label">Unidad:</span>
+                        <label class="unit-toggle__option"
+                               th:classappend="${unidad == 'kg'} ? 'unit-toggle__option--active' : ''">
+                            <input type="radio" name="unidad" value="kg"
+                                   th:checked="${unidad == 'kg'}"
+                                   id="toggleKg">
+                            kg
+                        </label>
+                        <label class="unit-toggle__option"
+                               th:classappend="${unidad == 'lb'} ? 'unit-toggle__option--active' : ''">
+                            <input type="radio" name="unidad" value="lb"
+                                   th:checked="${unidad == 'lb'}"
+                                   id="toggleLb">
+                            lb
+                        </label>
+                    </div>
+
+                    <!-- HU2 — Entrada de peso -->
+                    <div class="form-group">
+                        <label for="peso" id="pesoLabel"
+                               th:text="${unidad == 'lb'} ? 'Peso (lb)' : 'Peso (kg)'">
+                            Peso (kg)
+                        </label>
+                        <input id="peso"
+                               type="number"
+                               name="peso"
+                               step="0.1"
+                               min="1"
+                               max="999"
+                               required
+                               placeholder="Ej: 75.5">
+                    </div>
+
+                    <button type="submit" class="button-primary">
+                        Guardar peso
+                    </button>
+
+                </form>
+
+            </section>
+
+            <!-- Historial de registros -->
+            <section th:if="${historial != null and !#lists.isEmpty(historial)}"
+                     class="weight-history">
+
+                <h2>Historial</h2>
+
+                <div class="weight-table-wrapper">
+                    <table class="weight-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th th:text="${unidad == 'lb'} ? 'Peso (lb)' : 'Peso (kg)'">Peso (kg)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="registro : ${historial}">
+                                <td th:text="${registro.fecha}">2024-01-01</td>
+                                <td th:text="${unidad == 'lb'} ? ${registro.pesoLb} : ${registro.pesoKg}">75.0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </section>
+
+            <section th:if="${historial == null or #lists.isEmpty(historial)}"
+                     class="empty-state">
+                <h2>Sin registros</h2>
+                <p>Aún no has registrado tu peso. ¡Empieza hoy!</p>
+            </section>
+
+        </main>
+
+    </div>
+
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+
+<!-- HU3 — Actualiza el label del campo al cambiar la unidad -->
+<script>
+    (function () {
+        const kgRadio = document.getElementById('toggleKg');
+        const lbRadio = document.getElementById('toggleLb');
+        const label = document.getElementById('pesoLabel');
+        if (!kgRadio || !lbRadio || !label) return;
+
+        function actualizarLabel() {
+            label.textContent = lbRadio.checked ? 'Peso (lb)' : 'Peso (kg)';
+        }
+
+        kgRadio.addEventListener('change', actualizarLabel);
+        lbRadio.addEventListener('change', actualizarLabel);
+    })();
+</script>
+
+</body>
+</html>

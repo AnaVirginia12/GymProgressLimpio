@@ -1,13 +1,80 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.fidelitas.gymprogress.controller;
 
-/**
- *
- * @author milkyaakath
- */
+import com.fidelitas.gymprogress.domain.PesoCorporal;
+import com.fidelitas.gymprogress.domain.Usuario;
+import com.fidelitas.gymprogress.service.PesoCorporalService;
+import com.fidelitas.gymprogress.service.UsuarioService;
+import jakarta.servlet.http.HttpSession;
+import java.util.List;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+@Controller
+@RequestMapping("/peso")
 public class PesoCorporalController {
-    
+
+    private static final String SESION_USUARIO_ID = "usuarioId";
+
+    private final PesoCorporalService pesoCorporalService;
+    private final UsuarioService usuarioService;
+
+    public PesoCorporalController(
+            PesoCorporalService pesoCorporalService,
+            UsuarioService usuarioService
+    ) {
+        this.pesoCorporalService = pesoCorporalService;
+        this.usuarioService = usuarioService;
+    }
+
+    /**
+     * HU2 / HU3 — Formulario para registrar peso con selector de unidad (kg / lb).
+     */
+    @GetMapping
+    public String mostrarFormulario(HttpSession session, Model model) {
+        Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
+        if (usuarioId == null) {
+            return "redirect:/login";
+        }
+
+        // Unidad preferida del usuario para pre-seleccionar el toggle
+        String unidad = usuarioService.buscarPorId(usuarioId)
+                .map(Usuario::getUnidadPeso)
+                .orElse("kg");
+
+        List<PesoCorporal> historial = pesoCorporalService.historial(usuarioId);
+
+        model.addAttribute("unidad", unidad);
+        model.addAttribute("historial", historial);
+        return "progreso/peso";
+    }
+
+    /**
+     * HU2 — Guarda el peso y redirige al historial de progreso.
+     * HU3 — Acepta el parámetro "unidad" (kg/lb) para la conversión.
+     */
+    @PostMapping
+    public String guardarPeso(
+            @RequestParam Double peso,
+            @RequestParam(defaultValue = "kg") String unidad,
+            HttpSession session,
+            RedirectAttributes redirectAttributes
+    ) {
+        Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
+        if (usuarioId == null) {
+            return "redirect:/login";
+        }
+
+        pesoCorporalService.guardar(usuarioId, peso, unidad);
+
+        // HU3 — Actualiza la preferencia de unidad del usuario
+        usuarioService.buscarPorId(usuarioId).ifPresent(u -> {
+            u.setUnidadPeso(unidad);
+            usuarioService.actualizarPerfil(usuarioId, u);
+        });
+
+        redirectAttributes.addFlashAttribute("mensaje", "Peso registrado correctamente.");
+        return "redirect:/peso";
+    }
 }

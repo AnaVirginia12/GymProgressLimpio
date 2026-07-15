@@ -1,13 +1,37 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.fidelitas.gymprogress.service;
 
-/**
- *
- * @author milkyaakath
- */
+import com.fidelitas.gymprogress.domain.PesoCorporal;
+import com.fidelitas.gymprogress.repository.PesoCorporalRepository;
+import java.time.LocalDate;
+import java.util.List;
+import org.springframework.stereotype.Service;
+
+@Service
 public class PesoCorporalService {
-    
+
+    private final PesoCorporalRepository pesoCorporalRepository;
+
+    public PesoCorporalService(PesoCorporalRepository pesoCorporalRepository) {
+        this.pesoCorporalRepository = pesoCorporalRepository;
+    }
+
+    /** HU2 / HU3 — Guarda un registro de peso para el usuario. */
+    public PesoCorporal guardar(Long usuarioId, Double valorPeso, String unidad) {
+        PesoCorporal registro = new PesoCorporal();
+        registro.setUsuarioId(usuarioId);
+        registro.setFecha(LocalDate.now());
+
+        if ("lb".equalsIgnoreCase(unidad)) {
+            registro.setPesoLb(valorPeso);
+        } else {
+            registro.setPesoKg(valorPeso);
+        }
+
+        return pesoCorporalRepository.save(registro);
+    }
+
+    /** Devuelve el historial de peso del usuario ordenado por fecha descendente. */
+    public List<PesoCorporal> historial(Long usuarioId) {
+        return pesoCorporalRepository.findByUsuarioIdOrderByFechaDesc(usuarioId);
+    }
 }

@@ -1,15 +1,59 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head('Racha')}"></head>
+
+<body>
+
+<div class="app-shell">
+
+    <aside th:replace="~{general/fragmentos :: sidebar('progreso')}"></aside>
+
+    <div class="app-content">
+
+        <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+
+        <main class="page-content">
+
+            <h1 class="page-title">Racha de entrenamiento</h1>
+            <p class="page-subtitle">
+                Días consecutivos que llevas entrenando.
+            </p>
+
+            <div class="stats-row" th:if="${racha != null}">
+
+                <div class="stat-card stat-card--highlight">
+                    <span class="stat-card__label">Racha actual</span>
+                    <strong class="stat-card__value"
+                            th:text="${racha.diasActuales}">0</strong>
+                    <span class="stat-card__unit">días</span>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-card__label">Racha máxima</span>
+                    <strong class="stat-card__value"
+                            th:text="${racha.diasMaximo}">0</strong>
+                    <span class="stat-card__unit">días</span>
+                </div>
+
+                <div class="stat-card"
+                     th:if="${racha.ultimoEntrenamiento != null}">
+                    <span class="stat-card__label">Último entreno</span>
+                    <strong class="stat-card__value"
+                            th:text="${#temporals.format(racha.ultimoEntrenamiento, 'd MMM yyyy', new java.util.Locale('es'))}">
+                        —
+                    </strong>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+
+</body>
 </html>

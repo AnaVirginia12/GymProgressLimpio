@@ -1,13 +1,32 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.fidelitas.gymprogress.controller;
 
-/**
- *
- * @author milkyaakath
- */
+import com.fidelitas.gymprogress.service.RachaService;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/racha")
 public class RachaController {
-    
+
+    private static final String SESION_USUARIO_ID = "usuarioId";
+
+    private final RachaService rachaService;
+
+    public RachaController(RachaService rachaService) {
+        this.rachaService = rachaService;
+    }
+
+    /** HU — Muestra la racha actual del usuario. */
+    @GetMapping
+    public String mostrar(HttpSession session, Model model) {
+        Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
+        if (usuarioId == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("racha", rachaService.obtener(usuarioId));
+        return "progreso/racha";
+    }
 }

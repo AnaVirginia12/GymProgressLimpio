@@ -1,13 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.fidelitas.gymprogress.repository;
 
-/**
- *
- * @author milkyaakath
- */
-public class EjercicioRepository {
-    
+import com.fidelitas.gymprogress.domain.Ejercicio;
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface EjercicioRepository extends JpaRepository<Ejercicio, Long> {
+
+    List<Ejercicio> findAllByOrderByNombreAsc();
 }

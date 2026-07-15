@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="es"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{general/fragmentos :: head('Historial')}"></head>
 
@@ -17,15 +16,59 @@
         <main class="page-content">
 
             <h1 class="page-title">Historial</h1>
-
             <p class="page-subtitle">
-                Esta sección será desarrollada por el módulo correspondiente.
+                Todos tus entrenamientos anteriores.
             </p>
 
-            <section class="empty-state">
-                <h2>Vista en construcción</h2>
+            <!-- HU — Historial completo de entrenamientos anteriores -->
+            <section th:if="${sesiones != null and !#lists.isEmpty(sesiones)}"
+                     class="history-list">
+
+                <div th:each="sesion : ${sesiones}" class="history-card">
+
+                    <div class="history-card__header">
+                        <div>
+                            <span class="eyebrow"
+                                  th:text="${#temporals.format(sesion.iniciadaEn, 'EEEE, d MMM yyyy', new java.util.Locale('es'))}">
+                                Lunes, 1 ene 2025
+                            </span>
+                            <h2 class="history-card__title"
+                                th:text="'Entrenamiento del ' + ${#temporals.format(sesion.iniciadaEn, 'd/MM')}">
+                                Entrenamiento del 1/01
+                            </h2>
+                        </div>
+                        <div class="history-card__meta">
+                            <span th:text="${sesion.series.size()} + ' series'">12 series</span>
+                        </div>
+                    </div>
+
+                    <!-- Series agrupadas por ejercicio -->
+                    <div class="history-exercises"
+                         th:if="${!#lists.isEmpty(sesion.series)}">
+                        <div class="history-exercise-row"
+                             th:each="s : ${sesion.series}">
+                            <span class="history-exercise-name"
+                                  th:text="${s.ejercicioNombre}">Press banca</span>
+                            <span class="history-exercise-detail"
+                                  th:text="'S' + ${s.numeroSerie} + ' · ' + ${s.pesoKg} + 'kg × ' + ${s.repeticiones} + ' reps'">
+                                S1 · 80kg × 10 reps
+                            </span>
+                            <span th:if="${s.falloMuscular}"
+                                  class="badge badge--fallo">Fallo</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- Estado vacío -->
+            <section th:if="${sesiones == null or #lists.isEmpty(sesiones)}"
+                     class="empty-state">
+                <h2>Sin entrenamientos</h2>
                 <p>
-                    La navegación ya está disponible, pero aún no se ha conectado la lógica.
+                    Aún no has completado ningún entrenamiento.
+                    <a th:href="@{/rutinas/hoy}">¡Empieza hoy!</a>
                 </p>
             </section>
 
