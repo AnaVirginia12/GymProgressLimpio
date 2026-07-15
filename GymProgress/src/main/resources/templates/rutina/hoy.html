@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head('Rutina de hoy')}"></head>
+
+<body>
+
+<div class="app-shell">
+
+    <aside th:replace="~{general/fragmentos :: sidebar('rutina-hoy')}"></aside>
+
+    <div class="app-content">
+
+        <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+
+        <main class="page-content">
+
+            <div class="page-header">
+
+                <div>
+                    <span class="eyebrow">Entrenamiento diario</span>
+
+                    <h1 class="page-title">
+                        Rutina de hoy
+                    </h1>
+
+                    <p class="page-subtitle">
+                        Consulta el programa y su duración antes de comenzar.
+                    </p>
+                </div>
+
+                <a class="button-secondary"
+                   th:href="@{/rutinas}">
+                    Volver a rutinas
+                </a>
+
+            </div>
+
+            <section class="empty-state"
+                     th:if="${rutina == null}">
+
+                <h2>No tienes una rutina activa</h2>
+
+                <p>
+                    Selecciona primero uno de los programas disponibles.
+                </p>
+
+                <a class="button-primary"
+                   th:href="@{/rutinas/programas}">
+                    Elegir programa
+                </a>
+
+            </section>
+
+            <section class="today-routine"
+                     th:if="${rutina != null}">
+
+                <div class="today-routine__header">
+
+                    <div>
+                        <span class="program-card__tag"
+                              th:text="${rutina.programa}">
+                            Programa
+                        </span>
+
+                        <h2 th:text="${rutina.nombre}">
+                            Nombre de la rutina
+                        </h2>
+
+                        <p>
+                            Tipo de entrenamiento:
+                            <strong th:text="${rutina.tipo}">
+                                Gimnasio
+                            </strong>
+                        </p>
+                    </div>
+
+                    <div class="duration-card">
+
+                        <span>Duración estimada</span>
+
+                        <strong>
+                            <span th:text="${duracionEstimada}">
+                                55
+                            </span>
+                            minutos
+                        </strong>
+
+                        <small>
+                            Incluye ejecución, descansos y transiciones.
+                        </small>
+
+                    </div>
+
+                </div>
+
+                <div class="routine-exercises"
+                     th:if="${!#lists.isEmpty(rutina.ejercicios)}">
+
+                    <h2>Ejercicios programados</h2>
+
+                    <article class="exercise-row"
+                             th:each="detalle : ${rutina.ejercicios}">
+
+                        <div>
+                            <span class="exercise-row__order"
+                                  th:text="${detalle.orden}">
+                                1
+                            </span>
+
+                            <div>
+                                <strong>
+                                    Ejercicio
+                                    <span th:text="${detalle.ejercicioId}">
+                                        1
+                                    </span>
+                                </strong>
+
+                                <small>
+                                    <span th:text="${detalle.series}">
+                                        3
+                                    </span>
+                                    series de
+                                    <span th:text="${detalle.repsObjetivo}">
+                                        10
+                                    </span>
+                                    repeticiones
+                                </small>
+                            </div>
+                        </div>
+
+                        <span>
+                            Descanso:
+                            <strong th:text="${detalle.descansoSeg + ' s'}">
+                                60 s
+                            </strong>
+                        </span>
+
+                    </article>
+
+                </div>
+
+                <div class="empty-exercises"
+                     th:if="${#lists.isEmpty(rutina.ejercicios)}">
+
+                    <p>
+                        Todavía no hay ejercicios asignados. La duración se
+                        calculó utilizando el programa seleccionado.
+                    </p>
+
+                </div>
+
+                <button type="button"
+                        class="button-primary">
+                    Comenzar entrenamiento
+                </button>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+
+</body>
+</html>

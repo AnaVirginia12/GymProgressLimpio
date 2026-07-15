@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head('Inicio')}"></head>
+
+<body>
+
+<div class="app-shell">
+
+    <aside th:replace="~{general/fragmentos :: sidebar('inicio')}"></aside>
+
+    <div class="app-content">
+
+        <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+
+        <main class="page-content">
+
+            <h1 class="page-title">
+                Buenos días 👋
+            </h1>
+
+            <p class="page-subtitle">
+                Revisa tu entrenamiento programado para hoy.
+            </p>
+
+            <section class="today-card">
+
+                <div>
+
+                    <span class="eyebrow">
+                        Rutina de hoy
+                    </span>
+
+                    <h2>
+                        Push A — Pecho, hombros y tríceps
+                    </h2>
+
+                    <p>
+                        5 ejercicios · duración estimada: 55 minutos
+                    </p>
+
+                </div>
+
+                <a class="button-primary"
+                   th:href="@{/rutinas/hoy}">
+                    Iniciar rutina
+                </a>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head('Programas de entrenamiento')}"></head>
+
+<body>
+
+<div class="app-shell">
+
+    <aside th:replace="~{general/fragmentos :: sidebar('rutinas')}"></aside>
+
+    <div class="app-content">
+
+        <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+
+        <main class="page-content">
+
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Programas de entrenamiento</h1>
+
+                    <p class="page-subtitle">
+                        Selecciona el enfoque que mejor se adapte a tu objetivo.
+                    </p>
+                </div>
+
+                <a class="button-secondary"
+                   th:href="@{/rutinas}">
+                    Volver a rutinas
+                </a>
+            </div>
+
+            <section class="program-grid">
+
+                <article class="program-card">
+                    <div>
+                        <span class="program-card__tag">
+                            Fuerza
+                        </span>
+
+                        <h2>Programa de fuerza</h2>
+
+                        <p>
+                            Orientado a mejorar el rendimiento en levantamientos
+                            pesados con menor cantidad de repeticiones.
+                        </p>
+
+                        <ul>
+                            <li>3 a 6 repeticiones por serie</li>
+                            <li>Descansos prolongados</li>
+                            <li>Énfasis en ejercicios compuestos</li>
+                        </ul>
+                    </div>
+
+                    <form th:action="@{/rutinas/programas/seleccionar}"
+                          method="post">
+
+                        <input type="hidden"
+                               name="programa"
+                               value="Fuerza">
+
+                        <button type="submit"
+                                class="button-primary">
+                            Seleccionar
+                        </button>
+                    </form>
+                </article>
+
+                <article class="program-card program-card--featured">
+                    <div>
+                        <span class="program-card__tag">
+                            Hipertrofia
+                        </span>
+
+                        <h2>Programa de hipertrofia</h2>
+
+                        <p>
+                            Diseñado para aumentar la masa muscular mediante
+                            volumen moderado y rangos medios de repeticiones.
+                        </p>
+
+                        <ul>
+                            <li>8 a 12 repeticiones por serie</li>
+                            <li>Descansos moderados</li>
+                            <li>Balance entre volumen e intensidad</li>
+                        </ul>
+                    </div>
+
+                    <form th:action="@{/rutinas/programas/seleccionar}"
+                          method="post">
+
+                        <input type="hidden"
+                               name="programa"
+                               value="Hipertrofia">
+
+                        <button type="submit"
+                                class="button-primary">
+                            Seleccionar
+                        </button>
+                    </form>
+                </article>
+
+                <article class="program-card">
+                    <div>
+                        <span class="program-card__tag">
+                            Resistencia
+                        </span>
+
+                        <h2>Programa de resistencia</h2>
+
+                        <p>
+                            Enfocado en mejorar la capacidad de trabajo con
+                            más repeticiones y descansos breves.
+                        </p>
+
+                        <ul>
+                            <li>15 a 20 repeticiones por serie</li>
+                            <li>Descansos cortos</li>
+                            <li>Mayor volumen total</li>
+                        </ul>
+                    </div>
+
+                    <form th:action="@{/rutinas/programas/seleccionar}"
+                          method="post">
+
+                        <input type="hidden"
+                               name="programa"
+                               value="Resistencia">
+
+                        <button type="submit"
+                                class="button-primary">
+                            Seleccionar
+                        </button>
+                    </form>
+                </article>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+
+</body>
+</html>
