@@ -1,41 +1,28 @@
 <!DOCTYPE html>
 <html lang="es"
-      xmlns:th="http://www.thymeleaf.org">
-
-<head th:replace="~{general/fragmentos :: head('Progreso')}"></head>
-
-<body>
-
-<div class="app-shell">
-
-    <aside th:replace="~{general/fragmentos :: sidebar('progreso')}"></aside>
-
-    <div class="app-content">
-
-        <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
-
-        <main class="page-content">
-
-            <h1 class="page-title">Progreso</h1>
-
-            <p class="page-subtitle">
-                Esta sección será desarrollada por el módulo correspondiente.
-            </p>
-
-            <section class="empty-state">
-                <h2>Vista en construcción</h2>
-                <p>
-                    La navegación ya está disponible, pero aún no se ha conectado la lógica.
-                </p>
-            </section>
-
-        </main>
-
-    </div>
-
-</div>
-
-<script th:src="@{/js/app.js}"></script>
-
-</body>
+      xmlns:th="http://www.thymeleaf.org"
+      data-bs-theme="dark">
+    <head th:replace="~{general/fragmentos :: head('Progreso')}"></head>
+    
+    <body>
+        <div class="d-flex">
+            <aside th:replace="~{general/fragmentos :: sidebar('progreso')}"></aside>
+            <div class="app-content">
+                <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+                <main class="container-xxl p-4">
+                    <h1 class="mb-0">Progreso</h1>
+                    <p class="text-secondary mt-2">
+                        Esta sección será desarrollada por el módulo correspondiente.
+                    </p>
+                    <section class="card border-dashed text-center p-5 mt-4">
+                        <h2>Vista en construcción</h2>
+                        <p class="text-secondary mb-0">
+                            La navegación ya está disponible, pero aún no se ha conectado la lógica.
+                        </p>
+                    </section>
+                </main>
+            </div>
+        </div>
+        <script th:src="@{/js/app.js}"></script>
+    </body>
 </html>

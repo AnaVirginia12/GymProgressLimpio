@@ -12,8 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.addEventListener("click", (event) => {
         const clickedOutside =
-            !sidebar.contains(event.target) &&
-            !toggle.contains(event.target);
+                !sidebar.contains(event.target) &&
+                !toggle.contains(event.target);
 
         if (clickedOutside) {
             sidebar.classList.remove("is-open");

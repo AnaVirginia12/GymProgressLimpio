@@ -1,61 +1,41 @@
 <!DOCTYPE html>
 <html lang="es"
-      xmlns:th="http://www.thymeleaf.org">
-
-<head th:replace="~{general/fragmentos :: head('Inicio')}"></head>
-
-<body>
-
-<div class="app-shell">
-
-    <aside th:replace="~{general/fragmentos :: sidebar('inicio')}"></aside>
-
-    <div class="app-content">
-
-        <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
-
-        <main class="page-content">
-
-            <h1 class="page-title">
-                Buenos días 👋
-            </h1>
-
-            <p class="page-subtitle">
-                Revisa tu entrenamiento programado para hoy.
-            </p>
-
-            <section class="today-card">
-
-                <div>
-
-                    <span class="eyebrow">
-                        Rutina de hoy
-                    </span>
-
-                    <h2>
-                        Push A — Pecho, hombros y tríceps
-                    </h2>
-
-                    <p>
-                        5 ejercicios · duración estimada: 55 minutos
+      xmlns:th="http://www.thymeleaf.org"
+      data-bs-theme="dark">
+    <head th:replace="~{general/fragmentos :: head('Inicio')}"></head>
+    
+    <body>
+        <div class="d-flex">
+            <aside th:replace="~{general/fragmentos :: sidebar('inicio')}"></aside>
+            <div class="app-content">
+                <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+                <main class="container-xxl p-4">
+                    <h1 class="mb-0 text-white">
+                        Buenos días
+                    </h1>
+                    <p class="text-secondary mt-2">
+                        Revisa tu entrenamiento programado para hoy.
                     </p>
-
-                </div>
-
-                <a class="button-primary"
-                   th:href="@{/rutinas/hoy}">
-                    Iniciar rutina
-                </a>
-
-            </section>
-
-        </main>
-
-    </div>
-
-</div>
-
-<script th:src="@{/js/app.js}"></script>
-
-</body>
+                    <section class="card today-card text-white p-4 mt-4 d-flex flex-row flex-wrap justify-content-between align-items-center gap-4">
+                        <div>
+                            <span class="text-uppercase small fw-bold">
+                                Rutina de hoy
+                            </span>
+                            <h2 class="my-2">
+                                Push A — Pecho, hombros y tríceps
+                            </h2>
+                            <p class="mb-0">
+                                5 ejercicios · duración estimada: 55 minutos
+                            </p>
+                        </div>
+                        <a class="btn btn-light"
+                           th:href="@{/rutinas/hoy}">
+                            Iniciar rutina
+                        </a>
+                    </section>
+                </main>
+            </div>
+        </div>
+        <script th:src="@{/js/app.js}"></script>
+    </body>
 </html>
