@@ -1403,3 +1403,116 @@ a {
         grid-template-columns: 1fr;
     }
 }
+
+/*
+ * GymProgress - estilos personalizados
+ * La mayor parte del diseño usa clases utilitarias de Bootstrap 5.3
+ * directamente en el HTML. Aquí solo queda lo que Bootstrap no cubre:
+ * la barra lateral fija/deslizable en móvil, el paleta de color de marca
+ * y el widget de selección múltiple de grupos musculares.
+ */
+
+:root {
+    --bs-primary: #7c3aed;
+    --bs-primary-rgb: 124, 58, 237;
+}
+
+/* Tokens del modo oscuro de Bootstrap (data-bs-theme="dark").
+   Se ajustan aquí para que .card, .form-control, .dropdown-menu, etc.
+   usen la paleta de la marca en vez del gris oscuro por defecto. */
+[data-bs-theme="dark"] {
+    --bs-body-bg: #09090b;
+    --bs-body-color: #f5f5f7;
+    --bs-emphasis-color: #ffffff;
+    --bs-secondary-color: #9a9aa3;
+    --bs-tertiary-bg: #121216;
+    --bs-tertiary-color: #9a9aa3;
+    --bs-border-color: #28282f;
+    --bs-border-color-translucent: #28282f;
+}
+
+/* Los cuadros (.card) deben verse un tono más claro que el fondo,
+   nunca blancos. */
+.card {
+    --bs-card-bg: #121216;
+}
+
+
+/* Barra lateral fija en escritorio, deslizable en móvil */
+.sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 250px;
+    z-index: 1000;
+    transition: transform 180ms ease;
+}
+
+.app-content {
+    width: 100%;
+}
+
+@media (min-width: 851px) {
+    .app-content {
+        margin-left: 250px;
+    }
+
+    .mobile-header {
+        display: none !important;
+    }
+}
+
+@media (max-width: 850px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.is-open {
+        transform: translateX(0);
+    }
+}
+
+/* Tarjeta destacada "Rutina de hoy": degradado morado con más detalle
+   que el utilitario bg-gradient plano de Bootstrap. */
+.today-card {
+    --bs-card-bg: transparent;
+    background: linear-gradient(
+        135deg,
+        rgba(124, 58, 237, 0.45),
+        rgba(26, 26, 32, 0.75)
+    );
+    border: 1px solid rgba(139, 92, 246, 0.35) !important;
+}
+
+/* Borde punteado para estados vacíos (Bootstrap no lo trae) */
+.border-dashed {
+    border-style: dashed !important;
+}
+
+/* Widget de selección múltiple (grupo muscular) */
+.multiselect {
+    position: relative;
+}
+
+.multiselect__panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.multiselect--open .multiselect__panel {
+    display: block;
+}
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    color: #fff !important;
+    background-color: rgba(124, 58, 237, 0.22);
+}
+}
+}
