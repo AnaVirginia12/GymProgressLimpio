@@ -1,193 +1,220 @@
 <!DOCTYPE html>
 <html lang="es"
-      xmlns:th="http://www.thymeleaf.org"
-      data-bs-theme="dark">
-    <head th:replace="~{general/fragmentos :: head(${ejercicio.id == null ? 'Nuevo ejercicio' : 'Editar ejercicio'})}"></head>
-    
-    <body>
-        <div class="d-flex">
-            <aside th:replace="~{general/fragmentos :: sidebar('ejercicios')}"></aside>
-            <div class="app-content">
-                <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
-                <main class="container-xxl p-4">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-                        <div>
-                            <h1 class="mb-0"
-                                th:text="${ejercicio.id == null ? 'Nuevo ejercicio' : 'Editar ejercicio'}">
-                                Nuevo ejercicio
-                            </h1>
-                            <p class="text-secondary mt-2">Completa la información del ejercicio.</p>
-                        </div>
-                        <a class="btn btn-outline-secondary" th:href="@{/ejercicios}">Volver</a>
-                    </div>
-                    <form th:if="${ejercicio.id == null}"
-                          class="d-flex flex-column gap-3"
-                          style="max-width: 520px;"
-                          method="post"
-                          th:action="@{/ejercicios}"
-                          th:object="${ejercicio}">
-                        <div>
-                            <label class="form-label">Nombre</label>
-                            <input type="text" class="form-control" th:field="*{nombre}" required>
-                        </div>
-                        <div class="multiselect" data-multiselect>
-                            <label class="form-label">Grupo muscular</label>
-                            <button type="button" class="btn btn-outline-secondary d-flex justify-content-between align-items-center w-100" data-multiselect-trigger>
-                                <span data-multiselect-text>
-                                    Selecciona los grupos musculares
-                                </span>
-                                <span aria-hidden="true">▾</span>
-                            </button>
-                            <div class="multiselect__panel dropdown-menu p-2 w-100" data-multiselect-panel>
-                                <div class="form-check" th:each="g : ${gruposMusculares}">
-                                    <input type="checkbox"
-                                           class="form-check-input"
-                                           name="grupos"
-                                           th:id="${'grupo-' + g}"
-                                           th:value="${g}"
-                                           th:checked="${ejercicio.grupoMuscular != null and ejercicio.grupoMuscular.contains(g)}">
-                                    <label class="form-check-label" th:for="${'grupo-' + g}" th:text="${g}">Pecho</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="form-label">Tipo de entrenamiento</label>
-                            <select class="form-select" th:field="*{tipoEntrenamiento}" required>
-                                <option value="">Selecciona un tipo</option>
-                                <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"></option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="form-label">URL de imagen o GIF demostrativo</label>
-                            <input type="text" class="form-control" th:field="*{mediaUrl}" placeholder="https://...">
-                        </div>
-                        <div>
-                            <label class="form-label">Descripción</label>
-                            <textarea class="form-control" th:field="*{descripcion}" rows="4"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
-                    </form>
-                    <form th:unless="${ejercicio.id == null}"
-                          class="d-flex flex-column gap-3"
-                          style="max-width: 520px;"
-                          method="post"
-                          th:action="@{/ejercicios/{id}(id=${ejercicio.id})}"
-                          th:object="${ejercicio}">
-                        <div>
-                            <label class="form-label">Nombre</label>
-                            <input type="text" class="form-control" th:field="*{nombre}" required>
-                        </div>
-                        <div class="multiselect" data-multiselect>
-                            <label class="form-label">Grupo muscular</label>
-                            <button type="button" class="btn btn-outline-secondary d-flex justify-content-between align-items-center w-100" data-multiselect-trigger>
-                                <span data-multiselect-text>
-                                    Selecciona los grupos musculares
-                                </span>
-                                <span aria-hidden="true">▾</span>
-                            </button>
-                            <div class="multiselect__panel dropdown-menu p-2 w-100" data-multiselect-panel>
-                                <div class="form-check" th:each="g : ${gruposMusculares}">
-                                    <input type="checkbox"
-                                           class="form-check-input"
-                                           name="grupos"
-                                           th:id="${'grupo-edit-' + g}"
-                                           th:value="${g}"
-                                           th:checked="${ejercicio.grupoMuscular != null and ejercicio.grupoMuscular.contains(g)}">
-                                    <label class="form-check-label" th:for="${'grupo-edit-' + g}" th:text="${g}">Pecho</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="form-label">Tipo de entrenamiento</label>
-                            <select class="form-select" th:field="*{tipoEntrenamiento}" required>
-                                <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"></option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="form-label">URL de imagen o GIF demostrativo</label>
-                            <input type="text" class="form-control" th:field="*{mediaUrl}">
-                        </div>
-                        <div>
-                            <label class="form-label">Descripción</label>
-                            <textarea class="form-control" th:field="*{descripcion}" rows="4"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
-                    </form>
-                </main>
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head(${ejercicio.id == null ? 'Nuevo ejercicio' : 'Editar ejercicio'})}"></head>
+
+<body>
+
+<div class="app-shell">
+
+    <aside th:replace="~{general/fragmentos :: sidebar('ejercicios')}"></aside>
+
+    <div class="app-content">
+
+        <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+
+        <main class="page-content">
+
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title"
+                        th:text="${ejercicio.id == null ? 'Nuevo ejercicio' : 'Editar ejercicio'}">
+                        Nuevo ejercicio
+                    </h1>
+                    <p class="page-subtitle">Completa la información del ejercicio.</p>
+                </div>
+
+                <a class="button-secondary" th:href="@{/ejercicios}">Volver</a>
             </div>
-        </div>
-        <script th:src="@{/js/app.js}"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                var raices = document.querySelectorAll('[data-multiselect]');
 
-                raices.forEach(function (raiz) {
+            <form th:if="${ejercicio.id == null}"
+                  class="exercise-form"
+                  method="post"
+                  th:action="@{/ejercicios}"
+                  th:object="${ejercicio}">
 
-                    var trigger = raiz.querySelector('[data-multiselect-trigger]');
-                    var panel = raiz.querySelector('[data-multiselect-panel]');
-                    var textoTrigger = raiz.querySelector('[data-multiselect-text]');
-                    var checkboxes = raiz.querySelectorAll('input[type="checkbox"]');
-                    var placeholder = textoTrigger.textContent.trim();
+                <label>
+                    Nombre
+                    <input type="text" th:field="*{nombre}" required>
+                </label>
 
-                    function actualizarTexto() {
-                        var seleccionados = [];
+                <div class="multiselect" data-multiselect>
+                    <span class="multiselect__label">Grupo muscular</span>
 
-                        checkboxes.forEach(function (checkbox) {
-                            if (checkbox.checked) {
-                                seleccionados.push(checkbox.nextElementSibling.textContent.trim());
-                            }
-                        });
+                    <button type="button" class="multiselect__trigger" data-multiselect-trigger>
+                        <span class="multiselect__trigger-text" data-multiselect-text>
+                            Selecciona los grupos musculares
+                        </span>
+                        <span class="multiselect__chevron" aria-hidden="true">▾</span>
+                    </button>
 
-                        textoTrigger.textContent = seleccionados.length > 0
-                                ? seleccionados.join(', ')
-                                : placeholder;
+                    <div class="multiselect__panel" data-multiselect-panel>
+                        <label class="multiselect__option" th:each="g : ${gruposMusculares}">
+                            <input type="checkbox"
+                                   name="grupos"
+                                   th:value="${g}"
+                                   th:checked="${ejercicio.grupoMuscular != null and ejercicio.grupoMuscular.contains(g)}">
+                            <span th:text="${g}">Pecho</span>
+                        </label>
+                    </div>
+                </div>
+
+                <label>
+                    Tipo de entrenamiento
+                    <select th:field="*{tipoEntrenamiento}" required>
+                        <option value="">Selecciona un tipo</option>
+                        <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"></option>
+                    </select>
+                </label>
+
+                <label>
+                    URL de imagen o GIF demostrativo
+                    <input type="text" th:field="*{mediaUrl}" placeholder="https://...">
+                </label>
+
+                <label>
+                    Descripción
+                    <textarea th:field="*{descripcion}" rows="4"></textarea>
+                </label>
+
+                <button type="submit" class="button-primary">Guardar</button>
+
+            </form>
+
+            <form th:unless="${ejercicio.id == null}"
+                  class="exercise-form"
+                  method="post"
+                  th:action="@{/ejercicios/{id}(id=${ejercicio.id})}"
+                  th:object="${ejercicio}">
+
+                <label>
+                    Nombre
+                    <input type="text" th:field="*{nombre}" required>
+                </label>
+
+                <div class="multiselect" data-multiselect>
+                    <span class="multiselect__label">Grupo muscular</span>
+
+                    <button type="button" class="multiselect__trigger" data-multiselect-trigger>
+                        <span class="multiselect__trigger-text" data-multiselect-text>
+                            Selecciona los grupos musculares
+                        </span>
+                        <span class="multiselect__chevron" aria-hidden="true">▾</span>
+                    </button>
+
+                    <div class="multiselect__panel" data-multiselect-panel>
+                        <label class="multiselect__option" th:each="g : ${gruposMusculares}">
+                            <input type="checkbox"
+                                   name="grupos"
+                                   th:value="${g}"
+                                   th:checked="${ejercicio.grupoMuscular != null and ejercicio.grupoMuscular.contains(g)}">
+                            <span th:text="${g}">Pecho</span>
+                        </label>
+                    </div>
+                </div>
+
+                <label>
+                    Tipo de entrenamiento
+                    <select th:field="*{tipoEntrenamiento}" required>
+                        <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"></option>
+                    </select>
+                </label>
+
+                <label>
+                    URL de imagen o GIF demostrativo
+                    <input type="text" th:field="*{mediaUrl}">
+                </label>
+
+                <label>
+                    Descripción
+                    <textarea th:field="*{descripcion}" rows="4"></textarea>
+                </label>
+
+                <button type="submit" class="button-primary">Guardar</button>
+
+            </form>
+
+        </main>
+
+    </div>
+
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var raices = document.querySelectorAll('[data-multiselect]');
+
+        raices.forEach(function (raiz) {
+
+            var trigger = raiz.querySelector('[data-multiselect-trigger]');
+            var panel = raiz.querySelector('[data-multiselect-panel]');
+            var textoTrigger = raiz.querySelector('[data-multiselect-text]');
+            var checkboxes = raiz.querySelectorAll('input[type="checkbox"]');
+            var placeholder = textoTrigger.textContent.trim();
+
+            function actualizarTexto() {
+                var seleccionados = [];
+
+                checkboxes.forEach(function (checkbox) {
+                    if (checkbox.checked) {
+                        seleccionados.push(checkbox.nextElementSibling.textContent.trim());
                     }
-
-                    function abrir() {
-                        raiz.classList.add('multiselect--open');
-                        trigger.setAttribute('aria-expanded', 'true');
-                    }
-
-                    function cerrar() {
-                        raiz.classList.remove('multiselect--open');
-                        trigger.setAttribute('aria-expanded', 'false');
-                    }
-
-                    function alternar(evento) {
-                        evento.stopPropagation();
-                        if (raiz.classList.contains('multiselect--open')) {
-                            cerrar();
-                        } else {
-                            abrir();
-                        }
-                    }
-
-                    trigger.setAttribute('aria-expanded', 'false');
-                    trigger.addEventListener('click', alternar);
-
-                    checkboxes.forEach(function (checkbox) {
-                        checkbox.addEventListener('change', actualizarTexto);
-                    });
-
-                    panel.addEventListener('click', function (evento) {
-                        evento.stopPropagation();
-                    });
-
-                    document.addEventListener('click', function (evento) {
-                        if (!raiz.contains(evento.target)) {
-                            cerrar();
-                        }
-                    });
-
-                    document.addEventListener('keydown', function (evento) {
-                        if (evento.key === 'Escape') {
-                            cerrar();
-                        }
-                    });
-
-                    actualizarTexto();
                 });
+
+                textoTrigger.textContent = seleccionados.length > 0
+                    ? seleccionados.join(', ')
+                    : placeholder;
+            }
+
+            function abrir() {
+                raiz.classList.add('multiselect--open');
+                trigger.setAttribute('aria-expanded', 'true');
+            }
+
+            function cerrar() {
+                raiz.classList.remove('multiselect--open');
+                trigger.setAttribute('aria-expanded', 'false');
+            }
+
+            function alternar(evento) {
+                evento.stopPropagation();
+                if (raiz.classList.contains('multiselect--open')) {
+                    cerrar();
+                } else {
+                    abrir();
+                }
+            }
+
+            trigger.setAttribute('aria-expanded', 'false');
+            trigger.addEventListener('click', alternar);
+
+            checkboxes.forEach(function (checkbox) {
+                checkbox.addEventListener('change', actualizarTexto);
             });
-        </script>
-    </body>
+
+            panel.addEventListener('click', function (evento) {
+                evento.stopPropagation();
+            });
+
+            document.addEventListener('click', function (evento) {
+                if (!raiz.contains(evento.target)) {
+                    cerrar();
+                }
+            });
+
+            document.addEventListener('keydown', function (evento) {
+                if (evento.key === 'Escape') {
+                    cerrar();
+                }
+            });
+
+            actualizarTexto();
+        });
+    });
+</script>
+
+</body>
 </html>
