@@ -32,9 +32,7 @@ public class SesionController {
         this.rachaService = rachaService;
     }
 
-    /* ------------------------------------------------------------------ */
     /* Iniciar sesión y mostrar sesión activa                               */
-    /* ------------------------------------------------------------------ */
 
     /** HU — Inicia una nueva sesión (o recupera la activa) y redirige a ella. */
     @PostMapping("/iniciar")
@@ -73,9 +71,7 @@ public class SesionController {
         return "sesion/activa";
     }
 
-    /* ------------------------------------------------------------------ */
     /* Guardar serie (auto-save inmediato)                                  */
-    /* ------------------------------------------------------------------ */
 
     /**
      * HU — Almacena ejercicio, peso, repeticiones y fecha.
@@ -108,9 +104,7 @@ public class SesionController {
         return "redirect:/sesion/" + sesionId;
     }
 
-    /* ------------------------------------------------------------------ */
     /* Finalizar sesión                                                     */
-    /* ------------------------------------------------------------------ */
 
     /**
      * HU — Finaliza la sesión, actualiza la racha y redirige al resumen.
@@ -134,9 +128,7 @@ public class SesionController {
         return "redirect:/sesion/" + sesionId + "/resumen";
     }
 
-    /* ------------------------------------------------------------------ */
     /* Resumen de la sesión finalizada                                      */
-    /* ------------------------------------------------------------------ */
 
     /** HU — Muestra el resumen con volumen, tiempo y PRs. */
     @GetMapping("/{sesionId}/resumen")

@@ -28,9 +28,7 @@ public class SesionService {
         this.serieRegistradaRepository = serieRegistradaRepository;
     }
 
-    /* ------------------------------------------------------------------ */
     /* Iniciar sesión de entrenamiento                                      */
-    /* ------------------------------------------------------------------ */
 
     /**
      * Crea y persiste una nueva sesión para el usuario.
@@ -51,9 +49,7 @@ public class SesionService {
         return sesionRepository.save(sesion);
     }
 
-    /* ------------------------------------------------------------------ */
     /* Sesión activa                                                        */
-    /* ------------------------------------------------------------------ */
 
     @Transactional(readOnly = true)
     public Optional<Sesion> obtenerActiva(Long usuarioId) {
@@ -61,9 +57,7 @@ public class SesionService {
                 .findFirstByUsuarioIdAndFinalizadaEnIsNullOrderByIniciadaEnDesc(usuarioId);
     }
 
-    /* ------------------------------------------------------------------ */
     /* Guardar serie (con fallo muscular)                                   */
-    /* ------------------------------------------------------------------ */
 
     /**
      * HU — Almacena ejercicio, peso, repeticiones y fecha de cada serie.
@@ -97,9 +91,7 @@ public class SesionService {
         return serie;
     }
 
-    /* ------------------------------------------------------------------ */
     /* Finalizar sesión y calcular resumen                                  */
-    /* ------------------------------------------------------------------ */
 
     /**
      * HU — Resumen al finalizar entrenamiento (volumen, tiempo, PRs).
@@ -171,9 +163,7 @@ public class SesionService {
         return resumen;
     }
 
-    /* ------------------------------------------------------------------ */
     /* Historial completo                                                   */
-    /* ------------------------------------------------------------------ */
 
     /**
      * HU — Historial completo de entrenamientos anteriores.
