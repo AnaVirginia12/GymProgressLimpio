@@ -67,7 +67,7 @@ public class SesionController {
             return "redirect:/";
         }
 
-        List<Ejercicio> ejercicios = ejercicioService.listarTodos();
+        List<Ejercicio> ejercicios = ejercicioService.listar();
         model.addAttribute("sesion", sesion.get());
         model.addAttribute("ejercicios", ejercicios);
         return "sesion/activa";
