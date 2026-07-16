@@ -1,7 +1,6 @@
 package com.fidelitas.gymprogress.repository.rutina;
 
 import com.fidelitas.gymprogress.domain.rutina.Rutina;
-import com.fidelitas.gymprogress.domain.rutina.Rutina;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

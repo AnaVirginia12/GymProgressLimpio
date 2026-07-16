@@ -104,11 +104,10 @@ public class SesionController {
         return "redirect:/sesion/" + sesionId;
     }
 
-    /* Finalizar sesión                                                     */
+    // Finalizar sesión                                                     
 
-    /**
-     * HU — Finaliza la sesión, actualiza la racha y redirige al resumen.
-     */
+    //HU — Finaliza la sesión, actualiza la racha y redirige al resumen.
+     
     @PostMapping("/{sesionId}/finalizar")
     public String finalizar(
             @PathVariable Long sesionId,
@@ -128,9 +127,9 @@ public class SesionController {
         return "redirect:/sesion/" + sesionId + "/resumen";
     }
 
-    /* Resumen de la sesión finalizada                                      */
+    // Resumen de la sesión finalizada        
 
-    /** HU — Muestra el resumen con volumen, tiempo y PRs. */
+    // HU — Muestra el resumen con volumen, tiempo y PRs
     @GetMapping("/{sesionId}/resumen")
     public String mostrarResumen(
             @PathVariable Long sesionId,
