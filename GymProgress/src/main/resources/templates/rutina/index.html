@@ -1,108 +1,78 @@
 <!DOCTYPE html>
 <html lang="es"
-      xmlns:th="http://www.thymeleaf.org">
-
-<head th:replace="~{general/fragmentos :: head('Mis rutinas')}"></head>
-
-<body>
-
-<div class="app-shell">
-
-    <aside th:replace="~{general/fragmentos :: sidebar('rutinas')}"></aside>
-
-    <div class="app-content">
-
-        <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
-
-        <main class="page-content">
-
-            <div class="page-header">
-
-                <div>
-                    <h1 class="page-title">Mis rutinas</h1>
-
-                    <p class="page-subtitle">
-                        Consulta tu programa de entrenamiento activo.
-                    </p>
-                </div>
-
-                <a class="button-primary"
-                   th:href="@{/rutinas/programas}">
-                    Elegir programa
-                </a>
-
-            </div>
-
-            <div class="alert-success"
-                 th:if="${mensaje}"
-                 th:text="${mensaje}">
-            </div>
-
-            <section class="empty-state"
-                     th:if="${#lists.isEmpty(rutinas)}">
-
-                <h2>No tienes una rutina seleccionada</h2>
-
-                <p>
-                    Selecciona un programa para comenzar.
-                </p>
-
-                <a class="button-primary"
-                   th:href="@{/rutinas/programas}">
-                    Ver programas
-                </a>
-
-            </section>
-
-            <section class="routine-grid"
-                     th:unless="${#lists.isEmpty(rutinas)}">
-
-                <article class="routine-card"
-                         th:each="rutina : ${rutinas}">
-
-                    <div>
-
-                        <span class="program-card__tag"
-                              th:text="${rutina.programa}">
-                            Programa
-                        </span>
-
-                        <h2 th:text="${rutina.nombre}">
-                            Nombre de la rutina
-                        </h2>
-
-                        <p>
-                            Tipo:
-                            <strong th:text="${rutina.tipo}">
-                                Gimnasio
-                            </strong>
-                        </p>
-
-                        <p>
-                            Estado:
-                            <strong th:text="${rutina.activa ? 'Activa' : 'Inactiva'}">
-                                Activa
-                            </strong>
-                        </p>
-
+      xmlns:th="http://www.thymeleaf.org"
+      data-bs-theme="dark">
+    <head th:replace="~{general/fragmentos :: head('Mis rutinas')}"></head>
+    
+    <body>
+        <div class="d-flex">
+            <aside th:replace="~{general/fragmentos :: sidebar('rutinas')}"></aside>
+            <div class="app-content">
+                <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+                <main class="container-xxl p-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+                        <div>
+                            <h1 class="mb-0">Mis rutinas</h1>
+                            <p class="text-secondary mt-2">
+                                Consulta tu programa de entrenamiento activo.
+                            </p>
+                        </div>
+                        <a class="btn btn-primary"
+                           th:href="@{/rutinas/programas}">
+                            Elegir programa
+                        </a>
                     </div>
-
-                    <a class="button-primary"
-                       th:href="@{/rutinas/hoy}">
-                        Ver rutina de hoy
-                    </a>
-
-                </article>
-
-            </section>
-
-        </main>
-
-    </div>
-
-</div>
-
-<script th:src="@{/js/app.js}"></script>
-
-</body>
+                    <div class="alert alert-success"
+                         th:if="${mensaje}"
+                         th:text="${mensaje}">
+                    </div>
+                    <section class="card border-dashed text-center p-5"
+                             th:if="${#lists.isEmpty(rutinas)}">
+                        <h2>No tienes una rutina seleccionada</h2>
+                        <p class="text-secondary">
+                            Selecciona un programa para comenzar.
+                        </p>
+                        <a class="btn btn-primary mx-auto"
+                           th:href="@{/rutinas/programas}">
+                            Ver programas
+                        </a>
+                    </section>
+                    <section class="row row-cols-1 row-cols-md-2 g-4"
+                             th:unless="${#lists.isEmpty(rutinas)}">
+                        <article class="col"
+                                 th:each="rutina : ${rutinas}">
+                            <div class="card p-4 h-100 d-flex flex-row justify-content-between align-items-end flex-wrap gap-4">
+                                <div>
+                                    <span class="badge text-bg-primary-subtle rounded-pill"
+                                          th:text="${rutina.programa}">
+                                        Programa
+                                    </span>
+                                    <h2 class="mt-3 mb-2" th:text="${rutina.nombre}">
+                                        Nombre de la rutina
+                                    </h2>
+                                    <p class="mb-0">
+                                        Tipo:
+                                        <strong th:text="${rutina.tipo}">
+                                            Gimnasio
+                                        </strong>
+                                    </p>
+                                    <p class="mb-0">
+                                        Estado:
+                                        <strong th:text="${rutina.activa ? 'Activa' : 'Inactiva'}">
+                                            Activa
+                                        </strong>
+                                    </p>
+                                </div>
+                                <a class="btn btn-primary"
+                                   th:href="@{/rutinas/hoy}">
+                                    Ver rutina de hoy
+                                </a>
+                            </div>
+                        </article>
+                    </section>
+                </main>
+            </div>
+        </div>
+        <script th:src="@{/js/app.js}"></script>
+    </body>
 </html>
