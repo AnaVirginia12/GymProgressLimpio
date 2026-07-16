@@ -232,7 +232,9 @@ a {
         align-items: flex-start;
         flex-direction: column;
     }
-    .empty-state {
+}
+
+.empty-state {
     margin-top: 24px;
     padding: 32px;
     text-align: center;
@@ -249,6 +251,7 @@ a {
     margin: 0;
     color: var(--muted);
 }
+
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -347,6 +350,7 @@ a {
         flex-direction: column;
     }
 }
+
 .alert-success {
     margin-top: 24px;
     padding: 14px 16px;
@@ -393,6 +397,7 @@ a {
         flex-direction: column;
     }
 }
+
 .today-routine {
     margin-top: 28px;
     padding: 28px;
@@ -522,6 +527,27 @@ a {
         flex-direction: column;
     }
 }
+
+/* ==== Módulo Ejercicios (Persona 2) ==== */
+
+.search-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 24px 0;
+}
+
+.search-bar input,
+.search-bar select {
+    flex: 1;
+    min-width: 200px;
+    height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.95rem;
 }
 
 /* ================================================================== */
@@ -616,9 +642,6 @@ a {
     border: 1px solid var(--border);
     border-radius: 8px;
     background: var(--background);
-    color: var(--text);
-    font-size: 0.95rem;
-}
 
 .form-group input:disabled {
     opacity: 0.55;
@@ -922,6 +945,235 @@ a {
 .fallo-toggle input[type="checkbox"] {
     width: 18px;
     height: 18px;
+
+.exercise-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    margin-top: 12px;
+}
+
+.exercise-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    overflow: hidden;
+}
+
+.exercise-card__media {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    background: var(--background);
+}
+
+.exercise-card__media--placeholder {
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.exercise-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px;
+}
+
+.exercise-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.exercise-card__header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.exercise-card__header form {
+    margin: 0;
+}
+
+.exercise-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.favorite-btn {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.favorite-btn--active {
+    color: #facc15;
+}
+
+.exercise-card p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.exercise-card__actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.exercise-card__actions form {
+    margin: 0;
+}
+
+.exercise-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 520px;
+    margin-top: 24px;
+}
+
+.exercise-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.exercise-form input,
+.exercise-form select,
+.exercise-form textarea {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--background);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 400;
+}
+
+.multiselect {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.multiselect__label {
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.multiselect__trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--background);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 400;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 160ms ease;
+}
+
+.multiselect__trigger:hover {
+    border-color: rgba(139, 92, 246, 0.6);
+}
+
+.multiselect--open .multiselect__trigger {
+    border-color: var(--primary);
+}
+
+.multiselect__trigger-text {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--muted);
+}
+
+.multiselect--open .multiselect__trigger-text,
+.multiselect__trigger-text:not(:empty) {
+    color: var(--text);
+}
+
+.multiselect__chevron {
+    flex: 0 0 auto;
+    margin-left: 10px;
+    color: var(--muted);
+    transition: transform 180ms ease;
+}
+
+.multiselect--open .multiselect__chevron {
+    transform: rotate(180deg);
+    color: #c4b5fd;
+}
+
+.multiselect__panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    max-height: 260px;
+    overflow-y: auto;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+
+    opacity: 0;
+    transform: translateY(-6px);
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+        opacity 160ms ease,
+        transform 160ms ease,
+        visibility 160ms ease;
+}
+
+.multiselect--open .multiselect__panel {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.multiselect__option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 10px;
+    border-radius: 8px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: background-color 120ms ease;
+}
+
+.multiselect__option:hover {
+    background: var(--surface-hover);
+}
+
+.multiselect__option input {
+    width: 16px;
+    height: 16px;
     accent-color: var(--primary);
     cursor: pointer;
 }
@@ -1161,4 +1413,19 @@ a {
 
 .chart-point:hover {
     r: 6;
+}
+
+.multiselect__panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.multiselect__panel::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 8px;
+}
+
+@media (max-width: 900px) {
+    .exercise-grid {
+        grid-template-columns: 1fr;
+    }
 }

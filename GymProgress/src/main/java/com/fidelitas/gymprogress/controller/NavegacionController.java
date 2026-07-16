@@ -27,7 +27,7 @@ public class NavegacionController {
         this.pesoCorporalService = pesoCorporalService;
     }
 
-    /** HU — Historial completo de entrenamientos anteriores. */
+    // Historial completo de entrenamientos anteriores.
     @GetMapping("/historial")
     public String historial(HttpSession session, Model model) {
         Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
@@ -38,7 +38,10 @@ public class NavegacionController {
         return "historial/index";
     }
 
-    /** HU — Progreso: racha + datos de peso corporal para gráficos. */
+
+    // HU Progreso: racha + datos de peso corporal para gráficos.
+
+
     @GetMapping("/progreso")
     public String progreso(HttpSession session, Model model) {
         Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
