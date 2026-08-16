@@ -10,27 +10,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class RutinaService {
 
-    private static final Long USUARIO_TEMPORAL_ID = 1L;
-
     private final RutinaRepository rutinaRepository;
 
     public RutinaService(RutinaRepository rutinaRepository) {
         this.rutinaRepository = rutinaRepository;
     }
 
-    public List<Rutina> listarRutinas() {
+    public List<Rutina> listarRutinas(Long usuarioId) {
         return rutinaRepository
-                .findByUsuarioIdOrderByCreadaEnDesc(USUARIO_TEMPORAL_ID);
+                .findByUsuarioIdOrderByCreadaEnDesc(usuarioId);
     }
 
-    public Rutina seleccionarPrograma(String programa) {
+    public Rutina seleccionarPrograma(Long usuarioId, String programa) {
         Rutina rutina = rutinaRepository
-                .findFirstByUsuarioIdAndActivaTrueOrderByCreadaEnDesc(
-                        USUARIO_TEMPORAL_ID
-                )
+                .findFirstByUsuarioIdAndActivaTrueOrderByCreadaEnDesc(usuarioId)
                 .orElseGet(Rutina::new);
 
-        rutina.setUsuarioId(USUARIO_TEMPORAL_ID);
+        rutina.setUsuarioId(usuarioId);
         rutina.setNombre(generarNombre(programa));
         rutina.setTipo("Gimnasio");
         rutina.setPrograma(programa);
@@ -40,12 +36,70 @@ public class RutinaService {
     }
 
     @Transactional(readOnly = true)
-    public Rutina obtenerRutinaActiva() {
+    public Rutina obtenerRutinaActiva(Long usuarioId) {
         return rutinaRepository
-                .findFirstByUsuarioIdAndActivaTrueOrderByCreadaEnDesc(
-                        USUARIO_TEMPORAL_ID
-                )
+                .findFirstByUsuarioIdAndActivaTrueOrderByCreadaEnDesc(usuarioId)
                 .orElse(null);
+    }
+
+    @Transactional
+    public void agregarEjercicio(
+            Long usuarioId,
+            Long ejercicioId,
+            Integer series,
+            Integer repsObjetivo,
+            Integer descansoSeg
+    ) {
+        Rutina rutina = rutinaRepository
+                .findFirstByUsuarioIdAndActivaTrueOrderByCreadaEnDesc(usuarioId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Primero selecciona un programa de entrenamiento."
+                ));
+
+        if (ejercicioId == null) {
+            throw new IllegalArgumentException("Selecciona un ejercicio.");
+        }
+
+        RutinaEjercicio detalle = new RutinaEjercicio();
+        detalle.setEjercicioId(ejercicioId);
+        detalle.setOrden(siguienteOrden(rutina));
+        detalle.setSeries(valorPositivo(series, 3));
+        detalle.setRepsObjetivo(valorPositivo(repsObjetivo, 10));
+        detalle.setDescansoSeg(valorPositivo(descansoSeg, 60));
+
+        rutina.agregarEjercicio(detalle);
+        rutinaRepository.save(rutina);
+    }
+
+    @Transactional
+    public void eliminarEjercicio(Long usuarioId, Long rutinaEjercicioId) {
+        Rutina rutina = rutinaRepository
+                .findFirstByUsuarioIdAndActivaTrueOrderByCreadaEnDesc(usuarioId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No hay una rutina activa."
+                ));
+
+        rutina.getEjercicios()
+                .stream()
+                .filter(e -> e.getId().equals(rutinaEjercicioId))
+                .findFirst()
+                .ifPresent(rutina::eliminarEjercicio);
+
+        reordenar(rutina);
+        rutinaRepository.save(rutina);
+    }
+
+    private int siguienteOrden(Rutina rutina) {
+        return rutina.getEjercicios() == null
+                ? 1
+                : rutina.getEjercicios().size() + 1;
+    }
+
+    private void reordenar(Rutina rutina) {
+        List<RutinaEjercicio> ejercicios = rutina.getEjercicios();
+        for (int i = 0; i < ejercicios.size(); i++) {
+            ejercicios.get(i).setOrden(i + 1);
+        }
     }
 
     public int calcularDuracionEstimadaMinutos(Rutina rutina) {

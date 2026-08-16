@@ -70,19 +70,12 @@
                                           stroke="#7c3aed"
                                           stroke-width="2"
                                           points=""/>
-                                <th:block th:with="
-                                          registros=${#lists.size(historialPeso) > 12
-                                          ? historialPeso.subList(0, 12)
-                                          : historialPeso},
-                                          n=${#lists.size(registros)}">
-                                    <circle th:each="r, stat : ${registros}"
+                                <th:block th:with="n=${#lists.size(registrosGrafico)}">
+                                    <circle th:each="r, stat : ${registrosGrafico}"
                                             th:with="
                                             idx=${n - 1 - stat.index},
                                             xPos=${n == 1 ? 315 : 40 + idx * (550.0 / (n - 1))},
-                                            minP=${#aggregates.min(registros.![pesoKg])},
-                                            maxP=${#aggregates.max(registros.![pesoKg])},
-                                            rango=${maxP - minP < 1 ? 1 : maxP - minP},
-                                            yPos=${170 - ((r.pesoKg - minP) / rango) * 140}"
+                                            yPos=${170 - ((r.pesoKg - pesoMinimo) / rangoPeso) * 140}"
                                             th:cx="${xPos}"
                                             th:cy="${yPos}"
                                             r="4"

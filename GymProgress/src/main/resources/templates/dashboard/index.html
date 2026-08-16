@@ -9,28 +9,48 @@
             <div class="app-content flex-grow-1">
                 <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
                 <main class="container-xxl p-4">
-                    <h1 class="display-6 fw-bold mb-2">
+                    <h1 class="display-6 fw-bold mb-2"
+                        th:text="${saludo} + ' 👋'">
                         Buenos días 👋
                     </h1>
                     <p class="text-body-secondary">
                         Revisa tu entrenamiento programado para hoy.
                     </p>
-                    <section class="card today-card mt-4">
+                    <!-- HU21 — Tarjeta de la rutina activa, con datos reales -->
+                    <section class="card today-card mt-4"
+                             th:if="${rutina != null}">
                         <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4 p-4">
                             <div>
                                 <span class="text-uppercase fw-bold small text-primary-emphasis">
                                     Rutina de hoy
                                 </span>
-                                <h2 class="h3 my-2">
-                                    Push A — Pecho, hombros y tríceps
+                                <h2 class="h3 my-2" th:text="${rutina.nombre}">
+                                    Programa de hipertrofia
                                 </h2>
                                 <p class="mb-0 text-body-secondary">
-                                    5 ejercicios · duración estimada: 55 minutos
+                                    <span th:text="${totalEjercicios}">5</span>
+                                    <span th:text="${totalEjercicios == 1 ? 'ejercicio' : 'ejercicios'}">ejercicios</span>
+                                    · duración estimada:
+                                    <span th:text="${duracionEstimada}">55</span> minutos
                                 </p>
                             </div>
                             <a class="btn btn-primary btn-lg text-nowrap"
                                th:href="@{/rutinas/hoy}">
                                 Iniciar rutina
+                            </a>
+                        </div>
+                    </section>
+                    <!-- Estado vacío: todavía no eligió un programa -->
+                    <section class="card border-dashed text-center mt-4 p-4"
+                             th:if="${rutina == null}">
+                        <div class="card-body">
+                            <h2 class="h4">Todavía no tienes una rutina</h2>
+                            <p class="text-body-secondary">
+                                Elige un programa de entrenamiento para ver aquí tu rutina de hoy.
+                            </p>
+                            <a class="btn btn-primary"
+                               th:href="@{/rutinas/programas}">
+                                Elegir programa
                             </a>
                         </div>
                     </section>

@@ -27,7 +27,6 @@ public class NavegacionController {
         this.pesoCorporalService = pesoCorporalService;
     }
 
-    // Historial completo de entrenamientos anteriores.
     @GetMapping("/historial")
     public String historial(HttpSession session, Model model) {
         Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
@@ -38,18 +37,45 @@ public class NavegacionController {
         return "historial/index";
     }
 
-
-    // HU Progreso: racha + datos de peso corporal para gráficos.
-
-
     @GetMapping("/progreso")
     public String progreso(HttpSession session, Model model) {
         Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
         if (usuarioId == null) {
             return "redirect:/login";
         }
+
+        var historialPeso = pesoCorporalService.historial(usuarioId);
+
         model.addAttribute("racha", rachaService.obtener(usuarioId));
-        model.addAttribute("historialPeso", pesoCorporalService.historial(usuarioId));
+        model.addAttribute("historialPeso", historialPeso);
+        
+        var registros = historialPeso.size() > 12
+                ? historialPeso.subList(0, 12)
+                : historialPeso;
+
+        model.addAttribute("registrosGrafico", registros);
+
+        double minPeso = Double.MAX_VALUE;
+        double maxPeso = -Double.MAX_VALUE;
+
+        for (var registro : registros) {
+            double peso = registro.getPesoKg();
+            minPeso = Math.min(minPeso, peso);
+            maxPeso = Math.max(maxPeso, peso);
+        }
+
+        if (registros.isEmpty()) {
+            minPeso = 0;
+            maxPeso = 0;
+        }
+
+        model.addAttribute("pesoMinimo", minPeso);
+
+        model.addAttribute(
+                "rangoPeso",
+                (maxPeso - minPeso) < 1 ? 1.0 : (maxPeso - minPeso)
+        );
+
         return "progreso/index";
     }
 

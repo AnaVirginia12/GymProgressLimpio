@@ -22,6 +22,8 @@
                     </div>
                     <div class="alert alert-success" role="alert"
                          th:if="${mensaje}" th:text="${mensaje}"></div>
+                    <div class="alert alert-danger" role="alert"
+                         th:if="${error}" th:text="${error}"></div>
                     <form class="row g-2 mb-4" method="get" th:action="@{/ejercicios}">
                         <div class="col-12 col-md">
                             <input type="text"

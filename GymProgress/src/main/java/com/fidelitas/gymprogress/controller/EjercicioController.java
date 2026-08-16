@@ -71,7 +71,14 @@ public class EjercicioController {
             return "redirect:/login";
         }
         ejercicio.setGrupoMuscular(unirGrupos(grupos));
-        ejercicioService.crear(ejercicio);
+
+        try {
+            ejercicioService.crear(ejercicio);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/ejercicios/nuevo";
+        }
+
         redirectAttributes.addFlashAttribute("mensaje", "Ejercicio creado correctamente.");
         return "redirect:/ejercicios";
     }
@@ -107,7 +114,14 @@ public class EjercicioController {
             return "redirect:/login";
         }
         ejercicio.setGrupoMuscular(unirGrupos(grupos));
-        ejercicioService.actualizar(id, ejercicio);
+
+        try {
+            ejercicioService.actualizar(id, ejercicio);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/ejercicios/" + id + "/editar";
+        }
+
         redirectAttributes.addFlashAttribute("mensaje", "Ejercicio actualizado correctamente.");
         return "redirect:/ejercicios";
     }
