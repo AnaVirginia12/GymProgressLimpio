@@ -1,178 +1,167 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-
-<head th:replace="~{general/fragmentos :: head('Perfil')}"></head>
-
-<body>
-
-<div class="app-shell">
-
-    <aside th:replace="~{general/fragmentos :: sidebar('perfil')}"></aside>
-
-    <div class="app-content">
-
-        <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
-
-        <main class="page-content">
-
-            <div class="page-header">
-                <h1 class="page-title">Perfil</h1>
-
-                <!-- HU5 — Cerrar sesión -->
-                <form method="post" th:action="@{/logout}">
-                    <button type="submit" class="button-secondary">
-                        Cerrar sesión
-                    </button>
-                </form>
+<html lang="es"
+      data-bs-theme="dark"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head('Perfil')}"></head>
+    <body>
+        <div class="d-flex min-vh-100">
+            <aside th:replace="~{general/fragmentos :: sidebar('perfil')}"></aside>
+            <div class="app-content flex-grow-1">
+                <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+                <main class="container-xxl p-4">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+                        <h1 class="display-6 fw-bold mb-0">Perfil</h1>
+                        <form method="post" th:action="@{/logout}">
+                            <button type="submit" class="btn btn-secondary text-nowrap">
+                                Cerrar sesión
+                            </button>
+                        </form>
+                    </div>
+                    <div th:if="${mensaje}" class="alert alert-success" role="alert" th:text="${mensaje}"></div>
+                    <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+                    <form method="post"
+                          th:action="@{/perfil}"
+                          th:object="${usuario}"
+                          class="vstack gap-4"
+                          style="max-width: 760px;"
+                          th:if="${usuario != null}">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="avatar avatar-lg rounded-circle bg-primary text-white fw-bold overflow-hidden">
+                                <img th:if="${usuario.fotoUrl != null and !usuario.fotoUrl.isEmpty()}"
+                                     th:src="${usuario.fotoUrl}"
+                                     alt="Foto de perfil"
+                                     class="w-100 h-100 object-fit-cover">
+                                <span th:if="${usuario.fotoUrl == null or usuario.fotoUrl.isEmpty()}"
+                                      th:text="${usuario.nombre != null ? usuario.nombre.substring(0,1).toUpperCase() : 'U'}">
+                                    U
+                                </span>
+                            </div>
+                            <div class="flex-grow-1">
+                                <label class="form-label" for="fotoUrl">URL de foto de perfil</label>
+                                <input id="fotoUrl" type="url" class="form-control" th:field="*{fotoUrl}"
+                                       placeholder="https://... (opcional)">
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <h2 class="fs-6 fw-bold text-uppercase text-body-secondary mb-3">
+                                    Datos personales
+                                </h2>
+                                <div class="row g-3">
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="nombre">Nombre</label>
+                                        <input id="nombre" type="text" class="form-control"
+                                               th:field="*{nombre}" required>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="correo">Correo electrónico</label>
+                                        <input id="correo" type="email" class="form-control"
+                                               th:value="*{correo}" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <h2 class="fs-6 fw-bold text-uppercase text-body-secondary mb-3">
+                                    Preferencias de entrenamiento
+                                </h2>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="objetivo">Objetivo principal</label>
+                                        <select id="objetivo" class="form-select" th:field="*{objetivo}">
+                                            <option value="">Sin especificar</option>
+                                            <option value="Fuerza">Ganar fuerza</option>
+                                            <option value="Hipertrofia">Ganar músculo</option>
+                                            <option value="Resistencia">Mejorar resistencia</option>
+                                            <option value="Perdida de peso">Perder peso</option>
+                                            <option value="Bienestar">Bienestar general</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="nivel">Nivel de experiencia</label>
+                                        <select id="nivel" class="form-select" th:field="*{nivel}">
+                                            <option value="">Sin especificar</option>
+                                            <option value="Principiante">Principiante</option>
+                                            <option value="Intermedio">Intermedio</option>
+                                            <option value="Avanzado">Avanzado</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="diasSemana">Días disponibles por semana</label>
+                                        <select id="diasSemana" class="form-select" th:field="*{diasSemana}">
+                                            <option value="">Sin especificar</option>
+                                            <option value="2">2 días</option>
+                                            <option value="3">3 días</option>
+                                            <option value="4">4 días</option>
+                                            <option value="5">5 días</option>
+                                            <option value="6">6 días</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="minutosSesion">Tiempo por sesión</label>
+                                        <select id="minutosSesion" class="form-select" th:field="*{minutosSesion}">
+                                            <option value="">Sin especificar</option>
+                                            <option value="30">30 minutos</option>
+                                            <option value="45">45 minutos</option>
+                                            <option value="60">60 minutos</option>
+                                            <option value="75">75 minutos</option>
+                                            <option value="90">90 minutos</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="equipamiento">Equipamiento disponible</label>
+                                    <select id="equipamiento" class="form-select" th:field="*{equipamiento}">
+                                        <option value="">Sin especificar</option>
+                                        <option value="Gimnasio">Gimnasio completo</option>
+                                        <option value="Casa">En casa (mancuernas/bandas)</option>
+                                        <option value="Al aire libre">Al aire libre</option>
+                                        <option value="Sin equipamiento">Sin equipamiento</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label" for="lesiones">Lesiones o limitaciones físicas</label>
+                                    <textarea id="lesiones"
+                                              class="form-control"
+                                              th:field="*{lesiones}"
+                                              rows="2"
+                                              placeholder="Opcional"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <h2 class="fs-6 fw-bold text-uppercase text-body-secondary mb-3">
+                                    Unidad de peso
+                                </h2>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio"
+                                           th:field="*{unidadPeso}" value="kg">
+                                    <label class="form-check-label" th:for="${#ids.prev('unidadPeso')}">
+                                        Kilogramos (kg)
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio"
+                                           th:field="*{unidadPeso}" value="lb">
+                                    <label class="form-check-label" th:for="${#ids.prev('unidadPeso')}">
+                                        Libras (lb)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary">
+                                Guardar cambios
+                            </button>
+                        </div>
+                    </form>
+                </main>
             </div>
-
-            <!-- Mensajes de feedback -->
-            <div th:if="${mensaje}" class="alert-success" th:text="${mensaje}"></div>
-            <div th:if="${error}" class="alert-error" th:text="${error}"></div>
-
-            <!-- HU5 — Formulario de perfil editable con foto -->
-            <form method="post"
-                  th:action="@{/perfil}"
-                  th:object="${usuario}"
-                  class="profile-form"
-                  th:if="${usuario != null}">
-
-                <!-- Foto de perfil -->
-                <div class="profile-avatar-section">
-                    <div class="profile-avatar">
-                        <img th:if="${usuario.fotoUrl != null and !usuario.fotoUrl.isEmpty()}"
-                             th:src="${usuario.fotoUrl}"
-                             alt="Foto de perfil"
-                             class="profile-avatar__img">
-                        <span th:if="${usuario.fotoUrl == null or usuario.fotoUrl.isEmpty()}"
-                              th:text="${usuario.nombre != null ? usuario.nombre.substring(0,1).toUpperCase() : 'U'}">
-                            U
-                        </span>
-                    </div>
-                    <div class="form-group">
-                        <label for="fotoUrl">URL de foto de perfil</label>
-                        <input id="fotoUrl" type="url" th:field="*{fotoUrl}"
-                               placeholder="https://... (opcional)">
-                    </div>
-                </div>
-
-                <!-- Datos editables -->
-                <div class="form-section">
-                    <h2 class="form-section__title">Datos personales</h2>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="nombre">Nombre</label>
-                            <input id="nombre" type="text" th:field="*{nombre}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="correo">Correo electrónico</label>
-                            <!-- El correo se muestra pero no se edita desde aquí -->
-                            <input id="correo" type="email" th:value="*{correo}" disabled>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- HU2 — Objetivo, días y tiempo para automatizar rutina -->
-                <div class="form-section">
-                    <h2 class="form-section__title">Preferencias de entrenamiento</h2>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="objetivo">Objetivo principal</label>
-                            <select id="objetivo" th:field="*{objetivo}">
-                                <option value="">Sin especificar</option>
-                                <option value="Fuerza">Ganar fuerza</option>
-                                <option value="Hipertrofia">Ganar músculo</option>
-                                <option value="Resistencia">Mejorar resistencia</option>
-                                <option value="Perdida de peso">Perder peso</option>
-                                <option value="Bienestar">Bienestar general</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="nivel">Nivel de experiencia</label>
-                            <select id="nivel" th:field="*{nivel}">
-                                <option value="">Sin especificar</option>
-                                <option value="Principiante">Principiante</option>
-                                <option value="Intermedio">Intermedio</option>
-                                <option value="Avanzado">Avanzado</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="diasSemana">Días disponibles por semana</label>
-                            <select id="diasSemana" th:field="*{diasSemana}">
-                                <option value="">Sin especificar</option>
-                                <option value="2">2 días</option>
-                                <option value="3">3 días</option>
-                                <option value="4">4 días</option>
-                                <option value="5">5 días</option>
-                                <option value="6">6 días</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="minutosSesion">Tiempo por sesión</label>
-                            <select id="minutosSesion" th:field="*{minutosSesion}">
-                                <option value="">Sin especificar</option>
-                                <option value="30">30 minutos</option>
-                                <option value="45">45 minutos</option>
-                                <option value="60">60 minutos</option>
-                                <option value="75">75 minutos</option>
-                                <option value="90">90 minutos</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="equipamiento">Equipamiento disponible</label>
-                        <select id="equipamiento" th:field="*{equipamiento}">
-                            <option value="">Sin especificar</option>
-                            <option value="Gimnasio">Gimnasio completo</option>
-                            <option value="Casa">En casa (mancuernas/bandas)</option>
-                            <option value="Al aire libre">Al aire libre</option>
-                            <option value="Sin equipamiento">Sin equipamiento</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="lesiones">Lesiones o limitaciones físicas</label>
-                        <textarea id="lesiones"
-                                  th:field="*{lesiones}"
-                                  rows="2"
-                                  placeholder="Opcional"></textarea>
-                    </div>
-                </div>
-
-                <!-- HU3 — Preferencia de unidad de peso -->
-                <div class="form-section">
-                    <h2 class="form-section__title">Unidad de peso</h2>
-                    <div class="unit-toggle">
-                        <label class="unit-toggle__option">
-                            <input type="radio" th:field="*{unidadPeso}" value="kg">
-                            Kilogramos (kg)
-                        </label>
-                        <label class="unit-toggle__option">
-                            <input type="radio" th:field="*{unidadPeso}" value="lb">
-                            Libras (lb)
-                        </label>
-                    </div>
-                </div>
-
-                <button type="submit" class="button-primary">
-                    Guardar cambios
-                </button>
-
-            </form>
-
-        </main>
-
-    </div>
-
-</div>
-
-<script th:src="@{/js/app.js}"></script>
-
+        </div>
+    <th:block th:replace="~{general/fragmentos :: scripts}"></th:block>
 </body>
 </html>

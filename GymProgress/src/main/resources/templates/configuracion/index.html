@@ -1,41 +1,29 @@
 <!DOCTYPE html>
 <html lang="es"
+      data-bs-theme="dark"
       xmlns:th="http://www.thymeleaf.org">
-
-<head th:replace="~{general/fragmentos :: head('Configuracion')}"></head>
-
-<body>
-
-<div class="app-shell">
-
-    <aside th:replace="~{general/fragmentos :: sidebar('configuracion')}"></aside>
-
-    <div class="app-content">
-
-        <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
-
-        <main class="page-content">
-
-            <h1 class="page-title">Configuracion</h1>
-
-            <p class="page-subtitle">
-                Esta sección será desarrollada por el módulo correspondiente.
-            </p>
-
-            <section class="empty-state">
-                <h2>Vista en construcción</h2>
-                <p>
-                    La navegación ya está disponible, pero aún no se ha conectado la lógica.
-                </p>
-            </section>
-
-        </main>
-
-    </div>
-
-</div>
-
-<script th:src="@{/js/app.js}"></script>
-
+    <head th:replace="~{general/fragmentos :: head('Configuracion')}"></head>
+    <body>
+        <div class="d-flex min-vh-100">
+            <aside th:replace="~{general/fragmentos :: sidebar('configuracion')}"></aside>
+            <div class="app-content flex-grow-1">
+                <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+                <main class="container-xxl p-4">
+                    <h1 class="display-6 fw-bold mb-2">Configuración</h1>
+                    <p class="text-body-secondary">
+                        En proceso
+                    </p>
+                    <section class="card border-dashed text-center mt-4 p-4">
+                        <div class="card-body">
+                            <h2 class="h4">Vista en construcción</h2>
+                            <p class="text-body-secondary mb-0">
+                                En proceso
+                            </p>
+                        </div>
+                    </section>
+                </main>
+            </div>
+        </div>
+    <th:block th:replace="~{general/fragmentos :: scripts}"></th:block>
 </body>
 </html>

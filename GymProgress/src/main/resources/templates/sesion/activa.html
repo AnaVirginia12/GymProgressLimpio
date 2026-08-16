@@ -1,165 +1,135 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-
-<head th:replace="~{general/fragmentos :: head('Entrenamiento activo')}"></head>
-
-<body>
-
-<div class="app-shell">
-
-    <aside th:replace="~{general/fragmentos :: sidebar('')}"></aside>
-
-    <div class="app-content">
-
-        <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
-
-        <main class="page-content">
-
-            <!-- Cabecera con botón finalizar -->
-            <div class="page-header">
-                <div>
-                    <h1 class="page-title">Entrenamiento activo</h1>
-                    <p class="page-subtitle"
-                       th:text="'Iniciado a las ' + ${#temporals.format(sesion.iniciadaEn, 'HH:mm')}">
-                        Iniciado a las 08:30
-                    </p>
-                </div>
-
-                <!-- Finalizar sesión -->
-                <form method="post"
-                      th:action="@{/sesion/{id}/finalizar(id=${sesion.id})}">
-                    <button type="submit" class="button-primary">
-                        Finalizar entrenamiento
-                    </button>
-                </form>
-            </div>
-
-            <!-- HU — Guardado automático: confirmación de serie guardada -->
-            <div th:if="${serieGuardada}" class="alert-success">
-                ✓ Serie guardada automáticamente.
-            </div>
-
-            <!-- Series registradas en esta sesión -->
-            <section th:if="${!#lists.isEmpty(sesion.series)}"
-                     class="session-log">
-                <h2>Series registradas</h2>
-                <div class="session-table-wrapper">
-                    <table class="session-table">
-                        <thead>
-                            <tr>
-                                <th>Ejercicio</th>
-                                <th>Serie</th>
-                                <th>Peso (kg)</th>
-                                <th>Reps</th>
-                                <th>Fallo</th>
-                                <th>Hora</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="s : ${sesion.series}"
-                                th:classappend="${s.falloMuscular} ? 'row--fallo' : ''">
-                                <td th:text="${s.ejercicioNombre}">Press banca</td>
-                                <td th:text="${s.numeroSerie}">1</td>
-                                <td th:text="${s.pesoKg}">80</td>
-                                <td th:text="${s.repeticiones}">10</td>
-                                <td>
-                                    <!-- HU — Marcar serie como fallo muscular -->
-                                    <span th:if="${s.falloMuscular}"
-                                          class="badge badge--fallo">Fallo</span>
-                                    <span th:unless="${s.falloMuscular}"
-                                          class="badge badge--ok">—</span>
-                                </td>
-                                <td th:text="${#temporals.format(s.registradaEn, 'HH:mm')}">08:35</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Formulario para agregar serie -->
-            <!-- HU — Guardar ejercicio, peso, repeticiones, fecha + fallo muscular -->
-            <section class="serie-form-card">
-                <h2>Registrar serie</h2>
-
-                <form method="post"
-                      th:action="@{/sesion/{id}/serie(id=${sesion.id})}"
-                      class="serie-form"
-                      id="serieForm">
-
-                    <!-- Selector de ejercicio -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="ejercicioSelect">Ejercicio</label>
-                            <select id="ejercicioSelect"
-                                    name="ejercicioId"
-                                    required
-                                    onchange="actualizarNombreEjercicio(this)">
-                                <option value="">Selecciona...</option>
-                                <option th:each="e : ${ejercicios}"
-                                        th:value="${e.id}"
-                                        th:text="${e.nombre}"
-                                        th:attr="data-nombre=${e.nombre}">
-                                    Press banca
-                                </option>
-                            </select>
-                            <!-- Campo oculto con el nombre (desnormalizado) -->
-                            <input type="hidden" name="ejercicioNombre" id="ejercicioNombre">
+<html lang="es"
+      data-bs-theme="dark"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head('Entrenamiento activo')}"></head>
+    <body>
+        <div class="d-flex min-vh-100">
+            <aside th:replace="~{general/fragmentos :: sidebar('')}"></aside>
+            <div class="app-content flex-grow-1">
+                <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+                <main class="container-xxl p-4">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+                        <div>
+                            <h1 class="display-6 fw-bold mb-2">Entrenamiento activo</h1>
+                            <p class="text-body-secondary mb-0"
+                               th:text="'Iniciado a las ' + ${#temporals.format(sesion.iniciadaEn, 'HH:mm')}">
+                                Iniciado a las 08:30
+                            </p>
                         </div>
-
-                        <div class="form-group">
-                            <label for="numeroSerie">N° de serie</label>
-                            <input id="numeroSerie" type="number"
-                                   name="numeroSerie" min="1" max="20"
-                                   value="1" required>
-                        </div>
+                        <form method="post"
+                              th:action="@{/sesion/{id}/finalizar(id=${sesion.id})}">
+                            <button type="submit" class="btn btn-primary text-nowrap">
+                                Finalizar entrenamiento
+                            </button>
+                        </form>
                     </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="pesoKg">Peso (kg)</label>
-                            <input id="pesoKg" type="number"
-                                   name="pesoKg" step="0.5" min="0"
-                                   placeholder="Ej: 80" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="repeticiones">Repeticiones</label>
-                            <input id="repeticiones" type="number"
-                                   name="repeticiones" min="1" max="100"
-                                   placeholder="Ej: 10" required>
-                        </div>
+                    <div th:if="${serieGuardada}" class="alert alert-success" role="alert">
+                        ✓ Serie guardada automáticamente.
                     </div>
+                    <section th:if="${!#lists.isEmpty(sesion.series)}"
+                             class="mt-4">
+                        <h2 class="h4 mb-3">Series registradas</h2>
 
-                    <!-- HU — Marcar serie como fallo muscular -->
-                    <label class="fallo-toggle">
-                        <input type="checkbox" name="falloMuscular" value="true"
-                               id="falloCheckbox">
-                        <span class="fallo-toggle__label">
-                            Fallo muscular — agotó el músculo completamente
-                        </span>
-                    </label>
-
-                    <button type="submit" class="button-primary">
-                        Guardar serie
-                    </button>
-
-                </form>
-            </section>
-
-        </main>
-
-    </div>
-
-</div>
-
-<script th:src="@{/js/app.js}"></script>
-<script>
-    function actualizarNombreEjercicio(select) {
-        const opt = select.options[select.selectedIndex];
-        document.getElementById('ejercicioNombre').value =
-            opt.getAttribute('data-nombre') || '';
-    }
-</script>
-
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead>
+                                    <tr class="text-uppercase small text-body-secondary">
+                                        <th scope="col">Ejercicio</th>
+                                        <th scope="col">Serie</th>
+                                        <th scope="col">Peso (kg)</th>
+                                        <th scope="col">Reps</th>
+                                        <th scope="col">Fallo</th>
+                                        <th scope="col">Hora</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="s : ${sesion.series}"
+                                        th:classappend="${s.falloMuscular} ? 'table-danger' : ''">
+                                        <td th:text="${s.ejercicioNombre}">Press banca</td>
+                                        <td th:text="${s.numeroSerie}">1</td>
+                                        <td th:text="${s.pesoKg}">80</td>
+                                        <td th:text="${s.repeticiones}">10</td>
+                                        <td>
+                                            <span th:if="${s.falloMuscular}"
+                                                  class="badge rounded-pill bg-danger-subtle text-danger-emphasis">Fallo</span>
+                                            <span th:unless="${s.falloMuscular}"
+                                                  class="text-body-secondary">—</span>
+                                        </td>
+                                        <td th:text="${#temporals.format(s.registradaEn, 'HH:mm')}">08:35</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="card mt-4" style="max-width: 640px;">
+                        <div class="card-body p-4">
+                            <h2 class="h4 mb-4">Registrar serie</h2>
+                            <form method="post"
+                                  th:action="@{/sesion/{id}/serie(id=${sesion.id})}"
+                                  id="serieForm">
+                                <div class="row g-3 mb-3">
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="ejercicioSelect">Ejercicio</label>
+                                        <select id="ejercicioSelect"
+                                                class="form-select"
+                                                name="ejercicioId"
+                                                required
+                                                onchange="actualizarNombreEjercicio(this)">
+                                            <option value="">Selecciona...</option>
+                                            <option th:each="e : ${ejercicios}"
+                                                    th:value="${e.id}"
+                                                    th:text="${e.nombre}"
+                                                    th:attr="data-nombre=${e.nombre}">
+                                                Press banca
+                                            </option>
+                                        </select>
+                                        <input type="hidden" name="ejercicioNombre" id="ejercicioNombre">
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="numeroSerie">N° de serie</label>
+                                        <input id="numeroSerie" type="number" class="form-control"
+                                               name="numeroSerie" min="1" max="20"
+                                               value="1" required>
+                                    </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="pesoKg">Peso (kg)</label>
+                                        <input id="pesoKg" type="number" class="form-control"
+                                               name="pesoKg" step="0.5" min="0"
+                                               placeholder="Ej: 80" required>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="repeticiones">Repeticiones</label>
+                                        <input id="repeticiones" type="number" class="form-control"
+                                               name="repeticiones" min="1" max="100"
+                                               placeholder="Ej: 10" required>
+                                    </div>
+                                </div>
+                                <div class="form-check mb-4">
+                                    <input class="form-check-input" type="checkbox"
+                                           name="falloMuscular" value="true" id="falloCheckbox">
+                                    <label class="form-check-label text-body-secondary" for="falloCheckbox">
+                                        Fallo muscular — agotó el músculo completamente
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    Guardar serie
+                                </button>
+                            </form>
+                        </div>
+                    </section>
+                </main>
+            </div>
+        </div>
+    <th:block th:replace="~{general/fragmentos :: scripts}"></th:block>
+    <script>
+        function actualizarNombreEjercicio(select) {
+            const opt = select.options[select.selectedIndex];
+            document.getElementById('ejercicioNombre').value =
+                    opt.getAttribute('data-nombre') || '';
+        }
+    </script>
 </body>
 </html>
