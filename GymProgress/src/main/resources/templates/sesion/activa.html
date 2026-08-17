@@ -17,15 +17,21 @@
                                 Iniciado a las 08:30
                             </p>
                         </div>
+                        <div class="d-flex flex-wrap gap-2">
+                        <a class="btn btn-secondary text-nowrap"
+                           th:href="@{/ejercicios/ajustar(sesionId=${sesion.id})}">
+                            Ajustar rutina
+                        </a>
                         <form method="post"
                               th:action="@{/sesion/{id}/finalizar(id=${sesion.id})}">
                             <button type="submit" class="btn btn-primary text-nowrap">
                                 Finalizar entrenamiento
                             </button>
                         </form>
+                        </div>
                     </div>
                     <div th:if="${serieGuardada}" class="alert alert-success" role="alert">
-                        ✓ Serie guardada automáticamente.
+                        Serie guardada automáticamente.
                     </div>
                     <section th:if="${!#lists.isEmpty(sesion.series)}"
                              class="mt-4">

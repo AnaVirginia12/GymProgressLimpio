@@ -16,9 +16,14 @@
                                 Consulta, busca y administra el catálogo de ejercicios.
                             </p>
                         </div>
-                        <a class="btn btn-primary text-nowrap" th:href="@{/ejercicios/nuevo}">
-                            Nuevo ejercicio
-                        </a>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a class="btn btn-secondary text-nowrap" th:href="@{/ejercicios/alternativas}">
+                                Hoy no voy al gimnasio
+                            </a>
+                            <a class="btn btn-primary text-nowrap" th:href="@{/ejercicios/nuevo}">
+                                Nuevo ejercicio
+                            </a>
+                        </div>
                     </div>
                     <div class="alert alert-success" role="alert"
                          th:if="${mensaje}" th:text="${mensaje}"></div>
@@ -89,10 +94,19 @@
                                               th:text="${#strings.trim(g)}">
                                             Pecho
                                         </span>
+                                        <span class="badge rounded-pill text-uppercase bg-success-subtle text-success-emphasis"
+                                              th:unless="${ejercicio.requiereEquipo}">Sin equipo</span>
+                                        <span class="badge rounded-pill bg-body-secondary text-body"
+                                              th:if="${ejercicio.tieneTempo()}"
+                                              th:text="'Tempo ' + ${ejercicio.tempoTexto}">Tempo 3-1-1-0</span>
                                     </div>
                                     <p class="text-body-secondary mb-0"
                                        th:text="${ejercicio.descripcion}">Descripción del ejercicio.</p>
-                                    <div class="d-flex gap-2 mt-auto pt-2">
+                                    <div class="d-flex flex-wrap gap-2 mt-auto pt-2">
+                                        <a class="btn btn-primary btn-sm"
+                                           th:href="@{/ejercicios/{id}(id=${ejercicio.id})}">
+                                            Ver detalle
+                                        </a>
                                         <a class="btn btn-secondary btn-sm"
                                            th:href="@{/ejercicios/{id}/editar(id=${ejercicio.id})}">
                                             Editar
