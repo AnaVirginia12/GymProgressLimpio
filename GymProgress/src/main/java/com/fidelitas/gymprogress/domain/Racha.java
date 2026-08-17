@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 /**
- * HU — Sistema de rachas de días consecutivos entrenando.
+ * Sistema de rachas de días consecutivos entrenando.
  * Se mantiene un único registro por usuario con el contador actual
  * y la racha máxima histórica.
  */
@@ -19,15 +19,15 @@ public class Racha {
     @Column(name = "usuario_id", nullable = false, unique = true)
     private Long usuarioId;
 
-    /** Días consecutivos actuales entrenando. */
+    //Días consecutivos actuales entrenando
     @Column(name = "dias_actuales", nullable = false)
     private Integer diasActuales = 0;
 
-    /** Máxima racha histórica alcanzada. */
+    //Máxima racha histórica alcanzada
     @Column(name = "dias_maximo", nullable = false)
     private Integer diasMaximo = 0;
 
-    /** Última fecha en que se registró un entrenamiento. */
+    //Última fecha en que se registró un entrenamiento
     @Column(name = "ultimo_entrenamiento")
     private LocalDate ultimoEntrenamiento;
 

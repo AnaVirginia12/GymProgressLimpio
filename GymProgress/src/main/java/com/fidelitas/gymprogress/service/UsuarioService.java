@@ -15,8 +15,7 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    // HU1 — Autentica al usuario con correo y contraseña.
-    
+    //Autentica al usuario con correo y contraseña.
     public Optional<Usuario> iniciarSesion(String correo, String password) {
         return usuarioRepository.findByCorreo(correo)
                 .filter(u -> u.getPassword().equals(password))
@@ -26,7 +25,7 @@ public class UsuarioService {
                 });
     }
 
-    // HU4 — Registra un usuario nuevo con los datos de la encuesta de onboarding.
+    //Registra un usuario nuevo con los datos de la encuesta de onboarding.
      
     public Usuario registrar(Usuario usuario) {
         if (usuarioRepository.findByCorreo(usuario.getCorreo()).isPresent()) {
@@ -35,7 +34,7 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    // HU5 — Cierra la sesión del usuario limpiando su token.
+    //Cierra la sesión del usuario limpiando su token.
      
     public void cerrarSesion(Long usuarioId) {
         usuarioRepository.findById(usuarioId).ifPresent(u -> {
@@ -44,7 +43,7 @@ public class UsuarioService {
         });
     }
 
-    // HU5 — Actualiza los datos editables del perfil (nombre, foto, objetivo,días, minutos, equipamiento, lesiones, unidadPeso).
+    //Actualiza los datos editables del perfil (nombre, foto, objetivo,días, minutos, equipamiento, lesiones, unidadPeso).
      
     public Usuario actualizarPerfil(Long usuarioId, Usuario datosNuevos) {
         Usuario u = usuarioRepository.findById(usuarioId)

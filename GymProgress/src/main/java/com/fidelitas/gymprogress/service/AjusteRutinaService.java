@@ -12,6 +12,10 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Maneja los ajustes que el usuario puede hacer a su rutina en pleno
+ * entrenamiento: sustituir un ejercicio por otro, u omitirlo
+ */
 @Service
 public class AjusteRutinaService {
 
@@ -29,6 +33,10 @@ public class AjusteRutinaService {
         this.cambioRepository = cambioRepository;
     }
 
+     /**
+     * Representa una "propuesta" de cambio para un ejercicio de la
+     * rutina: el ejercicio actual y una lista de posibles alternativas.
+     */
     public record Propuesta(
             RutinaEjercicio detalle,
             Ejercicio actual,
@@ -151,7 +159,7 @@ public class AjusteRutinaService {
                 + ", un " + porcentaje + "% del volumen planeado para hoy.";
     }
 
-    /* HU31 — Cambios registrados en una sesión, para el historial. */
+    //Cambios registrados en una sesión, para el historial. 
     @Transactional(readOnly = true)
     public List<CambioEjercicio> cambiosDeSesion(Long sesionId) {
         return cambioRepository.findBySesionIdOrderByRegistradoEnAsc(sesionId);

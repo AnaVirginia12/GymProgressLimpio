@@ -3,6 +3,11 @@ package com.fidelitas.gymprogress.domain;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Representa a un usuario de la aplicación: sus datos de acceso
+ * (correo, contraseña) y su perfil de entrenamiento (objetivo,
+ * nivel, días disponibles, etc.).
+ */
 @Entity
 @Table(name = "usuario")
 public class Usuario {
@@ -20,42 +25,42 @@ public class Usuario {
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    /** URL o path relativo de la foto de perfil */
+    // URL o path relativo de la foto de perfil 
     @Column(name = "foto_url", length = 500)
     private String fotoUrl;
 
-    /** Objetivo principal: Fuerza, Hipertrofia, Resistencia, etc. */
+    //Objetivo principal: Fuerza, Hipertrofia, Resistencia, etc. 
     @Column(length = 80)
     private String objetivo;
 
-    /** Nivel: Principiante, Intermedio, Avanzado */
+    // Nivel: Principiante, Intermedio, Avanzado 
     @Column(length = 50)
     private String nivel;
 
-    /** Días disponibles por semana (1-7) */
+    //Días disponibles por semana (1-7) 
     @Column(name = "dias_semana")
     private Integer diasSemana;
 
-    /** Minutos disponibles por sesión */
+    //Minutos disponibles por sesión
     @Column(name = "minutos_sesion")
     private Integer minutosSesion;
 
-    /** Equipamiento disponible: Gimnasio, Casa, Al aire libre */
+    //Equipamiento disponible: Gimnasio, Casa, Al aire libre 
     @Column(length = 100)
     private String equipamiento;
 
-    /** Lesiones o limitaciones físicas reportadas */
+    //Lesiones o limitaciones físicas reportadas 
     @Column(length = 500)
     private String lesiones;
 
-    /** Preferencia de unidad: kg o lb */
+    //Preferencia de unidad: kg o lb 
     @Column(name = "unidad_peso", length = 2, nullable = false)
     private String unidadPeso = "kg";
 
     @Column(name = "creado_en", nullable = false)
     private LocalDateTime creadoEn = LocalDateTime.now();
 
-    /** Token de sesión para sincronización entre dispositivos */
+    //Token de sesión para sincronización entre dispositivos 
     @Column(name = "token_sesion", length = 64, unique = true)
     private String tokenSesion;
 

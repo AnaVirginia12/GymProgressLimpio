@@ -116,9 +116,7 @@ public class SesionController {
         return "redirect:/sesion/" + sesionId;
     }
 
-    // Finalizar sesión                                                     
-
-     
+    // Finalizar sesión                                                          
     @PostMapping("/{sesionId}/finalizar")
     public String finalizar(
             @PathVariable Long sesionId,
@@ -131,7 +129,7 @@ public class SesionController {
 
         Map<String, Object> resumen = sesionService.finalizar(sesionId, usuarioId);
 
-        // HU — Racha: registra el entrenamiento del día
+        //Racha: registra el entrenamiento del día
         rachaService.registrarEntrenamiento(usuarioId);
 
         session.setAttribute("resumenSesion", resumen);
@@ -140,7 +138,7 @@ public class SesionController {
 
     // Resumen de la sesión finalizada        
 
-    // HU — Muestra el resumen con volumen, tiempo y PRs
+    //Muestra el resumen con volumen, tiempo y PRs
     @GetMapping("/{sesionId}/resumen")
     public String mostrarResumen(
             @PathVariable Long sesionId,

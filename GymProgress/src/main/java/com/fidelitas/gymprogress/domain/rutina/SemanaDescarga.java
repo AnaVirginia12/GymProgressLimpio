@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * HU37 — Semana de descarga (deload).
+ *  Semana de descarga (deload).
  *
  * Cuando el análisis de las últimas 4 semanas detecta señales de
  * sobreentrenamiento se crea una sugerencia en estado SUGERIDA. El usuario
@@ -21,10 +21,10 @@ public class SemanaDescarga {
     public static final String POSPUESTA = "POSPUESTA";
     public static final String IGNORADA = "IGNORADA";
 
-    /** Durante el deload la rutina se hace al 60% del volumen habitual. */
+    //Durante el deload la rutina se hace al 60% del volumen habitual
     public static final double FACTOR_VOLUMEN = 0.6;
 
-    /** Y con un 10% menos de carga. */
+    //Y con un 10% menos de carga
     public static final double FACTOR_INTENSIDAD = 0.9;
 
     @Id
@@ -44,14 +44,14 @@ public class SemanaDescarga {
     @Column(name = "detectada_en", nullable = false)
     private LocalDateTime detectadaEn = LocalDateTime.now();
 
-    /** Solo se llenan cuando el usuario acepta. */
+    // Solo se llenan cuando el usuario acepta
     @Column(name = "inicio")
     private LocalDate inicio;
 
     @Column(name = "fin")
     private LocalDate fin;
 
-    /** Si la pospone, no se vuelve a sugerir hasta esta fecha. */
+    //Si la pospone, no se vuelve a sugerir hasta esta fecha
     @Column(name = "reintentar_desde")
     private LocalDate reintentarDesde;
 
@@ -122,7 +122,7 @@ public class SemanaDescarga {
         this.reintentarDesde = reintentarDesde;
     }
 
-    /** Está aceptada y hoy cae dentro de la semana. */
+    // Está aceptada y hoy cae dentro de la semana
     @Transient
     public boolean estaActiva() {
         if (!ACEPTADA.equals(estado) || inicio == null || fin == null) {
@@ -137,7 +137,7 @@ public class SemanaDescarga {
         return SUGERIDA.equals(estado);
     }
 
-    /** Días que quedan de descarga, contando hoy. */
+    //Días que quedan de descarga, contando hoy
     @Transient
     public long getDiasRestantes() {
         if (!estaActiva()) {

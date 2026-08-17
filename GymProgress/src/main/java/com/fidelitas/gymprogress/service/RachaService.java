@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * HU — Sistema de rachas de días consecutivos entrenando.
+ * Sistema de rachas de días consecutivos entrenando.
  */
 @Service
 public class RachaService {
@@ -57,7 +57,7 @@ public class RachaService {
         return rachaRepository.save(racha);
     }
 
-    /** Devuelve la racha actual del usuario (0 si no existe). */
+    //Devuelve la racha actual del usuario (0 si no existe).
     @Transactional(readOnly = true)
     public Racha obtener(Long usuarioId) {
         return rachaRepository.findByUsuarioId(usuarioId).orElseGet(() -> {

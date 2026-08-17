@@ -2,6 +2,13 @@ package com.fidelitas.gymprogress.domain.rutina;
 
 import jakarta.persistence.*;
 
+
+/**
+ * Representa un ejercicio específico dentro de una rutina, con sus
+ * series, repeticiones, peso sugerido, descanso y tempo de ejecución.
+ * Una Rutina tiene varios RutinaEjercicio (uno por cada ejercicio
+ * que la compone).
+ */
 @Entity
 @Table(name = "rutina_ejercicio")
 public class RutinaEjercicio {

@@ -72,7 +72,7 @@ public class EjercicioService {
     }
 
     /*
-     * HU7 — Alternativas sin equipamiento para los grupos musculares de un
+     * Alternativas sin equipamiento para los grupos musculares de un
      * ejercicio de gimnasio.
      *
      * grupoMuscular puede traer varios grupos separados por coma, así que se
@@ -117,7 +117,7 @@ public class EjercicioService {
     }
 
     /*
-     * HU9 — Tempo recomendado según el tipo de ejercicio y el programa.
+     * Tempo recomendado según el tipo de ejercicio y el programa.
      *
      * Si el ejercicio ya trae su propio tempo se respeta; si no, se sugiere
      * uno según el programa: en fuerza la fase excéntrica es más corta y con

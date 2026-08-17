@@ -15,7 +15,7 @@ public class PesoCorporalService {
         this.pesoCorporalRepository = pesoCorporalRepository;
     }
 
-    /** HU2 / HU3 — Guarda un registro de peso para el usuario. */
+    //Guarda un registro de peso para el usuario
     public PesoCorporal guardar(Long usuarioId, Double valorPeso, String unidad) {
         PesoCorporal registro = new PesoCorporal();
         registro.setUsuarioId(usuarioId);
@@ -30,7 +30,7 @@ public class PesoCorporalService {
         return pesoCorporalRepository.save(registro);
     }
 
-    /** Devuelve el historial de peso del usuario ordenado por fecha descendente. */
+    //Devuelve el historial de peso del usuario ordenado por fecha descendente.
     public List<PesoCorporal> historial(Long usuarioId) {
         return pesoCorporalRepository.findByUsuarioIdOrderByFechaDesc(usuarioId);
     }

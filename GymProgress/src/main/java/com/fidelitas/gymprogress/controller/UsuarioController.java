@@ -20,8 +20,7 @@ public class UsuarioController {
     }
 
    
-    // HU1 — Login
-
+    //Login
     @GetMapping("/login")
     public String mostrarLogin() {
         return "usuario/login";
@@ -48,9 +47,7 @@ public class UsuarioController {
     }
 
     
-    // HU1 — Logout
-    
-
+    //Logout
     @PostMapping("/logout")
     public String cerrarSesion(HttpSession session) {
         Long id = (Long) session.getAttribute(SESION_USUARIO_ID);
@@ -62,9 +59,7 @@ public class UsuarioController {
     }
 
     
-    // HU4 — Registro con encuesta de onboarding
-   
-
+    //Registro con encuesta de onboarding
     @GetMapping("/registro")
     public String mostrarRegistro(Model model) {
         model.addAttribute("usuario", new Usuario());
@@ -89,9 +84,8 @@ public class UsuarioController {
     }
 
    
-    // HU5 — Perfil editable
-    
-
+    //Perfil editable
+   
     @GetMapping("/perfil")
     public String mostrarPerfil(HttpSession session, Model model) {
         Long id = (Long) session.getAttribute(SESION_USUARIO_ID);

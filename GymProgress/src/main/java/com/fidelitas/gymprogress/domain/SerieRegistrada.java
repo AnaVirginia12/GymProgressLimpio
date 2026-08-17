@@ -20,28 +20,28 @@ public class SerieRegistrada {
     @JoinColumn(name = "sesion_id", nullable = false)
     private Sesion sesion;
 
-    /** Id del ejercicio al que pertenece esta serie. */
+    //Id del ejercicio al que pertenece esta serie. 
     @Column(name = "ejercicio_id", nullable = false)
     private Long ejercicioId;
 
-    /** Nombre del ejercicio (desnormalizado para facilitar historial). */
+    //Nombre del ejercicio
     @Column(name = "ejercicio_nombre", length = 120)
     private String ejercicioNombre;
 
-    /** Número de serie dentro del ejercicio (1, 2, 3…). */
+    //Número de serie dentro del ejercicio (1, 2, 3…)
     @Column(name = "numero_serie", nullable = false)
     private Integer numeroSerie;
 
-    /** Peso levantado en kg (siempre almacenado en kg). */
+    //Peso levantado en kg (siempre almacenado en kg)
     @Column(name = "peso_kg", nullable = false)
     private Double pesoKg;
 
-    /** Repeticiones completadas. */
+    //Repeticiones completadas
     @Column(nullable = false)
     private Integer repeticiones;
 
     /**
-     * HU — Marcar serie como fallo muscular:
+     * Marcar serie como fallo muscular:
      * true si el usuario agotó completamente el músculo en esta serie.
      */
     @Column(name = "fallo_muscular", nullable = false)
@@ -80,7 +80,7 @@ public class SerieRegistrada {
     public LocalDateTime getRegistradaEn() { return registradaEn; }
     public void setRegistradaEn(LocalDateTime registradaEn) { this.registradaEn = registradaEn; }
 
-    /** Volumen = peso × repeticiones (en kg). */
+    //Volumen = peso × repeticiones
     public Double getVolumen() {
         if (pesoKg == null || repeticiones == null) return 0.0;
         return pesoKg * repeticiones;

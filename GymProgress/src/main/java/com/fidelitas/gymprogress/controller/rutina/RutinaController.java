@@ -22,12 +22,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * Controlador del módulo de Rutinas: ver la lista de rutinas,
+ * elegir un programa, ver la rutina de hoy con racha y descarga
+ * (deload), y agregar o quitar ejercicios de la rutina.
+ */
 @Controller
 @RequestMapping("/rutinas")
 public class RutinaController {
 
     private static final String SESION_USUARIO_ID = "usuarioId";
 
+    // Servicios que traen y guardan los datos que necesita este controlador
     private final RutinaService rutinaService;
     private final EjercicioService ejercicioService;
     private final RachaService rachaService;
@@ -45,6 +51,7 @@ public class RutinaController {
         this.deloadService = deloadService;
     }
 
+    //Muestra la lista de rutinas del usuario 
     @GetMapping
     public String listar(HttpSession session, Model model) {
         Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
@@ -56,6 +63,7 @@ public class RutinaController {
         return "rutina/index";
     }
 
+    //Muestra la pantalla para poder elegir un programa de entrenamiento
     @GetMapping("/programas")
     public String programas(HttpSession session) {
         Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
@@ -66,6 +74,7 @@ public class RutinaController {
         return "rutina/programas";
     }
 
+    //Guarda el programa que el usuario eligio
     @PostMapping("/programas/seleccionar")
     public String seleccionarPrograma(
             @RequestParam String programa,
@@ -87,6 +96,12 @@ public class RutinaController {
         return "redirect:/rutinas";
     }
 
+ /**
+     * Muestra la rutina de hoy, junto con:
+     * -la racha de días entrenados 
+     * - si toca semana de descarga o no
+     * - el catálogo de ejercicios para poder agregarlos a la rutina
+     */
     @GetMapping("/hoy")
     public String rutinaHoy(HttpSession session, Model model) {
         Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
@@ -113,12 +128,12 @@ public class RutinaController {
         }
         model.addAttribute("nombresEjercicios", nombres);
 
-        // HU22 — Racha destacada, sin tener que navegar a otra pantalla.
+        //Racha destacada, sin tener que navegar a otra pantalla.
         Racha racha = rachaService.obtener(usuarioId);
         model.addAttribute("racha", racha);
         model.addAttribute("entrenoHoy", entrenoHoy(racha));
 
-        // HU37 — Semana de descarga: evalúa, y si toca deja la sugerencia.
+        //Semana de descarga: evalúa, y si toca deja la sugerencia.
         deloadService.evaluar(usuarioId);
 
         DeloadService.EstadoDeload deload = deloadService.estado(usuarioId);
@@ -142,15 +157,16 @@ public class RutinaController {
         return "rutina/hoy";
     }
 
-    /* HU22 — ¿La racha de hoy ya está completada? */
-    private boolean entrenoHoy(Racha racha) {
+     /**
+     * HU22 — Revisa si el usuario ya entrenó hoy, comparando la
+     * fecha del último entrenamiento con la fecha de hoy.
+     */    private boolean entrenoHoy(Racha racha) {
         return racha != null
                 && racha.getUltimoEntrenamiento() != null
                 && racha.getUltimoEntrenamiento().isEqual(LocalDate.now());
     }
 
-    /* HU37 — El usuario acepta, pospone o ignora la descarga.               */
-
+    //El usuario acepta la semana de descarga sugerida
     @PostMapping("/descarga/{id}/aceptar")
     public String aceptarDescarga(
             @PathVariable Long id,
@@ -215,6 +231,7 @@ public class RutinaController {
         return "redirect:/rutinas/hoy";
     }
 
+    //Agrega un ejercico del catalogo a la rutina de hoy 
     @PostMapping("/hoy/ejercicios")
     public String agregarEjercicio(
             @RequestParam Long ejercicioId,
@@ -243,6 +260,7 @@ public class RutinaController {
         return "redirect:/rutinas/hoy";
     }
 
+    // quita el ejercicio de la rutina de hoy 
     @PostMapping("/hoy/ejercicios/{id}/eliminar")
     public String eliminarEjercicio(
             @PathVariable Long id,

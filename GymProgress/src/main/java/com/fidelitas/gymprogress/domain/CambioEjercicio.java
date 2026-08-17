@@ -3,6 +3,11 @@ package com.fidelitas.gymprogress.domain;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Registra cuando un ejercicio de la rutina fue omitido o sustituido
+ * durante una sesión de entrenamiento (por ejemplo, si el usuario no
+ * tenía la máquina disponible y cambió el ejercicio por otro).
+ */
 @Entity
 @Table(name = "cambio_ejercicio")
 public class CambioEjercicio {
@@ -14,15 +19,18 @@ public class CambioEjercicio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // A qué sesión de entrenamiento pertenece este cambio
     @Column(name = "sesion_id", nullable = false)
     private Long sesionId;
 
+    // Ejercicio que se iba a hacer originalmente
     @Column(name = "ejercicio_original_id")
     private Long ejercicioOriginalId;
 
     @Column(name = "ejercicio_original_nombre", nullable = false, length = 120)
     private String ejercicioOriginalNombre;
 
+    // Ejercicio nuevo con el que se sustituyó
     @Column(name = "ejercicio_nuevo_id")
     private Long ejercicioNuevoId;
 
@@ -113,7 +121,10 @@ public class CambioEjercicio {
         this.registradoEn = registradoEn;
     }
 
-    @Transient
+    /**
+     * Dice si este cambio fue una omisión (el ejercicio simplemente
+     * se saltó) y no una sustitución por otro ejercicio.
+     */    @Transient
     public boolean esOmision() {
         return OMITIDO.equals(tipo);
     }

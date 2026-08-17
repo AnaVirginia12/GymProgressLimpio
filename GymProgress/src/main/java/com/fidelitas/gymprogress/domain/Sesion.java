@@ -26,12 +26,12 @@ public class Sesion {
     @Column(name = "iniciada_en", nullable = false)
     private LocalDateTime iniciadaEn = LocalDateTime.now();
 
-    /** Null mientras la sesión está activa. */
+    //Null mientras la sesión está activa
     @Column(name = "finalizada_en")
     private LocalDateTime finalizadaEn;
 
     /**
-     * HU — Guardado automático del progreso:
+     * Guardado automático del progreso:
      * La sesión persiste inmediatamente al crearse y se actualiza con cada serie.
      */
     @OneToMany(
@@ -63,7 +63,7 @@ public class Sesion {
     public List<SerieRegistrada> getSeries() { return series; }
     public void setSeries(List<SerieRegistrada> series) { this.series = series; }
 
-    /** Comodidad: agrega una serie manteniendo la relación bidireccional. */
+    //Comodidad: agrega una serie manteniendo la relación bidireccional
     public void agregarSerie(SerieRegistrada serie) {
         series.add(serie);
         serie.setSesion(this);

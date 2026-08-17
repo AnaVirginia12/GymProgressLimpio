@@ -19,7 +19,7 @@ public class RachaController {
         this.rachaService = rachaService;
     }
 
-    /** HU — Muestra la racha actual del usuario. */
+    // Muestra la racha actual del usuario. */
     @GetMapping
     public String mostrar(HttpSession session, Model model) {
         Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);

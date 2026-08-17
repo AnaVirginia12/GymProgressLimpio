@@ -14,7 +14,7 @@ public class PesoCorporal {
     @Column(name = "usuario_id", nullable = false)
     private Long usuarioId;
 
-    /** Peso almacenado siempre en kilogramos */
+    //Peso almacenado siempre en kilogramos
     @Column(name = "peso_kg", nullable = false)
     private Double pesoKg;
 
@@ -37,12 +37,11 @@ public class PesoCorporal {
     public void setFecha(LocalDate fecha) { this.fecha = fecha; }
 
     
-    // HU3 — Conversión entre kilogramos y libras
-   
+    // Conversión entre kilogramos y libras
 
     public static final double FACTOR_LB = 2.20462;
 
-    /** Devuelve el peso en libras redondeado a 2 decimales. */
+    //Devuelve el peso en libras redondeado a 2 decimales
     public Double getPesoLb() {
         if (pesoKg == null) {
             return null;
@@ -50,7 +49,7 @@ public class PesoCorporal {
         return Math.round(pesoKg * FACTOR_LB * 100.0) / 100.0;
     }
 
-    /** Establece el peso a partir de libras convirtiéndolo a kg internamente. */
+    //Establece el peso a partir de libras convirtiéndolo a kg internamente
     public void setPesoLb(Double pesoLb) {
         if (pesoLb == null) {
             this.pesoKg = null;
@@ -59,8 +58,7 @@ public class PesoCorporal {
         }
     }
 
-    //HU3 — Devuelve el peso en la unidad preferida del usuario.
-    
+    //Devuelve el peso en la unidad preferida del usuario.
     public Double getPesoEnUnidad(String unidad) {
         return "lb".equalsIgnoreCase(unidad) ? getPesoLb() : pesoKg;
     }

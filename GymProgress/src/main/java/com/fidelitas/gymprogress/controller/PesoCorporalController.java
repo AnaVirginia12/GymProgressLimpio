@@ -34,7 +34,7 @@ public class PesoCorporalController {
     }
 
     /**
-     * HU2 / HU3 — Formulario para registrar peso con selector de unidad (kg / lb).
+     * Formulario para registrar peso con selector de unidad (kg / lb).
      */
     @GetMapping
     public String mostrarFormulario(HttpSession session, Model model) {
@@ -56,8 +56,8 @@ public class PesoCorporalController {
     }
 
     /**
-     * HU2 — Guarda el peso y redirige al historial de progreso.
-     * HU3 — Acepta el parámetro "unidad" (kg/lb) para la conversión.
+     * Guarda el peso y redirige al historial de progreso.
+     * Acepta el parámetro "unidad" (kg/lb) para la conversión.
      */
     @PostMapping
     public String guardarPeso(
@@ -73,7 +73,7 @@ public class PesoCorporalController {
 
         pesoCorporalService.guardar(usuarioId, peso, unidad);
 
-        // HU3 — Actualiza la preferencia de unidad del usuario
+        // Actualiza la preferencia de unidad del usuario
         usuarioService.buscarPorId(usuarioId).ifPresent(u -> {
             u.setUnidadPeso(unidad);
             usuarioService.actualizarPerfil(usuarioId, u);

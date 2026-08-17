@@ -60,9 +60,9 @@ public class SesionService {
     /* Guardar serie (con fallo muscular)                                   */
 
     /**
-     * HU — Almacena ejercicio, peso, repeticiones y fecha de cada serie.
-     * HU — Marcar serie como fallo muscular.
-     * HU — Guardado automático: cada serie se persiste de inmediato.
+     * Almacena ejercicio, peso, repeticiones y fecha de cada serie.
+     * Marcar serie como fallo muscular.
+     * Guardado automático: cada serie se persiste de inmediato.
      */
     @Transactional
     public SerieRegistrada guardarSerie(
@@ -94,7 +94,7 @@ public class SesionService {
     /* Finalizar sesión y calcular resumen                                  */
 
     /**
-     * HU — Resumen al finalizar entrenamiento (volumen, tiempo, PRs).
+     * Resumen al finalizar entrenamiento (volumen, tiempo, PRs).
      * Cierra la sesión y retorna un mapa con las métricas.
      */
     @Transactional
@@ -163,11 +163,7 @@ public class SesionService {
         return resumen;
     }
 
-    /* Historial completo                                                   */
-
-    /**
-     * HU — Historial completo de entrenamientos anteriores.
-     */
+    
     @Transactional(readOnly = true)
     public List<Sesion> historial(Long usuarioId) {
         return sesionRepository

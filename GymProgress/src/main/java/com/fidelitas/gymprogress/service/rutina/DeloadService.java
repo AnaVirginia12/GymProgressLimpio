@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * HU37 — Detección automática de semana de descarga (deload).
+ * Detección automática de semana de descarga (deload).
  *
  * Analiza las 4 últimas semanas de entrenamiento y busca señales de fatiga
  * acumulada. Si las encuentra, deja una sugerencia que el usuario puede
@@ -26,10 +26,10 @@ public class DeloadService {
 
     private static final int SEMANAS_ANALIZADAS = 4;
 
-    /** A partir de este porcentaje de series al fallo se considera fatiga alta. */
+    //A partir de este porcentaje de series al fallo se considera fatiga alta
     private static final double UMBRAL_FALLO = 0.30;
 
-    /** Caída de volumen respecto a la semana anterior que se considera bajón. */
+    //Caída de volumen respecto a la semana anterior que se considera bajón
     private static final double UMBRAL_CAIDA_VOLUMEN = 0.15;
 
     private final SesionRepository sesionRepository;
@@ -43,7 +43,7 @@ public class DeloadService {
         this.semanaDescargaRepository = semanaDescargaRepository;
     }
 
-    /** Resumen de una semana del análisis. */
+    //Resumen de una semana del análisis
     public record ResumenSemana(
             int numero,
             double volumen,
@@ -56,7 +56,7 @@ public class DeloadService {
         }
     }
 
-    /** Lo que necesita la vista para pintar el estado del deload. */
+    //Lo que necesita la vista para pintar el estado del deload
     public record EstadoDeload(
             SemanaDescarga semana,
             List<ResumenSemana> semanas,
@@ -69,7 +69,7 @@ public class DeloadService {
     }
 
     /*
-     * Criterio 1 — Analiza rendimiento y fatiga de las últimas 4 semanas.
+     * Analiza rendimiento y fatiga de las últimas 4 semanas.
      *
      * Se agrupan las sesiones finalizadas por semana (la 1 es la más
      * reciente) y de cada una se saca volumen total, número de series y
@@ -122,20 +122,7 @@ public class DeloadService {
         return resumen;
     }
 
-    /*
-     * Criterio 2 — Si detecta señales de sobreentrenamiento, sugiere descarga.
-     *
-     * Se buscan dos señales, y basta con una:
-     *
-     *   a) Fatiga alta sostenida: más del 30% de las series al fallo en las
-     *      dos últimas semanas.
-     *   b) Rendimiento a la baja: el volumen de la última semana cayó más de
-     *      un 15% respecto a la anterior, habiendo entrenado igual o más.
-     *
-     * Solo se sugiere si hay datos suficientes (al menos 2 semanas con
-     * entrenamientos) y no hay ya una sugerencia pendiente, una descarga
-     * activa, o un aplazamiento vigente.
-     */
+  
     @Transactional
     public Optional<SemanaDescarga> evaluar(Long usuarioId) {
         Optional<SemanaDescarga> ultima =
@@ -206,7 +193,7 @@ public class DeloadService {
         return null;
     }
 
-    /* Criterio 3 — El usuario puede aceptar, posponer o ignorar.            */
+    //El usuario puede aceptar, posponer o ignorar
 
     @Transactional
     public SemanaDescarga aceptar(Long usuarioId, Long semanaId) {
@@ -240,9 +227,7 @@ public class DeloadService {
         return semanaDescargaRepository.save(semana);
     }
 
-    /* Criterio 4 — Durante el deload la rutina baja volumen e intensidad.   */
-
-    /** Semana de descarga activa hoy, si la hay. */
+    //Semana de descarga activa hoy, si la hay
     @Transactional(readOnly = true)
     public Optional<SemanaDescarga> descargaActiva(Long usuarioId) {
         return semanaDescargaRepository
@@ -253,7 +238,7 @@ public class DeloadService {
                 .findFirst();
     }
 
-    /** Factor de volumen a aplicar hoy: 0.6 en descarga, 1.0 el resto. */
+    //Factor de volumen a aplicar hoy: 0.6 en descarga, 1.0 el resto
     @Transactional(readOnly = true)
     public double factorVolumen(Long usuarioId) {
         return descargaActiva(usuarioId).isPresent()
@@ -261,7 +246,7 @@ public class DeloadService {
                 : 1.0;
     }
 
-    /** Series ajustadas para hoy, mínimo 1 cuando había alguna. */
+    //Series ajustadas para hoy, mínimo 1 cuando había alguna
     public int seriesAjustadas(Integer seriesOriginales, double factor) {
         if (seriesOriginales == null || seriesOriginales <= 0) {
             return 0;
@@ -269,7 +254,7 @@ public class DeloadService {
         return Math.max(1, (int) Math.round(seriesOriginales * factor));
     }
 
-    /** Estado completo para la vista. */
+    //Estado completo para la vista
     @Transactional(readOnly = true)
     public EstadoDeload estado(Long usuarioId) {
         SemanaDescarga semana = semanaDescargaRepository
@@ -294,7 +279,7 @@ public class DeloadService {
         return semana;
     }
 
-    /** Días transcurridos desde el inicio de la descarga, para la vista. */
+    //Días transcurridos desde el inicio de la descarga, para la vista
     public long diasDeDescarga(SemanaDescarga semana) {
         if (semana == null || semana.getInicio() == null) {
             return 0;
