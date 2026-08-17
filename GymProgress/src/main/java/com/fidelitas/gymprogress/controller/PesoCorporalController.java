@@ -11,6 +11,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+
+/**
+ * Controlador para registrar el peso corporal del usuario
+ * y ver su historial de peso.
+ */
 @Controller
 @RequestMapping("/peso")
 public class PesoCorporalController {

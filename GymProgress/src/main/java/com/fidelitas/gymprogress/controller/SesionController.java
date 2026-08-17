@@ -1,7 +1,6 @@
 package com.fidelitas.gymprogress.controller;
 
 import com.fidelitas.gymprogress.domain.Ejercicio;
-import com.fidelitas.gymprogress.service.AjusteRutinaService;
 import com.fidelitas.gymprogress.service.EjercicioService;
 import com.fidelitas.gymprogress.service.SesionService;
 import com.fidelitas.gymprogress.service.RachaService;
@@ -13,6 +12,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+
+/**
+ * Controlador que maneja una sesión de entrenamiento en vivo:
+ * iniciarla, registrar las series que se van haciendo, finalizarla
+ * y mostrar el resumen al terminar.
+ */
 @Controller
 @RequestMapping("/sesion")
 public class SesionController {
@@ -22,23 +27,22 @@ public class SesionController {
     private final SesionService sesionService;
     private final EjercicioService ejercicioService;
     private final RachaService rachaService;
-    private final AjusteRutinaService ajusteRutinaService;
 
     public SesionController(
             SesionService sesionService,
             EjercicioService ejercicioService,
-            RachaService rachaService,
-            AjusteRutinaService ajusteRutinaService
+            RachaService rachaService
     ) {
         this.sesionService = sesionService;
         this.ejercicioService = ejercicioService;
         this.rachaService = rachaService;
-        this.ajusteRutinaService = ajusteRutinaService;
     }
 
-    /* Iniciar sesión y mostrar sesión activa                               */
-
-    /** HU — Inicia una nueva sesión (o recupera la activa) y redirige a ella. */
+ /**
+ * Controlador que maneja una sesión de entrenamiento en vivo:
+ * iniciarla, registrar las series que se van haciendo, finalizarla
+ * y mostrar el resumen al terminar.
+ */
     @PostMapping("/iniciar")
     public String iniciar(
             @RequestParam(required = false) Long rutinaId,
@@ -154,9 +158,6 @@ public class SesionController {
         }
 
         model.addAllAttributes(resumen);
-
-        model.addAttribute("cambios", ajusteRutinaService.cambiosDeSesion(sesionId));
-
         session.removeAttribute("resumenSesion");
         return "sesion/resumen";
     }

@@ -8,6 +8,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+/**
+ * Controlador que maneja las pantallas generales de navegación:
+ * historial de entrenamientos, progreso y configuración.
+ */
 @Controller
 public class NavegacionController {
 
@@ -26,7 +30,10 @@ public class NavegacionController {
         this.rachaService = rachaService;
         this.pesoCorporalService = pesoCorporalService;
     }
-
+    
+    /**
+     * Muestra el historial completo de entrenamientos anteriores.
+     */
     @GetMapping("/historial")
     public String historial(HttpSession session, Model model) {
         Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
@@ -37,6 +44,10 @@ public class NavegacionController {
         return "historial/index";
     }
 
+     /**
+     * Muestra la pantalla de progreso: la racha de días entrenando
+     * y un gráfico con el historial de peso corporal.
+     */
     @GetMapping("/progreso")
     public String progreso(HttpSession session, Model model) {
         Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
@@ -79,6 +90,10 @@ public class NavegacionController {
         return "progreso/index";
     }
 
+     /**
+     * Muestra la pantalla de configuración. No necesita datos ni
+     * verificar sesión porque no muestra información personal.
+     */
     @GetMapping("/configuracion")
     public String configuracion() {
         return "configuracion/index";
