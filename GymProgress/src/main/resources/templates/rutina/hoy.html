@@ -30,6 +30,139 @@
                          th:if="${mensaje}" th:text="${mensaje}"></div>
                     <div class="alert alert-danger" role="alert"
                          th:if="${error}" th:text="${error}"></div>
+
+                    <!--
+                        HU22 — Racha destacada.
+                        Se ve sin navegar a ninguna otra pantalla, cambia de
+                        color segun si hoy ya se entreno, y al tocarla lleva
+                        al historial de rachas.
+                    -->
+                    <a class="card text-decoration-none mb-4 d-block"
+                       id="rachaDestacada"
+                       th:href="@{/racha}"
+                       th:if="${racha != null}"
+                       th:classappend="${entrenoHoy}
+                            ? 'bg-success-subtle border-success-subtle'
+                            : 'bg-primary-subtle border-primary-subtle'">
+                        <div class="card-body d-flex flex-wrap align-items-center gap-3 py-3">
+
+                            <span class="avatar rounded-circle fs-4"
+                                  th:classappend="${entrenoHoy}
+                                       ? 'bg-success text-white' : 'bg-primary text-white'"
+                                  th:text="${entrenoHoy} ? '✓' : '🔥'">🔥</span>
+
+                            <div>
+                                <span class="d-block fs-4 fw-bold"
+                                      th:text="${racha.diasActuales} + (${racha.diasActuales} == 1
+                                               ? ' día seguido' : ' días seguidos')">
+                                    12 días seguidos
+                                </span>
+                                <small class="d-block"
+                                       th:classappend="${entrenoHoy}
+                                            ? 'text-success-emphasis' : 'text-primary-emphasis'"
+                                       th:text="${entrenoHoy}
+                                            ? 'Ya entrenaste hoy, racha mantenida'
+                                            : 'Todavía no entrenas hoy — entrena para no perderla'">
+                                    Ya entrenaste hoy
+                                </small>
+                            </div>
+
+                            <span class="ms-auto text-body-secondary small text-nowrap">
+                                Máxima: <strong class="text-body"
+                                                th:text="${racha.diasMaximo}">21</strong>
+                                · Ver historial ›
+                            </span>
+
+                        </div>
+                    </a>
+
+                    <!--
+                        HU37 — Sugerencia de semana de descarga.
+                        Aparece cuando el analisis de las ultimas 4 semanas
+                        detecta fatiga acumulada.
+                    -->
+                    <section class="card border-warning mb-4"
+                             th:if="${deload != null and deload.pendiente()}">
+                        <div class="card-body p-4">
+
+                            <div class="d-flex flex-wrap align-items-start gap-3">
+                                <span class="avatar rounded-circle bg-warning-subtle fs-4">⚠</span>
+                                <div class="flex-grow-1">
+                                    <h2 class="h5 mb-1">Te conviene una semana de descarga</h2>
+                                    <p class="text-body-secondary mb-0"
+                                       th:text="${deload.semana().motivo}">
+                                        Llevas dos semanas seguidas llegando al fallo.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Datos del analisis, para que se entienda de donde sale -->
+                            <div class="table-responsive mt-3">
+                                <table class="table table-sm align-middle mb-0">
+                                    <thead>
+                                        <tr class="text-uppercase small text-body-secondary">
+                                            <th scope="col">Semana</th>
+                                            <th scope="col">Sesiones</th>
+                                            <th scope="col">Series</th>
+                                            <th scope="col">Al fallo</th>
+                                            <th scope="col">Volumen</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="s : ${deload.semanas()}">
+                                            <td th:text="${s.numero() == 1} ? 'Esta semana'
+                                                         : ('Hace ' + ${s.numero() - 1} + ' sem.')">
+                                                Esta semana
+                                            </td>
+                                            <td th:text="${s.sesiones()}">3</td>
+                                            <td th:text="${s.series()}">18</td>
+                                            <td th:text="${s.seriesAlFallo()}">7</td>
+                                            <td th:text="${#numbers.formatDecimal(s.volumen(), 0, 0)} + ' kg'">
+                                                4200 kg
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Aceptar, posponer o ignorar -->
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <form method="post"
+                                      th:action="@{/rutinas/descarga/{id}/aceptar(id=${deload.semana().id})}">
+                                    <button type="submit" class="btn btn-primary">
+                                        Aceptar la descarga
+                                    </button>
+                                </form>
+                                <form method="post"
+                                      th:action="@{/rutinas/descarga/{id}/posponer(id=${deload.semana().id})}">
+                                    <button type="submit" class="btn btn-secondary">
+                                        Posponer una semana
+                                    </button>
+                                </form>
+                                <form method="post"
+                                      th:action="@{/rutinas/descarga/{id}/ignorar(id=${deload.semana().id})}">
+                                    <button type="submit" class="btn btn-secondary">
+                                        Ignorar
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </section>
+
+                    <!-- HU37 — Aviso mientras la descarga esta activa -->
+                    <div class="alert alert-warning d-flex flex-wrap align-items-center gap-2 mb-4"
+                         role="alert"
+                         th:if="${deload != null and deload.activa()}">
+                        <strong>Semana de descarga en curso.</strong>
+                        <span>
+                            Tu rutina está al 60% del volumen y con un 10% menos de carga.
+                            Quedan
+                            <strong th:text="${deload.semana().diasRestantes}">4</strong>
+                            días.
+                        </span>
+                    </div>
+
                     <section class="card border-dashed text-center p-4"
                              th:if="${rutina == null}">
                         <div class="card-body">
@@ -95,11 +228,31 @@
                                                         th:text="${nombresEjercicios[detalle.ejercicioId]} ?: 'Ejercicio eliminado'">
                                                     Press banca
                                                 </strong>
-                                                <small class="d-block text-body-secondary">
+                                                <!-- Volumen normal -->
+                                                <small class="d-block text-body-secondary"
+                                                       th:unless="${enDescarga}">
                                                     <span th:text="${detalle.series}">3</span>
                                                     series de
                                                     <span th:text="${detalle.repsObjetivo}">10</span>
                                                     repeticiones
+                                                </small>
+
+                                                <!--
+                                                    HU37 — Durante la descarga se muestran las
+                                                    series ajustadas, con las originales tachadas
+                                                    para que se vea el ajuste.
+                                                -->
+                                                <small class="d-block text-body-secondary"
+                                                       th:if="${enDescarga}">
+                                                    <s th:text="${detalle.series}">4</s>
+                                                    <strong class="text-warning"
+                                                            th:text="${seriesAjustadas[detalle.id]}">2</strong>
+                                                    series de
+                                                    <span th:text="${detalle.repsObjetivo}">10</span>
+                                                    repeticiones
+                                                    <span class="badge rounded-pill bg-warning-subtle text-warning-emphasis ms-1">
+                                                        descarga
+                                                    </span>
                                                 </small>
                                             </div>
                                         </div>

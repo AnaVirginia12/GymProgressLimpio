@@ -1,6 +1,7 @@
 package com.fidelitas.gymprogress.controller;
 
 import com.fidelitas.gymprogress.domain.Ejercicio;
+import com.fidelitas.gymprogress.service.AjusteRutinaService;
 import com.fidelitas.gymprogress.service.EjercicioService;
 import com.fidelitas.gymprogress.service.SesionService;
 import com.fidelitas.gymprogress.service.RachaService;
@@ -27,15 +28,18 @@ public class SesionController {
     private final SesionService sesionService;
     private final EjercicioService ejercicioService;
     private final RachaService rachaService;
+    private final AjusteRutinaService ajusteRutinaService;
 
     public SesionController(
             SesionService sesionService,
             EjercicioService ejercicioService,
-            RachaService rachaService
+            RachaService rachaService,
+            AjusteRutinaService ajusteRutinaService
     ) {
         this.sesionService = sesionService;
         this.ejercicioService = ejercicioService;
         this.rachaService = rachaService;
+        this.ajusteRutinaService = ajusteRutinaService;
     }
 
  /**
@@ -114,7 +118,6 @@ public class SesionController {
 
     // Finalizar sesión                                                     
 
-    //HU — Finaliza la sesión, actualiza la racha y redirige al resumen.
      
     @PostMapping("/{sesionId}/finalizar")
     public String finalizar(
@@ -158,6 +161,9 @@ public class SesionController {
         }
 
         model.addAllAttributes(resumen);
+
+        model.addAttribute("cambios", ajusteRutinaService.cambiosDeSesion(sesionId));
+
         session.removeAttribute("resumenSesion");
         return "sesion/resumen";
     }

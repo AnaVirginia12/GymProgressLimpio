@@ -94,8 +94,17 @@ public class NavegacionController {
      * Muestra la pantalla de configuración. No necesita datos ni
      * verificar sesión porque no muestra información personal.
      */
+    /*
+     * Era la única pantalla a la que se entraba sin iniciar sesión.
+     * Se le pone el mismo control que al resto.
+     */
     @GetMapping("/configuracion")
-    public String configuracion() {
+    public String configuracion(HttpSession session) {
+        Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
+        if (usuarioId == null) {
+            return "redirect:/login";
+        }
+
         return "configuracion/index";
     }
 }

@@ -228,7 +228,6 @@ public class EjercicioController {
         return "ejercicio/detalle";
     }
 
-    /* HU7 — Alternativas en casa cuando el usuario no va al gimnasio.       */
 
     @GetMapping("/alternativas")
     public String alternativas(
@@ -249,7 +248,6 @@ public class EjercicioController {
         return "ejercicio/alternativas";
     }
 
-    /* HU31 — Omitir o sustituir durante el entrenamiento.                   */
 
     @GetMapping("/ajustar")
     public String ajustar(
@@ -301,7 +299,6 @@ public class EjercicioController {
         return destino(modo, sesionId);
     }
 
-    /* HU31 — Omitir un ejercicio y avisar del impacto en el volumen.        */
 
     @PostMapping("/rutina/{rutinaEjercicioId}/omitir")
     public String omitir(

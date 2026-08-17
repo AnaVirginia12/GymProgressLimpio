@@ -1,6 +1,8 @@
 package com.fidelitas.gymprogress.controller;
 
+import com.fidelitas.gymprogress.domain.Racha;
 import com.fidelitas.gymprogress.domain.rutina.Rutina;
+import com.fidelitas.gymprogress.service.RachaService;
 import com.fidelitas.gymprogress.service.rutina.RutinaService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -19,9 +21,14 @@ public class DashboardController {
 
     // Servicio que trae los datos de la rutina
     private final RutinaService rutinaService;
+    private final RachaService rachaService;
 
-    public DashboardController(RutinaService rutinaService) {
+    public DashboardController(
+            RutinaService rutinaService,
+            RachaService rachaService
+    ) {
         this.rutinaService = rutinaService;
+        this.rachaService = rachaService;
     }
     
      /**
@@ -52,6 +59,14 @@ public class DashboardController {
                         ? 0
                         : rutina.getEjercicios().size()
         );
+
+        // HU22 — Racha visible en la pantalla principal, sin navegar.
+        Racha racha = rachaService.obtener(usuarioId);
+        model.addAttribute("racha", racha);
+        model.addAttribute("entrenoHoy",
+                racha != null
+                && racha.getUltimoEntrenamiento() != null
+                && racha.getUltimoEntrenamiento().isEqual(java.time.LocalDate.now()));
 
         model.addAttribute("saludo", saludoSegunHora());
 

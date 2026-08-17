@@ -16,6 +16,50 @@
                     <p class="text-body-secondary">
                         Revisa tu entrenamiento programado para hoy.
                     </p>
+                    <!--
+                        HU22 — Racha destacada en la pantalla principal.
+                        Verde si hoy ya se entrenó, morada si no. Al tocarla
+                        se llega al historial de rachas.
+                    -->
+                    <a class="card text-decoration-none mt-4 d-block"
+                       id="rachaDestacada"
+                       th:href="@{/racha}"
+                       th:if="${racha != null}"
+                       th:classappend="${entrenoHoy}
+                            ? 'bg-success-subtle border-success-subtle'
+                            : 'bg-primary-subtle border-primary-subtle'">
+                        <div class="card-body d-flex flex-wrap align-items-center gap-3 py-3">
+
+                            <span class="avatar rounded-circle fs-4"
+                                  th:classappend="${entrenoHoy}
+                                       ? 'bg-success text-white' : 'bg-primary text-white'"
+                                  th:text="${entrenoHoy} ? '✓' : '🔥'">🔥</span>
+
+                            <div>
+                                <span class="d-block fs-4 fw-bold"
+                                      th:text="${racha.diasActuales} + (${racha.diasActuales} == 1
+                                               ? ' día seguido' : ' días seguidos')">
+                                    12 días seguidos
+                                </span>
+                                <small class="d-block"
+                                       th:classappend="${entrenoHoy}
+                                            ? 'text-success-emphasis' : 'text-primary-emphasis'"
+                                       th:text="${entrenoHoy}
+                                            ? 'Ya entrenaste hoy, racha mantenida'
+                                            : 'Todavía no entrenas hoy — entrena para no perderla'">
+                                    Ya entrenaste hoy
+                                </small>
+                            </div>
+
+                            <span class="ms-auto text-body-secondary small text-nowrap">
+                                Máxima: <strong class="text-body"
+                                                th:text="${racha.diasMaximo}">21</strong>
+                                · Ver historial ›
+                            </span>
+
+                        </div>
+                    </a>
+
                     <!-- HU21 — Tarjeta de la rutina activa, con datos reales -->
                     <section class="card today-card mt-4"
                              th:if="${rutina != null}">

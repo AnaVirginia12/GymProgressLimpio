@@ -2,16 +2,13 @@ package com.fidelitas.gymprogress.service;
 
 import com.fidelitas.gymprogress.domain.Ejercicio;
 import com.fidelitas.gymprogress.repository.EjercicioRepository;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 
-
-/**
- * Contiene la lógica del módulo de Ejercicios: buscar, crear,
- * actualizar, eliminar y validar que los datos estén completos
- * antes de guardar.
- */
 @Service
 public class EjercicioService {
 
@@ -53,6 +50,11 @@ public class EjercicioService {
         existente.setTipoEntrenamiento(datos.getTipoEntrenamiento());
         existente.setDescripcion(datos.getDescripcion());
         existente.setMediaUrl(datos.getMediaUrl());
+        existente.setRequiereEquipo(datos.getRequiereEquipo());
+        existente.setTempoExcentrico(datos.getTempoExcentrico());
+        existente.setTempoPausaAbajo(datos.getTempoPausaAbajo());
+        existente.setTempoConcentrico(datos.getTempoConcentrico());
+        existente.setTempoPausaArriba(datos.getTempoPausaArriba());
         // favorito se preserva; solo cambia vía alternarFavorito()
 
         return ejercicioRepository.save(existente);
@@ -67,6 +69,91 @@ public class EjercicioService {
                 .orElseThrow(() -> new IllegalArgumentException("Ejercicio no encontrado."));
         ejercicio.setFavorito(!Boolean.TRUE.equals(ejercicio.getFavorito()));
         return ejercicioRepository.save(ejercicio);
+    }
+
+    /*
+     * HU7 — Alternativas sin equipamiento para los grupos musculares de un
+     * ejercicio de gimnasio.
+     *
+     * grupoMuscular puede traer varios grupos separados por coma, así que se
+     * busca por cada uno y se juntan los resultados sin repetir.
+     */
+    public List<Ejercicio> alternativasEnCasa(Ejercicio original) {
+        return buscarAlternativas(original, true);
+    }
+
+    /*
+     * HU31 — Alternativas del mismo grupo muscular para sustituir un
+     * ejercicio durante el entrenamiento. Aquí sí se admite equipo, porque
+     * el usuario puede estar en el gimnasio y solo querer cambiarlo.
+     */
+    public List<Ejercicio> alternativasMismoGrupo(Ejercicio original) {
+        return buscarAlternativas(original, false);
+    }
+
+    private List<Ejercicio> buscarAlternativas(Ejercicio original, boolean soloSinEquipo) {
+        if (original == null || original.getGrupoMuscular() == null) {
+            return List.of();
+        }
+
+        Map<Long, Ejercicio> encontrados = new LinkedHashMap<>();
+
+        for (String grupo : original.getGrupoMuscular().split(",")) {
+            String limpio = grupo.trim();
+            if (limpio.isEmpty()) {
+                continue;
+            }
+
+            List<Ejercicio> parciales = soloSinEquipo
+                    ? ejercicioRepository.alternativasSinEquipo(limpio, original.getId())
+                    : ejercicioRepository.alternativasMismoGrupo(limpio, original.getId());
+
+            for (Ejercicio e : parciales) {
+                encontrados.putIfAbsent(e.getId(), e);
+            }
+        }
+
+        return new ArrayList<>(encontrados.values());
+    }
+
+    /*
+     * HU9 — Tempo recomendado según el tipo de ejercicio y el programa.
+     *
+     * Si el ejercicio ya trae su propio tempo se respeta; si no, se sugiere
+     * uno según el programa: en fuerza la fase excéntrica es más corta y con
+     * pausa abajo, en hipertrofia se alarga la excéntrica, y en resistencia
+     * se busca un ritmo continuo.
+     */
+    public int[] tempoRecomendado(Ejercicio ejercicio, String programa) {
+        if (ejercicio != null && ejercicio.tieneTempo()) {
+            return new int[] {
+                valor(ejercicio.getTempoExcentrico()),
+                valor(ejercicio.getTempoPausaAbajo()),
+                valor(ejercicio.getTempoConcentrico()),
+                valor(ejercicio.getTempoPausaArriba())
+            };
+        }
+
+        String tipo = ejercicio == null ? null : ejercicio.getTipoEntrenamiento();
+
+        if ("Cardio".equalsIgnoreCase(tipo)) {
+            return new int[] {1, 0, 1, 0};
+        }
+
+        if (programa == null) {
+            return new int[] {2, 1, 1, 0};
+        }
+
+        return switch (programa) {
+            case "Fuerza" -> new int[] {2, 1, 1, 1};
+            case "Hipertrofia" -> new int[] {3, 1, 1, 0};
+            case "Resistencia" -> new int[] {2, 0, 1, 0};
+            default -> new int[] {2, 1, 1, 0};
+        };
+    }
+
+    private int valor(Integer v) {
+        return v == null ? 0 : v;
     }
 
     private void validar(Ejercicio ejercicio) {
