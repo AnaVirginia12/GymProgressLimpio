@@ -72,11 +72,53 @@
                                     <input id="mediaNuevo" type="text" class="form-control"
                                            th:field="*{mediaUrl}" placeholder="https://...">
                                 </div>
-                                <div class="mb-4">
+                                <div class="mb-3">
                                     <label class="form-label" for="descripcionNuevo">Descripción</label>
                                     <textarea id="descripcionNuevo" class="form-control"
                                               th:field="*{descripcion}" rows="4"></textarea>
                                 </div>
+                                <div class="form-check form-switch mb-4">
+                                    <input class="form-check-input" type="checkbox"
+                                           id="equipoNuevo" th:field="*{requiereEquipo}">
+                                    <label class="form-check-label" for="equipoNuevo">
+                                        Necesita equipo de gimnasio
+                                        <small class="d-block text-body-secondary">
+                                            Desactívalo si se puede hacer en casa: así aparecerá
+                                            como alternativa cuando no se pueda ir al gimnasio.
+                                        </small>
+                                    </label>
+                                </div>
+                                <fieldset class="border rounded-3 p-3 mb-4">
+                                    <legend class="float-none w-auto px-2 fs-6 fw-bold text-uppercase text-body-secondary">
+                                        Tempo por repetición
+                                    </legend>
+                                    <p class="text-body-secondary small">
+                                        Segundos de cada fase. Déjalo vacío para usar el tempo
+                                        sugerido según el programa.
+                                    </p>
+                                    <div class="row g-2">
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label small" for="excNuevo">Excéntrico</label>
+                                            <input id="excNuevo" type="number" min="0" max="10"
+                                                   class="form-control" th:field="*{tempoExcentrico}">
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label small" for="pabNuevo">Pausa abajo</label>
+                                            <input id="pabNuevo" type="number" min="0" max="10"
+                                                   class="form-control" th:field="*{tempoPausaAbajo}">
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label small" for="conNuevo">Concéntrico</label>
+                                            <input id="conNuevo" type="number" min="0" max="10"
+                                                   class="form-control" th:field="*{tempoConcentrico}">
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label small" for="parNuevo">Pausa arriba</label>
+                                            <input id="parNuevo" type="number" min="0" max="10"
+                                                   class="form-control" th:field="*{tempoPausaArriba}">
+                                        </div>
+                                    </div>
+                                </fieldset>
                                 <button type="submit" class="btn btn-primary">Guardar</button>
                             </form>
                             <form th:unless="${ejercicio.id == null}"
@@ -127,11 +169,53 @@
                                     <input id="mediaEditar" type="text" class="form-control"
                                            th:field="*{mediaUrl}">
                                 </div>
-                                <div class="mb-4">
+                                <div class="mb-3">
                                     <label class="form-label" for="descripcionEditar">Descripción</label>
                                     <textarea id="descripcionEditar" class="form-control"
                                               th:field="*{descripcion}" rows="4"></textarea>
                                 </div>
+                                <div class="form-check form-switch mb-4">
+                                    <input class="form-check-input" type="checkbox"
+                                           id="equipoEditar" th:field="*{requiereEquipo}">
+                                    <label class="form-check-label" for="equipoEditar">
+                                        Necesita equipo de gimnasio
+                                        <small class="d-block text-body-secondary">
+                                            Desactívalo si se puede hacer en casa: así aparecerá
+                                            como alternativa cuando no se pueda ir al gimnasio.
+                                        </small>
+                                    </label>
+                                </div>
+                                <fieldset class="border rounded-3 p-3 mb-4">
+                                    <legend class="float-none w-auto px-2 fs-6 fw-bold text-uppercase text-body-secondary">
+                                        Tempo por repetición
+                                    </legend>
+                                    <p class="text-body-secondary small">
+                                        Segundos de cada fase. Déjalo vacío para usar el tempo
+                                        sugerido según el programa.
+                                    </p>
+                                    <div class="row g-2">
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label small" for="excEditar">Excéntrico</label>
+                                            <input id="excEditar" type="number" min="0" max="10"
+                                                   class="form-control" th:field="*{tempoExcentrico}">
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label small" for="pabEditar">Pausa abajo</label>
+                                            <input id="pabEditar" type="number" min="0" max="10"
+                                                   class="form-control" th:field="*{tempoPausaAbajo}">
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label small" for="conEditar">Concéntrico</label>
+                                            <input id="conEditar" type="number" min="0" max="10"
+                                                   class="form-control" th:field="*{tempoConcentrico}">
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label small" for="parEditar">Pausa arriba</label>
+                                            <input id="parEditar" type="number" min="0" max="10"
+                                                   class="form-control" th:field="*{tempoPausaArriba}">
+                                        </div>
+                                    </div>
+                                </fieldset>
                                 <button type="submit" class="btn btn-primary">Guardar</button>
                             </form>
                         </div>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es"
+      data-bs-theme="dark"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head(${modo == 'ajuste' ? 'Ajustar rutina' : 'Entrenar en casa'})}"></head>
+
+<body>
+
+<div class="d-flex min-vh-100">
+
+    <aside th:replace="~{general/fragmentos :: sidebar('ejercicios')}"></aside>
+
+    <div class="app-content flex-grow-1">
+
+        <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+
+        <main class="container-xxl p-4">
+
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+
+                <div th:if="${modo == 'casa'}">
+                    <span class="text-uppercase fw-bold small text-primary-emphasis">Hoy no voy al gimnasio</span>
+                    <h1 class="display-6 fw-bold mb-2">Entrenar en casa</h1>
+                    <p class="text-body-secondary mb-0">
+                        Estas alternativas no necesitan equipo y trabajan los mismos
+                        grupos musculares que tu rutina de hoy.
+                    </p>
+                </div>
+
+                <div th:if="${modo == 'ajuste'}">
+                    <span class="text-uppercase fw-bold small text-primary-emphasis">Durante el entrenamiento</span>
+                    <h1 class="display-6 fw-bold mb-2">Ajustar rutina</h1>
+                    <p class="text-body-secondary mb-0">
+                        Omite un ejercicio o cámbialo por otro del mismo grupo muscular.
+                    </p>
+                </div>
+
+                <a class="btn btn-secondary text-nowrap"
+                   th:href="${sesionId != null} ? @{/sesion/{id}(id=${sesionId})} : @{/rutinas/hoy}">
+                    Volver
+                </a>
+
+            </div>
+
+            <div class="alert alert-success" role="alert"
+                 th:if="${mensaje}" th:text="${mensaje}"></div>
+            <div class="alert alert-danger" role="alert"
+                 th:if="${error}" th:text="${error}"></div>
+
+            <!-- Sin rutina o sin ejercicios asignados -->
+            <section class="card border-dashed text-center p-4"
+                     th:if="${#lists.isEmpty(propuestas)}">
+                <div class="card-body">
+                    <h2 class="h4">No hay ejercicios que ajustar</h2>
+                    <p class="text-body-secondary mb-0">
+                        Agrega ejercicios a tu rutina de hoy para poder cambiarlos.
+                        <a th:href="@{/rutinas/hoy}">Ir a la rutina de hoy</a>.
+                    </p>
+                </div>
+            </section>
+
+            <div class="vstack gap-3" th:unless="${#lists.isEmpty(propuestas)}">
+
+                <article class="card" th:each="p : ${propuestas}">
+                    <div class="card-body p-4">
+
+                        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="avatar rounded-circle bg-primary-subtle text-primary-emphasis fw-bold"
+                                      th:text="${p.detalle.orden}">1</span>
+                                <div>
+                                    <strong class="d-block" th:text="${p.actual.nombre}">Press banca</strong>
+                                    <small class="d-block text-body-secondary">
+                                        <span th:text="${p.detalle.series}">4</span> series ·
+                                        <span th:text="${p.actual.grupoMuscular}">Pecho</span>
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-wrap align-items-center gap-2">
+                                <span class="badge rounded-pill bg-success-subtle text-success-emphasis"
+                                      th:unless="${p.actual.requiereEquipo}">Sin equipo</span>
+                                <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis"
+                                      th:if="${p.actual.requiereEquipo}">Necesita equipo</span>
+
+                                <!-- HU31 — Omitir con aviso del impacto -->
+                                <form method="post" th:if="${modo == 'ajuste'}"
+                                      th:action="@{/ejercicios/rutina/{id}/omitir(id=${p.detalle.id})}"
+                                      onsubmit="return confirm('¿Omitir este ejercicio del entrenamiento de hoy?');">
+                                    <input type="hidden" name="modo" value="ajuste">
+                                    <input type="hidden" name="sesionId" th:value="${sesionId}"
+                                           th:if="${sesionId != null}">
+                                    <button type="submit" class="btn btn-secondary btn-sm">Omitir</button>
+                                </form>
+                            </div>
+
+                        </div>
+
+                        <!-- Ya se puede hacer en casa: no hace falta cambiarlo -->
+                        <div class="alert alert-success mt-3 mb-0 py-2"
+                             role="alert"
+                             th:if="${modo == 'casa' and !p.actual.requiereEquipo}">
+                            Este ya lo puedes hacer en casa, no hay que cambiarlo.
+                        </div>
+
+                        <!-- No hay con qué reemplazarlo -->
+                        <div class="alert alert-warning mt-3 mb-0 py-2"
+                             role="alert"
+                             th:if="${!p.tieneAlternativas() and (modo == 'ajuste' or p.actual.requiereEquipo)}">
+                            No hay ejercicios en el catálogo que trabajen
+                            <span th:text="${p.actual.grupoMuscular}">este grupo</span>
+                            <span th:if="${modo == 'casa'}">sin equipo</span>.
+                            <a th:href="@{/ejercicios/nuevo}" class="alert-link">Crea uno</a>.
+                        </div>
+
+                        <!-- Alternativas sugeridas: aceptar o dejar como está -->
+                        <div class="border-top mt-3 pt-3" th:if="${p.tieneAlternativas()}">
+
+                            <h3 class="h6 text-uppercase fw-bold text-body-secondary mb-3">
+                                <span th:if="${modo == 'casa'}">Alternativas en casa</span>
+                                <span th:unless="${modo == 'casa'}">Cambiar por</span>
+                            </h3>
+
+                            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-2">
+
+                                <div class="col" th:each="alt : ${p.alternativas}">
+                                    <div class="border rounded-3 p-3 h-100 d-flex flex-column gap-2">
+
+                                        <div>
+                                            <a class="fw-bold text-decoration-none"
+                                               th:href="@{/ejercicios/{id}(id=${alt.id})}"
+                                               th:text="${alt.nombre}">Flexiones</a>
+                                            <small class="d-block text-body-secondary"
+                                                   th:text="${alt.grupoMuscular}">Pecho, Tríceps</small>
+                                        </div>
+
+                                        <form method="post" class="mt-auto d-grid"
+                                              th:action="@{/ejercicios/rutina/{id}/sustituir(id=${p.detalle.id})}">
+                                            <input type="hidden" name="nuevoEjercicioId" th:value="${alt.id}">
+                                            <input type="hidden" name="modo" th:value="${modo}">
+                                            <input type="hidden" name="sesionId" th:value="${sesionId}"
+                                                   th:if="${sesionId != null}">
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                <span th:if="${modo == 'casa'}">Aceptar</span>
+                                                <span th:unless="${modo == 'casa'}">Sustituir</span>
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <p class="text-body-secondary small mt-3 mb-0" th:if="${modo == 'casa'}">
+                                Si prefieres dejarlo como está, simplemente no aceptes ninguna.
+                            </p>
+
+                        </div>
+
+                    </div>
+                </article>
+
+            </div>
+
+            <!-- HU31 — Registro de los cambios de esta sesión -->
+            <section class="mt-5" th:if="${cambios != null and !#lists.isEmpty(cambios)}">
+
+                <h2 class="h4 mb-3">Cambios registrados en esta sesión</h2>
+
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr class="text-uppercase small text-body-secondary">
+                                <th scope="col">Hora</th>
+                                <th scope="col">Ejercicio</th>
+                                <th scope="col">Cambio</th>
+                                <th scope="col">Series</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="c : ${cambios}">
+                                <td th:text="${#temporals.format(c.registradoEn, 'HH:mm')}">08:41</td>
+                                <td th:text="${c.ejercicioOriginalNombre}">Press banca</td>
+                                <td>
+                                    <span class="badge rounded-pill bg-danger-subtle text-danger-emphasis"
+                                          th:if="${c.esOmision()}">Omitido</span>
+                                    <span th:unless="${c.esOmision()}">
+                                        <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis">
+                                            Sustituido
+                                        </span>
+                                        por <strong th:text="${c.ejercicioNuevoNombre}">Flexiones</strong>
+                                    </span>
+                                </td>
+                                <td th:text="${c.seriesAfectadas}">4</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</div>
+
+<th:block th:replace="~{general/fragmentos :: scripts}"></th:block>
+
+</body>
+</html>

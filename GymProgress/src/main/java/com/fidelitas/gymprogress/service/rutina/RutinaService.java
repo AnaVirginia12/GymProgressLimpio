@@ -72,6 +72,34 @@ public class RutinaService {
     }
 
     @Transactional
+    public void sustituirEjercicio(
+            Long usuarioId,
+            Long rutinaEjercicioId,
+            Long nuevoEjercicioId
+    ) {
+        Rutina rutina = rutinaRepository
+                .findFirstByUsuarioIdAndActivaTrueOrderByCreadaEnDesc(usuarioId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No hay una rutina activa."
+                ));
+
+        if (nuevoEjercicioId == null) {
+            throw new IllegalArgumentException("Selecciona el ejercicio de reemplazo.");
+        }
+
+        RutinaEjercicio detalle = rutina.getEjercicios()
+                .stream()
+                .filter(e -> e.getId().equals(rutinaEjercicioId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Ese ejercicio no está en tu rutina."
+                ));
+
+        detalle.setEjercicioId(nuevoEjercicioId);
+        rutinaRepository.save(rutina);
+    }
+
+    @Transactional
     public void eliminarEjercicio(Long usuarioId, Long rutinaEjercicioId) {
         Rutina rutina = rutinaRepository
                 .findFirstByUsuarioIdAndActivaTrueOrderByCreadaEnDesc(usuarioId)

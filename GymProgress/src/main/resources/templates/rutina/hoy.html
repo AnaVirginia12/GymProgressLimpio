@@ -178,14 +178,18 @@
                                     </div>
                                 </form>
                             </div>
-                            <form method="post"
-                                  th:action="@{/sesion/iniciar}"
-                                  class="border-top mt-4 pt-4">
-                                <input type="hidden" name="rutinaId" th:value="${rutina.id}">
-                                <button type="submit" class="btn btn-primary btn-lg">
-                                    Comenzar entrenamiento
-                                </button>
-                            </form>
+                            <div class="d-flex flex-wrap align-items-center gap-3 border-top mt-4 pt-4">
+                                <form method="post" th:action="@{/sesion/iniciar}">
+                                    <input type="hidden" name="rutinaId" th:value="${rutina.id}">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        Comenzar entrenamiento
+                                    </button>
+                                </form>
+                                <a class="btn btn-secondary btn-lg"
+                                   th:href="@{/ejercicios/alternativas}">
+                                    Hoy no voy al gimnasio
+                                </a>
+                            </div>
                         </div>
                     </section>
                 </main>

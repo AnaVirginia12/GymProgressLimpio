@@ -104,6 +104,28 @@
                             </table>
                         </div>
                     </section>
+                    <section class="mt-5" th:if="${cambios != null and !#lists.isEmpty(cambios)}">
+                        <h2 class="h4 mb-3">Ajustes de la rutina</h2>
+                        <div class="vstack gap-2">
+                            <div class="d-flex flex-wrap align-items-center gap-2 border rounded-3 p-3"
+                                 th:each="c : ${cambios}">
+                                <span class="badge rounded-pill bg-danger-subtle text-danger-emphasis"
+                                      th:if="${c.esOmision()}">Omitido</span>
+                                <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis"
+                                      th:unless="${c.esOmision()}">Sustituido</span>
+                                <strong th:text="${c.ejercicioOriginalNombre}">Press banca</strong>
+                                <span class="text-body-secondary" th:unless="${c.esOmision()}">
+                                    por <strong class="text-body"
+                                                th:text="${c.ejercicioNuevoNombre}">Flexiones</strong>
+                                </span>
+                                <span class="text-body-secondary ms-auto"
+                                      th:if="${c.esOmision()}"
+                                      th:text="${c.seriesAfectadas} + ' series sin hacer'">
+                                    4 series sin hacer
+                                </span>
+                            </div>
+                        </div>
+                    </section>
                     <div class="d-flex flex-wrap gap-3 mt-5">
                         <a th:href="@{/}" class="btn btn-secondary">Ir al inicio</a>
                         <a th:href="@{/historial}" class="btn btn-primary">Ver historial</a>
