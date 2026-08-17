@@ -9,14 +9,21 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+/**
+ * Controlador del módulo de Ejercicios.
+ * Aquí se manejan todas las acciones: ver la lista, buscar, crear,
+ * editar, eliminar y marcar como favorito.
+ */
 @Controller
 @RequestMapping("/ejercicios")
 public class EjercicioController {
 
     private static final String SESION_USUARIO_ID = "usuarioId";
 
+    // Opciones fijas que se muestran en el formulario (tipo de entrenamiento)
     private static final String[] TIPOS_ENTRENAMIENTO = {"Calistenia", "Cardio", "Gimnasio"};
 
+    // Opciones fijas de grupos musculares que se muestran en el formulario
     private static final String[] GRUPOS_MUSCULARES = {
         "Pecho", "Espalda", "Hombros", "Bíceps", "Tríceps",
         "Antebrazos", "Abdomen", "Glúteos", "Cuádriceps",
@@ -29,6 +36,10 @@ public class EjercicioController {
         this.ejercicioService = ejercicioService;
     }
 
+     /**
+     * Muestra la lista de ejercicios. Permite buscar por texto y
+     * filtrar por tipo de entrenamiento.
+     */
     @GetMapping
     public String listar(
             @RequestParam(required = false) String q,
@@ -47,6 +58,9 @@ public class EjercicioController {
         return "ejercicio/index";
     }
 
+     /**
+     * Muestra el formulario vacío para crear un ejercicio nuevo.
+     */
     @GetMapping("/nuevo")
     public String nuevo(HttpSession session, Model model) {
         Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
@@ -58,7 +72,13 @@ public class EjercicioController {
         model.addAttribute("gruposMusculares", GRUPOS_MUSCULARES);
         return "ejercicio/modifica";
     }
-
+    
+    
+     /**
+     * Guarda el ejercicio nuevo que el usuario llenó en el formulario.
+     * Si algo sale mal (por ejemplo, datos inválidos), regresa al
+     * formulario mostrando el error en vez de romper la aplicación.
+     */
     @PostMapping
     public String crear(
             @ModelAttribute Ejercicio ejercicio,
@@ -83,6 +103,9 @@ public class EjercicioController {
         return "redirect:/ejercicios";
     }
 
+    /**
+     * Muestra el formulario ya lleno con los datos del ejercicio a editar.
+     */
     @GetMapping("/{id}/editar")
     public String editar(
             @PathVariable Long id,
@@ -126,6 +149,9 @@ public class EjercicioController {
         return "redirect:/ejercicios";
     }
 
+    /**
+     * Elimina un ejercicio de la lista.
+     */
     @PostMapping("/{id}/eliminar")
     public String eliminar(
             @PathVariable Long id,
@@ -141,6 +167,9 @@ public class EjercicioController {
         return "redirect:/ejercicios";
     }
 
+     /**
+     * Marca o desmarca un ejercicio como favorito.
+     */
     @PostMapping("/{id}/favorito")
     public String alternarFavorito(
             @PathVariable Long id,

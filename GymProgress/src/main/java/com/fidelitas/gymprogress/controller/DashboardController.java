@@ -7,17 +7,27 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+/**
+ * Controlador de la pantalla principal (dashboard).
+ * Muestra la rutina activa del usuario y un resumen de esta.
+ */
 @Controller
 public class DashboardController {
-
+    
+    // Nombre con el que se guarda el id del usuario cuando inicia sesión
     private static final String SESION_USUARIO_ID = "usuarioId";
 
+    // Servicio que trae los datos de la rutina
     private final RutinaService rutinaService;
 
     public DashboardController(RutinaService rutinaService) {
         this.rutinaService = rutinaService;
     }
     
+     /**
+     * Muestra el dashboard con la rutina activa del usuario,
+     * cuánto dura aproximadamente y cuántos ejercicios tiene.
+     */
     @GetMapping("/")
     public String mostrarDashboard(HttpSession session, Model model) {
         Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
@@ -28,12 +38,14 @@ public class DashboardController {
         Rutina rutina = rutinaService.obtenerRutinaActiva(usuarioId);
 
         model.addAttribute("rutina", rutina);
-
+        
+         // Tiempo aproximado que toma completar la rutina
         model.addAttribute(
                 "duracionEstimada",
                 rutinaService.calcularDuracionEstimadaMinutos(rutina)
         );
-
+        
+        // Si no hay rutina o no tiene ejercicios, se muestra 0 en vez de fallar
         model.addAttribute(
                 "totalEjercicios",
                 rutina == null || rutina.getEjercicios() == null
@@ -46,6 +58,10 @@ public class DashboardController {
         return "dashboard/index";
     }
 
+     /**
+     * Devuelve un saludo distinto según la hora del día
+     * (buenos días, buenas tardes o buenas noches).
+     */
     private String saludoSegunHora() {
         int hora = java.time.LocalTime.now().getHour();
 
