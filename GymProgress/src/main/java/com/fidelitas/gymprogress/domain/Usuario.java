@@ -65,6 +65,25 @@ public class Usuario {
     @Column(name = "unidad_peso", length = 2, nullable = false)
     private String unidadPeso = "kg";
 
+    //Preferencia de apariencia: dark o light (valores de data-bs-theme)
+    @Column(name = "tema", length = 10, nullable = false)
+    private String tema = "dark";
+
+    //Si el descanso entre series inicia solo al guardar una serie, o el usuario lo inicia manualmente
+    @Column(name = "descanso_automatico", nullable = false)
+    private Boolean descansoAutomatico = true;
+
+    //Duración por defecto (segundos) del temporizador de descanso
+    @Column(name = "descanso_por_defecto_seg", nullable = false)
+    private Integer descansoPorDefectoSeg = 90;
+
+    /**
+     * Estos tres campos son de la pantalla de configuración. Los tres llevan
+     * 'nullable = false' y a la vez un valor inicial ("dark", true, 90): el
+     * valor lo pone Java al hacer 'new Usuario()', así que nunca llegan vacíos
+     * a la base y por eso pueden ser obligatorios sin romper el registro
+     */
+
     @Column(name = "creado_en", nullable = false)
     private LocalDateTime creadoEn = LocalDateTime.now();
 
@@ -112,6 +131,15 @@ public class Usuario {
 
     public String getUnidadPeso() { return unidadPeso; }
     public void setUnidadPeso(String unidadPeso) { this.unidadPeso = unidadPeso; }
+
+    public String getTema() { return tema; }
+    public void setTema(String tema) { this.tema = tema; }
+
+    public Boolean getDescansoAutomatico() { return descansoAutomatico; }
+    public void setDescansoAutomatico(Boolean descansoAutomatico) { this.descansoAutomatico = descansoAutomatico; }
+
+    public Integer getDescansoPorDefectoSeg() { return descansoPorDefectoSeg; }
+    public void setDescansoPorDefectoSeg(Integer descansoPorDefectoSeg) { this.descansoPorDefectoSeg = descansoPorDefectoSeg; }
 
     public LocalDateTime getCreadoEn() { return creadoEn; }
     public void setCreadoEn(LocalDateTime creadoEn) { this.creadoEn = creadoEn; }
