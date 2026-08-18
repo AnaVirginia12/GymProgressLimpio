@@ -9,8 +9,8 @@
 -- registros de peso corporal
 --
 -- USUARIOS DE PRUEBA
---   kata@gmail.com / 123456
---   ana@gmail.com  / 123456
+--   kata@gmail.com / 12345678
+--   ana@gmail.com  / 12345678
 
 SET NAMES utf8mb4;
 
@@ -1346,9 +1346,7 @@ VALUES
     (56, 8, 'Dominadas', 4, 0.0, 5, 1, DATE_ADD(DATE_ADD(DATE_SUB(CURDATE(), INTERVAL 0 DAY), INTERVAL 18 HOUR), INTERVAL 72 MINUTE));
 
 
--- ============================================================
 -- 8. PESO CORPORAL   (un registro por semana)
--- ============================================================
 
 INSERT INTO peso_corporal (usuario_id, fecha, peso_kg) VALUES
     (1, DATE_SUB(CURDATE(), INTERVAL 49 DAY), 62.0),
@@ -1369,12 +1367,10 @@ INSERT INTO peso_corporal (usuario_id, fecha, peso_kg) VALUES
     (2, DATE_SUB(CURDATE(), INTERVAL 0 DAY), 73.0);
 
 
--- ============================================================
 -- 9. AJUSTES DE RUTINA Y SEMANA DE DESCARGA
 --
 -- Dos ejemplos para que las pantallas de HU31 y HU37 tengan algo
--- que mostrar desde el primer arranque.
--- ============================================================
+-- que mostrar desde el primer arranque
 
 -- Un ejercicio sustituido y otro omitido en la sesión de ayer de Kata
 INSERT INTO cambio_ejercicio
