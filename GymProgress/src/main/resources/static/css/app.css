@@ -4,11 +4,11 @@
     --gp-primary: #7c3aed;
     --gp-primary-hover: #8b5cf6;
     --gp-primary-active: #6d28d9;
-    --gp-sidebar-bg: #0e0e11;
     --gp-sidebar-width: 250px;
 }
 
 [data-bs-theme="dark"] {
+    --gp-sidebar-bg: #0e0e11;
     --bs-body-bg: #09090b;
     --bs-body-color: #f5f5f7;
     --bs-emphasis-color: #ffffff;
@@ -74,6 +74,7 @@
 
 /* Modo claro — misma identidad negro/morado sobre fondo claro */
 [data-bs-theme="light"] {
+    --gp-sidebar-bg: #ffffff;
     --bs-body-bg: #f6f4fc;
     --bs-body-color: #14121a;
     --bs-emphasis-color: #0e0e11;
@@ -121,7 +122,7 @@
 }
 
 [data-bs-theme="light"] .sidebar .nav-link:hover {
-    color: #fff;
+    color: var(--bs-emphasis-color);
 }
 
 .form-control:focus,
@@ -137,9 +138,14 @@
     border-color: var(--gp-primary);
 }
 
-.nav-pills {
+[data-bs-theme="dark"] .nav-pills {
     --bs-nav-pills-link-active-bg: rgba(124, 58, 237, 0.22);
     --bs-nav-pills-link-active-color: #ffffff;
+}
+
+[data-bs-theme="light"] .nav-pills {
+    --bs-nav-pills-link-active-bg: rgba(124, 58, 237, 0.16);
+    --bs-nav-pills-link-active-color: #5b21b6;
 }
 
 /* Barra lateral */
