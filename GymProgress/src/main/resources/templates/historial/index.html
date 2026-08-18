@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es"
+      data-bs-theme="dark"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head('Historial')}"></head>
+    <body>
+        <div class="d-flex min-vh-100">
+            <aside th:replace="~{general/fragmentos :: sidebar('historial')}"></aside>
+            <div class="app-content flex-grow-1">
+                <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+                <main class="container-xxl p-4">
+                    <h1 class="display-6 fw-bold mb-2">Historial</h1>
+                    <p class="text-body-secondary">
+                        Todos tus entrenamientos anteriores.
+                    </p>
+                    <section th:if="${sesiones != null and !#lists.isEmpty(sesiones)}"
+                             class="vstack gap-3 mt-4">
+                        <div th:each="sesion : ${sesiones}" class="card">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                                    <div>
+                                        <span class="text-uppercase fw-bold small text-primary-emphasis"
+                                              th:text="${#temporals.format(sesion.iniciadaEn, 'EEEE, d MMM yyyy', new java.util.Locale('es'))}">
+                                            Lunes, 1 ene 2025
+                                        </span>
+                                        <h2 class="h5 mt-1 mb-0"
+                                            th:text="'Entrenamiento del ' + ${#temporals.format(sesion.iniciadaEn, 'd/MM')}">
+                                            Entrenamiento del 1/01
+                                        </h2>
+                                    </div>
+                                    <div class="text-body-secondary small text-nowrap">
+                                        <span th:text="${sesion.series.size()} + ' series'">12 series</span>
+                                    </div>
+                                </div>
+                                <div class="vstack gap-2 border-top pt-3"
+                                     th:if="${!#lists.isEmpty(sesion.series)}">
+                                    <div class="d-flex align-items-center gap-2 small"
+                                         th:each="s : ${sesion.series}">
+                                        <span class="fw-bold" style="min-width: 140px;"
+                                              th:text="${s.ejercicioNombre}">Press banca</span>
+                                        <span class="text-body-secondary"
+                                              th:text="'S' + ${s.numeroSerie} + ' · ' + ${s.pesoKg} + 'kg × ' + ${s.repeticiones} + ' reps'">
+                                            S1 · 80kg × 10 reps
+                                        </span>
+                                        <span th:if="${s.falloMuscular}"
+                                              class="badge rounded-pill bg-danger-subtle text-danger-emphasis">Fallo</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section th:if="${sesiones == null or #lists.isEmpty(sesiones)}"
+                             class="card border-dashed text-center mt-4 p-4">
+                        <div class="card-body">
+                            <h2 class="h4">Sin entrenamientos</h2>
+                            <p class="text-body-secondary mb-0">
+                                Aún no has completado ningún entrenamiento.
+                                <a th:href="@{/rutinas/hoy}">¡Empieza hoy!</a>
+                            </p>
+                        </div>
+                    </section>
+                </main>
+            </div>
+        </div>
+    <th:block th:replace="~{general/fragmentos :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es"
+      data-bs-theme="dark"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head('Ejercicio')}"></head>
+
+<body>
+
+<div class="d-flex min-vh-100">
+
+    <aside th:replace="~{general/fragmentos :: sidebar('ejercicios')}"></aside>
+
+    <div class="app-content flex-grow-1">
+
+        <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+
+        <main class="container-xxl p-4">
+
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+                <div>
+                    <span class="text-uppercase fw-bold small text-primary-emphasis"
+                          th:text="${ejercicio.tipoEntrenamiento}">Gimnasio</span>
+                    <h1 class="display-6 fw-bold mb-2" th:text="${ejercicio.nombre}">
+                        Press banca
+                    </h1>
+                    <div class="d-flex flex-wrap gap-1">
+                        <span class="badge rounded-pill text-uppercase bg-primary-subtle text-primary-emphasis"
+                              th:each="g : ${#strings.arraySplit(ejercicio.grupoMuscular, ',')}"
+                              th:text="${#strings.trim(g)}">Pecho</span>
+                        <span class="badge rounded-pill bg-success-subtle text-success-emphasis"
+                              th:unless="${ejercicio.requiereEquipo}">Sin equipo</span>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a class="btn btn-secondary text-nowrap"
+                       th:href="@{/ejercicios/{id}/editar(id=${ejercicio.id})}">Editar</a>
+                    <a class="btn btn-secondary text-nowrap" th:href="@{/ejercicios}">Volver</a>
+                </div>
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-12 col-lg-5">
+
+                    <div class="card">
+                        <div class="ratio ratio-16x9 bg-body">
+                            <img th:if="${ejercicio.mediaUrl != null and !ejercicio.mediaUrl.isBlank()}"
+                                 th:src="${ejercicio.mediaUrl}"
+                                 alt="Demostración del ejercicio"
+                                 class="object-fit-cover">
+                            <div th:unless="${ejercicio.mediaUrl != null and !ejercicio.mediaUrl.isBlank()}"
+                                 class="d-flex align-items-center justify-content-center text-body-secondary small">
+                                Sin imagen
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-body-secondary mb-0"
+                               th:text="${ejercicio.descripcion} ?: 'Sin descripción.'">
+                                Descripción del ejercicio.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- HU7 — Alternativas sin equipo del mismo grupo muscular -->
+                    <div class="card mt-4" th:if="${!#lists.isEmpty(alternativasCasa)}">
+                        <div class="card-body">
+                            <h2 class="h6 text-uppercase fw-bold text-body-secondary mb-3">
+                                Se puede hacer en casa con
+                            </h2>
+                            <div class="vstack gap-2">
+                                <a class="d-flex justify-content-between align-items-center text-decoration-none border rounded-3 p-2"
+                                   th:each="alt : ${alternativasCasa}"
+                                   th:href="@{/ejercicios/{id}(id=${alt.id})}">
+                                    <span th:text="${alt.nombre}">Flexiones</span>
+                                    <span class="badge rounded-pill bg-success-subtle text-success-emphasis">
+                                        Sin equipo
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- HU9 — Tempo de repetición con guía visual -->
+                <div class="col-12 col-lg-7">
+
+                    <div class="card">
+                        <div class="card-body p-4">
+
+                            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+                                <div>
+                                    <h2 class="h5 mb-1">Tempo de repetición</h2>
+                                    <p class="text-body-secondary small mb-0"
+                                       th:if="${tempoPropio}">
+                                        Tempo propio de este ejercicio.
+                                    </p>
+                                    <p class="text-body-secondary small mb-0"
+                                       th:unless="${tempoPropio}">
+                                        Sugerido para el programa
+                                        <strong class="text-body"
+                                                th:text="${programa} ?: 'general'">Hipertrofia</strong>.
+                                        Puedes fijar uno propio al editar el ejercicio.
+                                    </p>
+                                </div>
+
+                                <span class="badge fs-5 rounded-pill bg-primary-subtle text-primary-emphasis"
+                                      id="tempoTexto"
+                                      th:text="${tempoExcentrico} + '-' + ${tempoPausaAbajo} + '-' + ${tempoConcentrico} + '-' + ${tempoPausaArriba}">
+                                    3-1-1-0
+                                </span>
+                            </div>
+
+                            <div class="row row-cols-2 row-cols-md-4 g-2 mb-4">
+                                <div class="col">
+                                    <div class="border rounded-3 p-2 text-center" data-fase="0">
+                                        <span class="d-block text-uppercase fw-bold text-body-secondary"
+                                              style="font-size: 0.68rem">Excéntrico</span>
+                                        <strong class="d-block fs-4" th:text="${tempoExcentrico} + 's'">3s</strong>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="border rounded-3 p-2 text-center" data-fase="1">
+                                        <span class="d-block text-uppercase fw-bold text-body-secondary"
+                                              style="font-size: 0.68rem">Pausa abajo</span>
+                                        <strong class="d-block fs-4" th:text="${tempoPausaAbajo} + 's'">1s</strong>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="border rounded-3 p-2 text-center" data-fase="2">
+                                        <span class="d-block text-uppercase fw-bold text-body-secondary"
+                                              style="font-size: 0.68rem">Concéntrico</span>
+                                        <strong class="d-block fs-4" th:text="${tempoConcentrico} + 's'">1s</strong>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="border rounded-3 p-2 text-center" data-fase="3">
+                                        <span class="d-block text-uppercase fw-bold text-body-secondary"
+                                              style="font-size: 0.68rem">Pausa arriba</span>
+                                        <strong class="d-block fs-4" th:text="${tempoPausaArriba} + 's'">0s</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Guía visual: círculo que crece y se encoge siguiendo el tempo -->
+                            <div class="text-center py-3 border-top">
+
+                                <div class="d-flex justify-content-center align-items-center"
+                                     style="height: 190px">
+                                    <div id="guia"
+                                         class="rounded-circle d-grid bg-primary-subtle border border-primary-subtle"
+                                         style="width: 90px; height: 90px; place-items: center;
+                                                transition: width 200ms linear, height 200ms linear">
+                                        <span id="guiaTexto" class="fw-bold text-primary-emphasis">Listo</span>
+                                    </div>
+                                </div>
+
+                                <p class="text-body-secondary small"
+                                   th:text="'Una repetición completa dura ' + ${segundosRepeticion} + ' segundos.'">
+                                    Una repetición completa dura 5 segundos.
+                                </p>
+
+                                <!-- El usuario decide si usa el tempo o no -->
+                                <div class="form-check form-switch d-inline-flex align-items-center gap-2 mb-3">
+                                    <input class="form-check-input" type="checkbox" id="usarTempo" checked>
+                                    <label class="form-check-label" for="usarTempo">
+                                        Usar guía de tempo
+                                    </label>
+                                </div>
+
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button type="button" class="btn btn-primary" id="iniciarGuia">
+                                        Iniciar guía
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" id="detenerGuia" disabled>
+                                        Detener
+                                    </button>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
+<th:block th:replace="~{general/fragmentos :: scripts}"></th:block>
+
+<script th:inline="javascript">
+    /*
+        HU9 — Guía visual del tempo.
+        Recorre las cuatro fases marcando la tarjeta activa y cambiando el
+        tamaño del círculo: se encoge en la bajada y crece en la subida.
+    */
+    (function () {
+        const fases = [
+            { nombre: 'Baja',   segundos: /*[[${tempoExcentrico}]]*/ 3, tam: 60 },
+            { nombre: 'Aguanta', segundos: /*[[${tempoPausaAbajo}]]*/ 1, tam: 60 },
+            { nombre: 'Sube',   segundos: /*[[${tempoConcentrico}]]*/ 1, tam: 130 },
+            { nombre: 'Aguanta', segundos: /*[[${tempoPausaArriba}]]*/ 0, tam: 130 }
+        ];
+
+        const guia = document.getElementById('guia');
+        const texto = document.getElementById('guiaTexto');
+        const iniciar = document.getElementById('iniciarGuia');
+        const detener = document.getElementById('detenerGuia');
+        const usarTempo = document.getElementById('usarTempo');
+        const tarjetas = document.querySelectorAll('[data-fase]');
+
+        let temporizador = null;
+        let indice = 0;
+
+        function limpiarResaltado() {
+            tarjetas.forEach(t => t.classList.remove('border-primary', 'bg-primary-subtle'));
+        }
+
+        function parar() {
+            clearTimeout(temporizador);
+            temporizador = null;
+            indice = 0;
+            limpiarResaltado();
+            guia.style.width = '90px';
+            guia.style.height = '90px';
+            texto.textContent = 'Listo';
+            iniciar.disabled = !usarTempo.checked;
+            detener.disabled = true;
+        }
+
+        function paso() {
+            const fase = fases[indice];
+
+            if (fase.segundos <= 0) {
+                indice = (indice + 1) % fases.length;
+                paso();
+                return;
+            }
+
+            limpiarResaltado();
+            const tarjeta = document.querySelector('[data-fase="' + indice + '"]');
+            if (tarjeta) {
+                tarjeta.classList.add('border-primary', 'bg-primary-subtle');
+            }
+
+            guia.style.transitionDuration = fase.segundos + 's';
+            guia.style.width = fase.tam + 'px';
+            guia.style.height = fase.tam + 'px';
+            texto.textContent = fase.nombre;
+
+            temporizador = setTimeout(function () {
+                indice = (indice + 1) % fases.length;
+                paso();
+            }, fase.segundos * 1000);
+        }
+
+        iniciar.addEventListener('click', function () {
+            if (!usarTempo.checked) return;
+            iniciar.disabled = true;
+            detener.disabled = false;
+            indice = 0;
+            paso();
+        });
+
+        detener.addEventListener('click', parar);
+
+        // Desactivar la guía deshabilita el tempo por completo
+        usarTempo.addEventListener('change', function () {
+            if (!usarTempo.checked) {
+                parar();
+                iniciar.disabled = true;
+            } else {
+                iniciar.disabled = false;
+            }
+        });
+    })();
+</script>
+
+</body>
+</html>

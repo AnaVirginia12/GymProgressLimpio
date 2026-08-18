@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es"
+      data-bs-theme="dark"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head('Progreso')}"></head>
+    <body>
+        <div class="d-flex min-vh-100">
+            <aside th:replace="~{general/fragmentos :: sidebar('progreso')}"></aside>
+            <div class="app-content flex-grow-1">
+                <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+                <main class="container-xxl p-4">
+                    <h1 class="display-6 fw-bold mb-2">Progreso</h1>
+                    <p class="text-body-secondary">
+                        Visualiza tu evolución de peso corporal y tu racha de entrenamientos.
+                    </p>
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 mt-1"
+                         th:if="${racha != null}">
+                        <div class="col">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <span class="d-block text-uppercase fw-bold small text-body-secondary">
+                                        Racha actual
+                                    </span>
+                                    <strong class="d-block fs-1 fw-bold mt-2"
+                                            th:text="${racha.diasActuales}">7</strong>
+                                    <span class="d-block small text-body-secondary">días</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <span class="d-block text-uppercase fw-bold small text-body-secondary">
+                                        Racha máxima
+                                    </span>
+                                    <strong class="d-block fs-1 fw-bold mt-2"
+                                            th:text="${racha.diasMaximo}">21</strong>
+                                    <span class="d-block small text-body-secondary">días</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col" th:if="${racha.ultimoEntrenamiento != null}">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <span class="d-block text-uppercase fw-bold small text-body-secondary">
+                                        Último entreno
+                                    </span>
+                                    <strong class="d-block fs-1 fw-bold mt-2"
+                                            th:text="${#temporals.format(racha.ultimoEntrenamiento, 'd MMM', new java.util.Locale('es'))}">
+                                        1 ene
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <section class="mt-5"
+                             th:if="${historialPeso != null and !#lists.isEmpty(historialPeso)}">
+                        <h2 class="h4 mb-3">Peso corporal</h2>
+                        <div class="card">
+                            <div class="card-body">
+                                <svg viewBox="0 0 600 200"
+                                     class="w-100 d-block"
+                                     aria-label="Gráfico de peso corporal">
+                                <line x1="40" y1="10" x2="40" y2="170"
+                                      stroke="#28282f" stroke-width="1"/>
+                                <line x1="40" y1="170" x2="590" y2="170"
+                                      stroke="#28282f" stroke-width="1"/>
+                                <polyline id="weightLine"
+                                          fill="none"
+                                          stroke="#7c3aed"
+                                          stroke-width="2"
+                                          points=""/>
+                                <th:block th:with="n=${#lists.size(registrosGrafico)}">
+                                    <circle th:each="r, stat : ${registrosGrafico}"
+                                            th:with="
+                                            idx=${n - 1 - stat.index},
+                                            xPos=${n == 1 ? 315 : 40 + idx * (550.0 / (n - 1))},
+                                            yPos=${170 - ((r.pesoKg - pesoMinimo) / rangoPeso) * 140}"
+                                            th:cx="${xPos}"
+                                            th:cy="${yPos}"
+                                            r="4"
+                                            fill="#7c3aed"
+                                            th:attr="
+                                            data-x=${xPos},
+                                            data-y=${yPos},
+                                            data-peso=${r.pesoKg},
+                                            data-fecha=${r.fecha}"
+                                            class="chart-point">
+                                    <title th:text="${r.pesoKg} + ' kg — ' + ${r.fecha}">
+                                        80 kg
+                                    </title>
+                                    </circle>
+                                </th:block>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="table-responsive mt-4">
+                            <table class="table align-middle mb-0">
+                                <thead>
+                                    <tr class="text-uppercase small text-body-secondary">
+                                        <th scope="col">Fecha</th>
+                                        <th scope="col">Peso (kg)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="r : ${historialPeso}">
+                                        <td th:text="${r.fecha}">2025-01-01</td>
+                                        <td th:text="${r.pesoKg}">80</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section th:if="${historialPeso == null or #lists.isEmpty(historialPeso)}"
+                             class="card border-dashed text-center mt-4 p-4">
+                        <div class="card-body">
+                            <h2 class="h4">Sin datos de peso</h2>
+                            <p class="text-body-secondary mb-0">
+                                Aún no has registrado tu peso.
+                                <a th:href="@{/peso}">Registrar ahora</a>
+                            </p>
+                        </div>
+                    </section>
+                    <section class="mt-5">
+                        <h2 class="h4 mb-2">Pesos levantados por ejercicio</h2>
+                        <p class="text-body-secondary">
+                            Consulta tu evolución por ejercicio en el historial de entrenamientos.
+                        </p>
+                        <a th:href="@{/historial}" class="btn btn-secondary">
+                            Ver historial completo
+                        </a>
+                    </section>
+                </main>
+            </div>
+        </div>
+    <th:block th:replace="~{general/fragmentos :: scripts}"></th:block>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var line = document.getElementById('weightLine');
+            if (!line)
+                return;
+            var points = document.querySelectorAll('.chart-point');
+            if (!points.length)
+                return;
+            var coords = Array.from(points).map(function (p) {
+                return p.getAttribute('data-x') + ',' + p.getAttribute('data-y');
+            });
+            line.setAttribute('points', coords.join(' '));
+        });
+    </script>
+</body>
+</html>

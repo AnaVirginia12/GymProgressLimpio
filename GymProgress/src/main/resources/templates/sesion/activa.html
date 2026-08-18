@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es"
+      data-bs-theme="dark"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head('Entrenamiento activo')}"></head>
+    <body>
+        <div class="d-flex min-vh-100">
+            <aside th:replace="~{general/fragmentos :: sidebar('')}"></aside>
+            <div class="app-content flex-grow-1">
+                <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+                <main class="container-xxl p-4">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+                        <div>
+                            <h1 class="display-6 fw-bold mb-2">Entrenamiento activo</h1>
+                            <p class="text-body-secondary mb-0"
+                               th:text="'Iniciado a las ' + ${#temporals.format(sesion.iniciadaEn, 'HH:mm')}">
+                                Iniciado a las 08:30
+                            </p>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                        <a class="btn btn-secondary text-nowrap"
+                           th:href="@{/ejercicios/ajustar(sesionId=${sesion.id})}">
+                            Ajustar rutina
+                        </a>
+                        <form method="post"
+                              th:action="@{/sesion/{id}/finalizar(id=${sesion.id})}">
+                            <button type="submit" class="btn btn-primary text-nowrap">
+                                Finalizar entrenamiento
+                            </button>
+                        </form>
+                        </div>
+                    </div>
+                    <div th:if="${serieGuardada}" class="alert alert-success" role="alert">
+                        Serie guardada automáticamente.
+                    </div>
+                    <!-- HU — Descanso manual o automático, según ajustes -->
+                    <div th:if="${serieGuardada != null and serieGuardada and !descansoAutomatico}" class="mb-4">
+                        <button type="button" class="btn btn-outline-primary" id="descansoIniciarManual">
+                            Iniciar descanso (<span th:text="${descansoPorDefectoSeg}">90</span> s)
+                        </button>
+                    </div>
+                    <section class="card mt-4 mb-4" id="descansoCard" style="max-width: 420px; display: none;">
+                        <div class="card-body p-4 text-center">
+                            <h2 class="h6 text-uppercase text-body-secondary mb-2">Descanso</h2>
+                            <div class="display-4 fw-bold" id="descansoTiempo">00:00</div>
+                            <div class="d-flex justify-content-center gap-2 mt-3">
+                                <button type="button" class="btn btn-outline-primary btn-sm" id="descansoMas15">
+                                    +15 s
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-sm" id="descansoSaltar">
+                                    Saltar
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                    <section th:if="${!#lists.isEmpty(sesion.series)}"
+                             class="mt-4">
+                        <h2 class="h4 mb-3">Series registradas</h2>
+
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead>
+                                    <tr class="text-uppercase small text-body-secondary">
+                                        <th scope="col">Ejercicio</th>
+                                        <th scope="col">Serie</th>
+                                        <th scope="col">Peso (kg)</th>
+                                        <th scope="col">Reps</th>
+                                        <th scope="col">Fallo</th>
+                                        <th scope="col">Hora</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="s : ${sesion.series}"
+                                        th:classappend="${s.falloMuscular} ? 'table-danger' : ''">
+                                        <td th:text="${s.ejercicioNombre}">Press banca</td>
+                                        <td th:text="${s.numeroSerie}">1</td>
+                                        <td th:text="${s.pesoKg}">80</td>
+                                        <td th:text="${s.repeticiones}">10</td>
+                                        <td>
+                                            <span th:if="${s.falloMuscular}"
+                                                  class="badge rounded-pill bg-danger-subtle text-danger-emphasis">Fallo</span>
+                                            <span th:unless="${s.falloMuscular}"
+                                                  class="text-body-secondary">—</span>
+                                        </td>
+                                        <td th:text="${#temporals.format(s.registradaEn, 'HH:mm')}">08:35</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="card mt-4" style="max-width: 640px;">
+                        <div class="card-body p-4">
+                            <h2 class="h4 mb-4">Registrar serie</h2>
+                            <form method="post"
+                                  th:action="@{/sesion/{id}/serie(id=${sesion.id})}"
+                                  id="serieForm">
+                                <div class="row g-3 mb-3">
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="ejercicioSelect">Ejercicio</label>
+                                        <select id="ejercicioSelect"
+                                                class="form-select"
+                                                name="ejercicioId"
+                                                required
+                                                onchange="actualizarNombreEjercicio(this)">
+                                            <option value="">Selecciona...</option>
+                                            <option th:each="e : ${ejercicios}"
+                                                    th:value="${e.id}"
+                                                    th:text="${e.nombre}"
+                                                    th:attr="data-nombre=${e.nombre}">
+                                                Press banca
+                                            </option>
+                                        </select>
+                                        <input type="hidden" name="ejercicioNombre" id="ejercicioNombre">
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="numeroSerie">N° de serie</label>
+                                        <input id="numeroSerie" type="number" class="form-control"
+                                               name="numeroSerie" min="1" max="20"
+                                               value="1" required>
+                                    </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="pesoKg">Peso (kg)</label>
+                                        <input id="pesoKg" type="number" class="form-control"
+                                               name="pesoKg" step="0.5" min="0"
+                                               placeholder="Ej: 80" required>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="repeticiones">Repeticiones</label>
+                                        <input id="repeticiones" type="number" class="form-control"
+                                               name="repeticiones" min="1" max="100"
+                                               placeholder="Ej: 10" required>
+                                    </div>
+                                </div>
+                                <div class="form-check mb-4">
+                                    <input class="form-check-input" type="checkbox"
+                                           name="falloMuscular" value="true" id="falloCheckbox">
+                                    <label class="form-check-label text-body-secondary" for="falloCheckbox">
+                                        Fallo muscular — agotó el músculo completamente
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    Guardar serie
+                                </button>
+                            </form>
+                        </div>
+                    </section>
+                </main>
+            </div>
+        </div>
+    <th:block th:replace="~{general/fragmentos :: scripts}"></th:block>
+    <script>
+        function actualizarNombreEjercicio(select) {
+            const opt = select.options[select.selectedIndex];
+            document.getElementById('ejercicioNombre').value =
+                    opt.getAttribute('data-nombre') || '';
+        }
+    </script>
+    <script th:inline="javascript">
+        (function () {
+            const descansoAutomatico = /*[[${descansoAutomatico}]]*/ true;
+            const descansoPorDefectoSeg = /*[[${descansoPorDefectoSeg}]]*/ 90;
+            const serieGuardada = /*[[${serieGuardada}]]*/ false;
+
+            const card = document.getElementById('descansoCard');
+            const tiempoEl = document.getElementById('descansoTiempo');
+            const btnManual = document.getElementById('descansoIniciarManual');
+            const btnSaltar = document.getElementById('descansoSaltar');
+            const btnMas15 = document.getElementById('descansoMas15');
+            if (!card || !tiempoEl) {
+                return;
+            }
+
+            let restante = 0;
+            let intervalId = null;
+
+            function formatear(segundos) {
+                const m = Math.floor(segundos / 60).toString().padStart(2, '0');
+                const s = (segundos % 60).toString().padStart(2, '0');
+                return m + ':' + s;
+            }
+
+            function actualizar() {
+                tiempoEl.textContent = formatear(Math.max(restante, 0));
+                if (restante <= 0) {
+                    detener();
+                }
+            }
+
+            function iniciar(segundos) {
+                restante = segundos;
+                card.style.display = '';
+                if (btnManual) {
+                    btnManual.style.display = 'none';
+                }
+                actualizar();
+                clearInterval(intervalId);
+                intervalId = setInterval(function () {
+                    restante -= 1;
+                    actualizar();
+                }, 1000);
+            }
+
+            function detener() {
+                clearInterval(intervalId);
+                card.style.display = 'none';
+            }
+
+            if (btnSaltar) {
+                btnSaltar.addEventListener('click', detener);
+            }
+            if (btnMas15) {
+                btnMas15.addEventListener('click', function () {
+                    restante += 15;
+                    actualizar();
+                });
+            }
+            if (btnManual) {
+                btnManual.addEventListener('click', function () {
+                    iniciar(descansoPorDefectoSeg);
+                });
+            }
+
+            if (serieGuardada && descansoAutomatico) {
+                iniciar(descansoPorDefectoSeg);
+            }
+        })();
+    </script>
+</body>
+</html>

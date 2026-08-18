@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es"
+      data-bs-theme="dark"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head('Registrar peso')}"></head>
+    <body>
+        <div class="d-flex min-vh-100">
+            <aside th:replace="~{general/fragmentos :: sidebar('progreso')}"></aside>
+            <div class="app-content flex-grow-1">
+                <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+                <main class="container-xxl p-4">
+                    <h1 class="display-6 fw-bold mb-2">Registrar peso</h1>
+                    <p class="text-body-secondary">
+                        Lleva el seguimiento de tu peso corporal.
+                    </p>
+                    <div th:if="${mensaje}" class="alert alert-success" role="alert" th:text="${mensaje}"></div>
+                    <!-- HU — Registro periódico: recuerda registrar el peso si pasó una semana -->
+                    <div th:if="${recordatorioPeso}" class="alert alert-warning" role="alert">
+                        Han pasado <span th:text="${diasDesdeUltimo}">7</span> días desde tu último registro.
+                        ¡Es un buen momento para actualizar tu peso!
+                    </div>
+                    <section class="card mt-4" style="max-width: 480px;">
+                        <div class="card-body p-4">
+                            <form method="post" th:action="@{/peso}" id="weightForm">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <span class="text-body-secondary small fw-semibold">Unidad:</span>
+                                    <div class="btn-group" role="group" aria-label="Unidad de peso">
+                                        <input type="radio" class="btn-check" name="unidad" value="kg"
+                                               id="toggleKg" autocomplete="off"
+                                               th:checked="${unidad == 'kg'}">
+                                        <label class="btn btn-outline-primary btn-sm" for="toggleKg">kg</label>
+                                        <input type="radio" class="btn-check" name="unidad" value="lb"
+                                               id="toggleLb" autocomplete="off"
+                                               th:checked="${unidad == 'lb'}">
+                                        <label class="btn btn-outline-primary btn-sm" for="toggleLb">lb</label>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label" for="peso" id="pesoLabel"
+                                           th:text="${unidad == 'lb'} ? 'Peso (lb)' : 'Peso (kg)'">
+                                        Peso (kg)
+                                    </label>
+                                    <input id="peso"
+                                           type="number"
+                                           class="form-control"
+                                           name="peso"
+                                           step="0.1"
+                                           min="1"
+                                           max="999"
+                                           required
+                                           placeholder="Ej: 75.5">
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        Guardar peso
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                    <section th:if="${historial != null and !#lists.isEmpty(historial)}"
+                             class="mt-5">
+                        <h2 class="h4 mb-3">Historial</h2>
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead>
+                                    <tr class="text-uppercase small text-body-secondary">
+                                        <th scope="col">Fecha</th>
+                                        <th scope="col"
+                                            th:text="${unidad == 'lb'} ? 'Peso (lb)' : 'Peso (kg)'">Peso (kg)</th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="registro : ${historial}">
+                                        <td th:text="${registro.fecha}">2024-01-01</td>
+                                        <td th:text="${unidad == 'lb'} ? ${registro.pesoLb} : ${registro.pesoKg}">75.0</td>
+                                        <td class="text-end">
+                                            <form method="post"
+                                                  th:action="@{/peso/{id}/eliminar(id=${registro.id})}"
+                                                  onsubmit="return confirm('¿Eliminar este registro de peso?');">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section th:if="${historial == null or #lists.isEmpty(historial)}"
+                             class="card border-dashed text-center mt-4 p-4">
+                        <div class="card-body">
+                            <h2 class="h4">Sin registros</h2>
+                            <p class="text-body-secondary mb-0">Aún no has registrado tu peso. ¡Empieza hoy!</p>
+                        </div>
+                    </section>
+                </main>
+            </div>
+        </div>
+    <th:block th:replace="~{general/fragmentos :: scripts}"></th:block>
+    <script>
+        (function () {
+            const kgRadio = document.getElementById('toggleKg');
+            const lbRadio = document.getElementById('toggleLb');
+            const label = document.getElementById('pesoLabel');
+            if (!kgRadio || !lbRadio || !label)
+                return;
+
+            function actualizarLabel() {
+                label.textContent = lbRadio.checked ? 'Peso (lb)' : 'Peso (kg)';
+            }
+
+            kgRadio.addEventListener('change', actualizarLabel);
+            lbRadio.addEventListener('change', actualizarLabel);
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es"
+      data-bs-theme="dark"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head('Programas de entrenamiento')}"></head>
+    <body>
+        <div class="d-flex min-vh-100">
+            <aside th:replace="~{general/fragmentos :: sidebar('rutinas')}"></aside>
+            <div class="app-content flex-grow-1">
+                <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+                <main class="container-xxl p-4">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+                        <div>
+                            <h1 class="display-6 fw-bold mb-2">Programas de entrenamiento</h1>
+                            <p class="text-body-secondary mb-0">
+                                Selecciona el enfoque que mejor se adapte a tu objetivo.
+                            </p>
+                        </div>
+                        <a class="btn btn-secondary text-nowrap"
+                           th:href="@{/rutinas}">
+                            Volver a rutinas
+                        </a>
+                    </div>
+                    <div class="alert alert-info d-flex gap-3 align-items-start"
+                         role="alert"
+                         th:if="${totalEjercicios > 0}">
+                        <span class="fs-4">&#9432;</span>
+                        <div>
+                            <strong>Tu rutina actual es de
+                                <span th:text="${#strings.toLowerCase(programaActual)}">hipertrofia</span>
+                                y tiene
+                                <span th:text="${totalEjercicios}">4</span>
+                                <span th:text="${totalEjercicios == 1} ? 'ejercicio' : 'ejercicios'">ejercicios</span>.</strong>
+                            <p class="mb-0">
+                                Si cambias de programa se conservan los mismos ejercicios
+                                (para no perder tu historial de progreso), pero se ajustan
+                                las repeticiones objetivo y el descanso entre series.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row row-cols-1 row-cols-lg-3 g-4">
+                        <div class="col">
+                            <article class="card h-100">
+                                <div class="card-body d-flex flex-column p-4">
+
+                                    <div>
+                                        <span class="badge rounded-pill text-uppercase bg-primary-subtle text-primary-emphasis">
+                                            Fuerza
+                                        </span>
+                                        <h2 class="h4 mt-3 mb-2">Programa de fuerza</h2>
+                                        <p class="text-body-secondary">
+                                            Orientado a mejorar el rendimiento en levantamientos
+                                            pesados con menor cantidad de repeticiones.
+                                        </p>
+                                        <ul class="text-body-secondary">
+                                            <li>3 a 6 repeticiones por serie</li>
+                                            <li>Descansos prolongados</li>
+                                            <li>Énfasis en ejercicios compuestos</li>
+                                        </ul>
+                                    </div>
+                                    <form class="mt-auto d-grid"
+                                          th:action="@{/rutinas/programas/seleccionar}"
+                                          method="post"
+                                          th:attr="onsubmit=${totalEjercicios > 0 and programaActual != 'Fuerza'}
+                                              ? |return confirm('Se ajustarán tus ${totalEjercicios} ejercicios a 5 repeticiones y 180 s de descanso. ¿Continuar?');|
+                                              : null">
+                                        <input type="hidden"
+                                               name="programa"
+                                               value="Fuerza">
+                                        <button type="submit"
+                                                class="btn"
+                                                th:classappend="${programaActual == 'Fuerza'} ? 'btn-success' : 'btn-primary'"
+                                                th:text="${programaActual == 'Fuerza'} ? 'Programa actual' : 'Seleccionar'">
+                                            Seleccionar
+                                        </button>
+                                    </form>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="col">
+                            <article class="card h-100 border-primary">
+                                <div class="card-body d-flex flex-column p-4">
+                                    <div>
+                                        <span class="badge rounded-pill text-uppercase bg-primary-subtle text-primary-emphasis">
+                                            Hipertrofia
+                                        </span>
+                                        <h2 class="h4 mt-3 mb-2">Programa de hipertrofia</h2>
+                                        <p class="text-body-secondary">
+                                            Diseñado para aumentar la masa muscular mediante
+                                            volumen moderado y rangos medios de repeticiones.
+                                        </p>
+                                        <ul class="text-body-secondary">
+                                            <li>8 a 12 repeticiones por serie</li>
+                                            <li>Descansos moderados</li>
+                                            <li>Balance entre volumen e intensidad</li>
+                                        </ul>
+                                    </div>
+                                    <form class="mt-auto d-grid"
+                                          th:action="@{/rutinas/programas/seleccionar}"
+                                          method="post"
+                                          th:attr="onsubmit=${totalEjercicios > 0 and programaActual != 'Hipertrofia'}
+                                              ? |return confirm('Se ajustarán tus ${totalEjercicios} ejercicios a 10 repeticiones y 90 s de descanso. ¿Continuar?');|
+                                              : null">
+                                        <input type="hidden"
+                                               name="programa"
+                                               value="Hipertrofia">
+                                        <button type="submit"
+                                                class="btn"
+                                                th:classappend="${programaActual == 'Hipertrofia'} ? 'btn-success' : 'btn-primary'"
+                                                th:text="${programaActual == 'Hipertrofia'} ? 'Programa actual' : 'Seleccionar'">
+                                            Seleccionar
+                                        </button>
+                                    </form>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="col">
+                            <article class="card h-100">
+                                <div class="card-body d-flex flex-column p-4">
+                                    <div>
+                                        <span class="badge rounded-pill text-uppercase bg-primary-subtle text-primary-emphasis">
+                                            Resistencia
+                                        </span>
+                                        <h2 class="h4 mt-3 mb-2">Programa de resistencia</h2>
+                                        <p class="text-body-secondary">
+                                            Enfocado en mejorar la capacidad de trabajo con
+                                            más repeticiones y descansos breves.
+                                        </p>
+                                        <ul class="text-body-secondary">
+                                            <li>15 a 20 repeticiones por serie</li>
+                                            <li>Descansos cortos</li>
+                                            <li>Mayor volumen total</li>
+                                        </ul>
+                                    </div>
+                                    <form class="mt-auto d-grid"
+                                          th:action="@{/rutinas/programas/seleccionar}"
+                                          method="post"
+                                          th:attr="onsubmit=${totalEjercicios > 0 and programaActual != 'Resistencia'}
+                                              ? |return confirm('Se ajustarán tus ${totalEjercicios} ejercicios a 18 repeticiones y 45 s de descanso. ¿Continuar?');|
+                                              : null">
+                                        <input type="hidden"
+                                               name="programa"
+                                               value="Resistencia">
+                                        <button type="submit"
+                                                class="btn"
+                                                th:classappend="${programaActual == 'Resistencia'} ? 'btn-success' : 'btn-primary'"
+                                                th:text="${programaActual == 'Resistencia'} ? 'Programa actual' : 'Seleccionar'">
+                                            Seleccionar
+                                        </button>
+                                    </form>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    <th:block th:replace="~{general/fragmentos :: scripts}"></th:block>
+</body>
+</html>

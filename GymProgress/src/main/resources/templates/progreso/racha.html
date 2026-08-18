@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es"
+      data-bs-theme="dark"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head('Racha')}"></head>
+    <body>
+        <div class="d-flex min-vh-100">
+            <aside th:replace="~{general/fragmentos :: sidebar('progreso')}"></aside>
+            <div class="app-content flex-grow-1">
+                <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+                <main class="container-xxl p-4">
+                    <h1 class="display-6 fw-bold mb-2">Racha de entrenamiento</h1>
+                    <p class="text-body-secondary">
+                        Días consecutivos que llevas entrenando.
+                    </p>
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 mt-1"
+                         th:if="${racha != null}">
+                        <div class="col">
+                            <div class="card h-100 bg-primary-subtle border-primary-subtle">
+                                <div class="card-body">
+                                    <span class="d-block text-uppercase fw-bold small text-primary-emphasis">
+                                        Racha actual
+                                    </span>
+                                    <strong class="d-block fs-1 fw-bold mt-2"
+                                            th:text="${racha.diasActuales}">0</strong>
+                                    <span class="d-block small text-body-secondary">días</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <span class="d-block text-uppercase fw-bold small text-body-secondary">
+                                        Racha máxima
+                                    </span>
+                                    <strong class="d-block fs-1 fw-bold mt-2"
+                                            th:text="${racha.diasMaximo}">0</strong>
+                                    <span class="d-block small text-body-secondary">días</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col" th:if="${racha.ultimoEntrenamiento != null}">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <span class="d-block text-uppercase fw-bold small text-body-secondary">
+                                        Último entreno
+                                    </span>
+                                    <strong class="d-block fs-1 fw-bold mt-2"
+                                            th:text="${#temporals.format(racha.ultimoEntrenamiento, 'd MMM yyyy', new java.util.Locale('es'))}">
+                                        —
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    <th:block th:replace="~{general/fragmentos :: scripts}"></th:block>
+</body>
+</html>

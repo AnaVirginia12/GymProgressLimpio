@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es"
+      data-bs-theme="dark"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head(${ejercicio.id == null ? 'Nuevo ejercicio' : 'Editar ejercicio'})}"></head>
+    <body>
+        <div class="d-flex min-vh-100">
+            <aside th:replace="~{general/fragmentos :: sidebar('ejercicios')}"></aside>
+            <div class="app-content flex-grow-1">
+                <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+                <main class="container-xxl p-4">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+                        <div>
+                            <h1 class="display-6 fw-bold mb-2"
+                                th:text="${ejercicio.id == null ? 'Nuevo ejercicio' : 'Editar ejercicio'}">
+                                Nuevo ejercicio
+                            </h1>
+                            <p class="text-body-secondary mb-0">Completa la información del ejercicio.</p>
+                        </div>
+                        <a class="btn btn-secondary text-nowrap" th:href="@{/ejercicios}">Volver</a>
+                    </div>
+                    <div class="alert alert-danger" role="alert"
+                         th:if="${error}" th:text="${error}"></div>
+                    <div class="card" style="max-width: 640px;">
+                        <div class="card-body p-4">
+                            <form th:if="${ejercicio.id == null}"
+                                  method="post"
+                                  th:action="@{/ejercicios}"
+                                  th:object="${ejercicio}">
+                                <div class="mb-3">
+                                    <label class="form-label" for="nombreNuevo">Nombre</label>
+                                    <input id="nombreNuevo" type="text" class="form-control"
+                                           th:field="*{nombre}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="gruposNuevo">Grupo muscular</label>
+                                    <div class="dropdown" data-multiselect>
+                                        <button class="btn btn-secondary dropdown-toggle w-100 d-flex justify-content-between align-items-center text-start"
+                                                type="button"
+                                                id="gruposNuevo"
+                                                data-bs-toggle="dropdown"
+                                                data-bs-auto-close="outside"
+                                                aria-expanded="false">
+                                            <span class="text-truncate" data-multiselect-text>
+                                                Selecciona los grupos musculares
+                                            </span>
+                                        </button>
+                                        <ul class="dropdown-menu multiselect-menu w-100 p-2">
+                                            <li th:each="g : ${gruposMusculares}">
+                                                <label class="dropdown-item d-flex align-items-center gap-2 rounded-2">
+                                                    <input class="form-check-input m-0 flex-shrink-0"
+                                                           type="checkbox"
+                                                           name="grupos"
+                                                           th:value="${g}"
+                                                           th:checked="${ejercicio.grupoMuscular != null and ejercicio.grupoMuscular.contains(g)}">
+                                                    <span th:text="${g}">Pecho</span>
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="tipoNuevo">Tipo de entrenamiento</label>
+                                    <select id="tipoNuevo" class="form-select"
+                                            th:field="*{tipoEntrenamiento}" required>
+                                        <option value="">Selecciona un tipo</option>
+                                        <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"></option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="mediaNuevo">URL de imagen o GIF demostrativo</label>
+                                    <input id="mediaNuevo" type="text" class="form-control"
+                                           th:field="*{mediaUrl}" placeholder="https://...">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="descripcionNuevo">Descripción</label>
+                                    <textarea id="descripcionNuevo" class="form-control"
+                                              th:field="*{descripcion}" rows="4"></textarea>
+                                </div>
+                                <div class="form-check form-switch mb-4">
+                                    <input class="form-check-input" type="checkbox"
+                                           id="equipoNuevo" th:field="*{requiereEquipo}">
+                                    <label class="form-check-label" for="equipoNuevo">
+                                        Necesita equipo de gimnasio
+                                        <small class="d-block text-body-secondary">
+                                            Desactívalo si se puede hacer en casa: así aparecerá
+                                            como alternativa cuando no se pueda ir al gimnasio.
+                                        </small>
+                                    </label>
+                                </div>
+                                <fieldset class="border rounded-3 p-3 mb-4">
+                                    <legend class="float-none w-auto px-2 fs-6 fw-bold text-uppercase text-body-secondary">
+                                        Tempo por repetición
+                                    </legend>
+                                    <p class="text-body-secondary small">
+                                        Segundos de cada fase. Déjalo vacío para usar el tempo
+                                        sugerido según el programa.
+                                    </p>
+                                    <div class="row g-2">
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label small" for="excNuevo">Excéntrico</label>
+                                            <input id="excNuevo" type="number" min="0" max="10"
+                                                   class="form-control" th:field="*{tempoExcentrico}">
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label small" for="pabNuevo">Pausa abajo</label>
+                                            <input id="pabNuevo" type="number" min="0" max="10"
+                                                   class="form-control" th:field="*{tempoPausaAbajo}">
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label small" for="conNuevo">Concéntrico</label>
+                                            <input id="conNuevo" type="number" min="0" max="10"
+                                                   class="form-control" th:field="*{tempoConcentrico}">
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label small" for="parNuevo">Pausa arriba</label>
+                                            <input id="parNuevo" type="number" min="0" max="10"
+                                                   class="form-control" th:field="*{tempoPausaArriba}">
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </form>
+                            <form th:unless="${ejercicio.id == null}"
+                                  method="post"
+                                  th:action="@{/ejercicios/{id}(id=${ejercicio.id})}"
+                                  th:object="${ejercicio}">
+                                <div class="mb-3">
+                                    <label class="form-label" for="nombreEditar">Nombre</label>
+                                    <input id="nombreEditar" type="text" class="form-control"
+                                           th:field="*{nombre}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="gruposEditar">Grupo muscular</label>
+                                    <div class="dropdown" data-multiselect>
+                                        <button class="btn btn-secondary dropdown-toggle w-100 d-flex justify-content-between align-items-center text-start"
+                                                type="button"
+                                                id="gruposEditar"
+                                                data-bs-toggle="dropdown"
+                                                data-bs-auto-close="outside"
+                                                aria-expanded="false">
+                                            <span class="text-truncate" data-multiselect-text>
+                                                Selecciona los grupos musculares
+                                            </span>
+                                        </button>
+                                        <ul class="dropdown-menu multiselect-menu w-100 p-2">
+                                            <li th:each="g : ${gruposMusculares}">
+                                                <label class="dropdown-item d-flex align-items-center gap-2 rounded-2">
+                                                    <input class="form-check-input m-0 flex-shrink-0"
+                                                           type="checkbox"
+                                                           name="grupos"
+                                                           th:value="${g}"
+                                                           th:checked="${ejercicio.grupoMuscular != null and ejercicio.grupoMuscular.contains(g)}">
+                                                    <span th:text="${g}">Pecho</span>
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="tipoEditar">Tipo de entrenamiento</label>
+                                    <select id="tipoEditar" class="form-select"
+                                            th:field="*{tipoEntrenamiento}" required>
+                                        <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"></option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="mediaEditar">URL de imagen o GIF demostrativo</label>
+                                    <input id="mediaEditar" type="text" class="form-control"
+                                           th:field="*{mediaUrl}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="descripcionEditar">Descripción</label>
+                                    <textarea id="descripcionEditar" class="form-control"
+                                              th:field="*{descripcion}" rows="4"></textarea>
+                                </div>
+                                <div class="form-check form-switch mb-4">
+                                    <input class="form-check-input" type="checkbox"
+                                           id="equipoEditar" th:field="*{requiereEquipo}">
+                                    <label class="form-check-label" for="equipoEditar">
+                                        Necesita equipo de gimnasio
+                                        <small class="d-block text-body-secondary">
+                                            Desactívalo si se puede hacer en casa: así aparecerá
+                                            como alternativa cuando no se pueda ir al gimnasio.
+                                        </small>
+                                    </label>
+                                </div>
+                                <fieldset class="border rounded-3 p-3 mb-4">
+                                    <legend class="float-none w-auto px-2 fs-6 fw-bold text-uppercase text-body-secondary">
+                                        Tempo por repetición
+                                    </legend>
+                                    <p class="text-body-secondary small">
+                                        Segundos de cada fase. Déjalo vacío para usar el tempo
+                                        sugerido según el programa.
+                                    </p>
+                                    <div class="row g-2">
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label small" for="excEditar">Excéntrico</label>
+                                            <input id="excEditar" type="number" min="0" max="10"
+                                                   class="form-control" th:field="*{tempoExcentrico}">
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label small" for="pabEditar">Pausa abajo</label>
+                                            <input id="pabEditar" type="number" min="0" max="10"
+                                                   class="form-control" th:field="*{tempoPausaAbajo}">
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label small" for="conEditar">Concéntrico</label>
+                                            <input id="conEditar" type="number" min="0" max="10"
+                                                   class="form-control" th:field="*{tempoConcentrico}">
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <label class="form-label small" for="parEditar">Pausa arriba</label>
+                                            <input id="parEditar" type="number" min="0" max="10"
+                                                   class="form-control" th:field="*{tempoPausaArriba}">
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </form>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    <th:block th:replace="~{general/fragmentos :: scripts}"></th:block>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('[data-multiselect]').forEach(function (raiz) {
+
+                var texto = raiz.querySelector('[data-multiselect-text]');
+                var checkboxes = raiz.querySelectorAll('input[type="checkbox"]');
+                var placeholder = texto.textContent.trim();
+
+                function actualizarTexto() {
+                    var seleccionados = [];
+
+                    checkboxes.forEach(function (checkbox) {
+                        if (checkbox.checked) {
+                            seleccionados.push(checkbox.nextElementSibling.textContent.trim());
+                        }
+                    });
+
+                    texto.textContent = seleccionados.length > 0
+                            ? seleccionados.join(', ')
+                            : placeholder;
+                }
+                
+                checkboxes.forEach(function (checkbox) {
+                    checkbox.addEventListener('change', actualizarTexto);
+                });
+
+                actualizarTexto();
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es"
+      data-bs-theme="dark"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{general/fragmentos :: head('Resumen del entrenamiento')}"></head>
+    <body>
+        <div class="d-flex min-vh-100">
+            <aside th:replace="~{general/fragmentos :: sidebar('historial')}"></aside>
+            <div class="app-content flex-grow-1">
+                <header th:replace="~{general/fragmentos :: mobileHeader}"></header>
+                <main class="container-xxl p-4">
+                    <h1 class="display-6 fw-bold mb-2">¡Entrenamiento completado!</h1>
+                    <p class="text-body-secondary">
+                        Aquí tienes el resumen de tu sesión de hoy.
+                    </p>
+                    <div class="row row-cols-1 row-cols-md-3 g-3 mt-1">
+                        <div class="col">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <span class="d-block text-uppercase fw-bold small text-body-secondary">
+                                        Volumen total
+                                    </span>
+                                    <strong class="d-block fs-2 fw-bold mt-2"
+                                            th:text="${volumenTotal} + ' kg'">
+                                        2 400 kg
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <span class="d-block text-uppercase fw-bold small text-body-secondary">
+                                        Duración
+                                    </span>
+                                    <strong class="d-block fs-2 fw-bold mt-2"
+                                            th:text="${duracionMinutos} + ' min'">
+                                        55 min
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <span class="d-block text-uppercase fw-bold small text-body-secondary">
+                                        Series completadas
+                                    </span>
+                                    <strong class="d-block fs-2 fw-bold mt-2"
+                                            th:text="${totalSeries}">
+                                        12
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <section th:if="${prs != null and !prs.isEmpty()}"
+                             class="mt-5">
+                        <h2 class="h4 mb-1">Récords personales</h2>
+                        <p class="text-body-secondary">¡Superaste tu mejor marca en estos ejercicios!</p>
+                        <div class="d-flex flex-wrap gap-3">
+                            <div th:each="pr : ${prs}"
+                                 class="card bg-primary-subtle border-primary-subtle">
+                                <div class="card-body py-3 px-4">
+                                    <strong class="d-block" th:text="${pr.key}">Press banca</strong>
+                                    <span class="d-block fs-5 fw-bold text-primary-emphasis"
+                                          th:text="${pr.value} + ' kg'">100 kg</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section th:if="${sesion != null and !#lists.isEmpty(sesion.series)}"
+                             class="mt-5">
+                        <h2 class="h4 mb-3">Detalle de series</h2>
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead>
+                                    <tr class="text-uppercase small text-body-secondary">
+                                        <th scope="col">Ejercicio</th>
+                                        <th scope="col">Serie</th>
+                                        <th scope="col">Peso (kg)</th>
+                                        <th scope="col">Reps</th>
+                                        <th scope="col">Volumen</th>
+                                        <th scope="col">Fallo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="s : ${sesion.series}"
+                                        th:classappend="${s.falloMuscular} ? 'table-danger' : ''">
+                                        <td th:text="${s.ejercicioNombre}">Press banca</td>
+                                        <td th:text="${s.numeroSerie}">1</td>
+                                        <td th:text="${s.pesoKg}">80</td>
+                                        <td th:text="${s.repeticiones}">10</td>
+                                        <td th:text="${s.volumen} + ' kg'">800 kg</td>
+                                        <td>
+                                            <span th:if="${s.falloMuscular}"
+                                                  class="badge rounded-pill bg-danger-subtle text-danger-emphasis">Fallo</span>
+                                            <span th:unless="${s.falloMuscular}"
+                                                  class="text-body-secondary">—</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    <section class="mt-5" th:if="${cambios != null and !#lists.isEmpty(cambios)}">
+                        <h2 class="h4 mb-3">Ajustes de la rutina</h2>
+                        <div class="vstack gap-2">
+                            <div class="d-flex flex-wrap align-items-center gap-2 border rounded-3 p-3"
+                                 th:each="c : ${cambios}">
+                                <span class="badge rounded-pill bg-danger-subtle text-danger-emphasis"
+                                      th:if="${c.esOmision()}">Omitido</span>
+                                <span class="badge rounded-pill bg-primary-subtle text-primary-emphasis"
+                                      th:unless="${c.esOmision()}">Sustituido</span>
+                                <strong th:text="${c.ejercicioOriginalNombre}">Press banca</strong>
+                                <span class="text-body-secondary" th:unless="${c.esOmision()}">
+                                    por <strong class="text-body"
+                                                th:text="${c.ejercicioNuevoNombre}">Flexiones</strong>
+                                </span>
+                                <span class="text-body-secondary ms-auto"
+                                      th:if="${c.esOmision()}"
+                                      th:text="${c.seriesAfectadas} + ' series sin hacer'">
+                                    4 series sin hacer
+                                </span>
+                            </div>
+                        </div>
+                    </section>
+                    <div class="d-flex flex-wrap gap-3 mt-5">
+                        <a th:href="@{/}" class="btn btn-secondary">Ir al inicio</a>
+                        <a th:href="@{/historial}" class="btn btn-primary">Ver historial</a>
+                    </div>
+                </main>
+            </div>
+        </div>
+    <th:block th:replace="~{general/fragmentos :: scripts}"></th:block>
+</body>
+</html>
