@@ -96,7 +96,7 @@ public class RutinaController {
         return "redirect:/rutinas";
     }
 
- /**
+     /**
      * Muestra la rutina de hoy, junto con:
      * -la racha de días entrenados 
      * - si toca semana de descarga o no
@@ -156,11 +156,12 @@ public class RutinaController {
 
         return "rutina/hoy";
     }
-
+    
      /**
-     * HU22 — Revisa si el usuario ya entrenó hoy, comparando la
+     * Revisa si el usuario ya entrenó hoy, comparando la
      * fecha del último entrenamiento con la fecha de hoy.
-     */    private boolean entrenoHoy(Racha racha) {
+     */ 
+        private boolean entrenoHoy(Racha racha) {
         return racha != null
                 && racha.getUltimoEntrenamiento() != null
                 && racha.getUltimoEntrenamiento().isEqual(LocalDate.now());

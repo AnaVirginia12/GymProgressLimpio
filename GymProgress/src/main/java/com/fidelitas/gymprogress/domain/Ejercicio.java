@@ -16,7 +16,7 @@ public class Ejercicio {
     @Column(length = 500)
     private String descripcion;
 
-    //Grupo muscular principal: Pecho, Espalda, Piernas, Hombros, Bíceps, etc. */
+    //Grupo muscular principal: Pecho, Espalda, Piernas, Hombros, Bíceps, etc
     @Column(name = "grupo_muscular", nullable = false, length = 80)
     private String grupoMuscular;
 
