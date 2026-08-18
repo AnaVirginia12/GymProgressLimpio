@@ -9,13 +9,13 @@ import java.util.List;
  * Representa una sesión de entrenamiento (un día de gimnasio).
  * Se crea al "Iniciar rutina" y se cierra al finalizarla.
  */
-@Entity
-@Table(name = "sesion")
+@Entity //convierte esto de una clase de java común en una tabla
+@Table(name = "sesion") //fija el nombre exacto de la tabla
 public class Sesion {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id //marca la llave primaria. toda @Entity necesita una
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //IDENTITY significa "el número lo pone mysql, no java", cuando un usuario nuevo se hace, se manda en null el id, mysql le asigna el siguiente número libre y lo devuelve
+    private Long id; //Long de objeto
 
     @Column(name = "usuario_id", nullable = false)
     private Long usuarioId;

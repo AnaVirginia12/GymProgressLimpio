@@ -8,22 +8,30 @@ import java.time.LocalDateTime;
  * (correo, contraseña) y su perfil de entrenamiento (objetivo,
  * nivel, días disponibles, etc.).
  */
-@Entity
-@Table(name = "usuario")
+@Entity //convierte esto de una clase de java común en una tabla
+@Table(name = "usuario") //fija el nombre exacto de la tabla
 public class Usuario {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id //marca la llave primaria. toda @Entity necesita una 
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //IDENTITY significa "el número lo pone mysql, no java", cuando un usuario nuevo se hace, se manda en null el id, mysql le asigna el siguiente número libre y lo devuelve
+    private Long id; //Long de objeto
 
-    @Column(nullable = false, unique = true, length = 180)
+    @Column(nullable = false, unique = true, length = 180) //nullable = false: No se puede guardar un usuario sin correo. unique = true: crea un índice único, dos personas no se pueden registrar con el mismo correo
     private String correo;
+    /**
+     * 'UsuarioService' igual comprueba a mano si el correo ya existe, antes de
+     * intentar guardar. Eso es para poder mostrar un mensaje bonito ("Ese
+     * correo ya está registrado") en vez de dejar que explote una excepción fea
+     * de la base. Las dos defensas se complementan: la de Java da buen mensaje,
+     * la de la base garantiza que no pase ni aunque dos personas se registren
+     * en el mismo milisegundo
+     */
 
-    @Column(nullable = false, length = 255)
-    private String password;
+    @Column(nullable = false, length = 255) //con 255 carecteres porque está pensada para que quepa una contraseña cifrada
+    private String password; //contraseña
 
     @Column(nullable = false, length = 100)
-    private String nombre;
+    private String nombre; //nombre de usuario
 
     // URL o path relativo de la foto de perfil 
     @Column(name = "foto_url", length = 500)
@@ -53,21 +61,9 @@ public class Usuario {
     @Column(length = 500)
     private String lesiones;
 
-    //Preferencia de unidad: kg o lb
+    //Preferencia de unidad: kg o lb 
     @Column(name = "unidad_peso", length = 2, nullable = false)
     private String unidadPeso = "kg";
-
-    //Preferencia de apariencia: dark o light (valores de data-bs-theme)
-    @Column(name = "tema", length = 10, nullable = false)
-    private String tema = "dark";
-
-    //Si el descanso entre series inicia solo al guardar una serie, o el usuario lo inicia manualmente
-    @Column(name = "descanso_automatico", nullable = false)
-    private Boolean descansoAutomatico = true;
-
-    //Duración por defecto (segundos) del temporizador de descanso
-    @Column(name = "descanso_por_defecto_seg", nullable = false)
-    private Integer descansoPorDefectoSeg = 90;
 
     @Column(name = "creado_en", nullable = false)
     private LocalDateTime creadoEn = LocalDateTime.now();
@@ -76,9 +72,11 @@ public class Usuario {
     @Column(name = "token_sesion", length = 64, unique = true)
     private String tokenSesion;
 
+    //constructor vacío
     public Usuario() {
     }
 
+    //setters n getters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -115,18 +113,16 @@ public class Usuario {
     public String getUnidadPeso() { return unidadPeso; }
     public void setUnidadPeso(String unidadPeso) { this.unidadPeso = unidadPeso; }
 
-    public String getTema() { return tema; }
-    public void setTema(String tema) { this.tema = tema; }
-
-    public Boolean getDescansoAutomatico() { return descansoAutomatico; }
-    public void setDescansoAutomatico(Boolean descansoAutomatico) { this.descansoAutomatico = descansoAutomatico; }
-
-    public Integer getDescansoPorDefectoSeg() { return descansoPorDefectoSeg; }
-    public void setDescansoPorDefectoSeg(Integer descansoPorDefectoSeg) { this.descansoPorDefectoSeg = descansoPorDefectoSeg; }
-
     public LocalDateTime getCreadoEn() { return creadoEn; }
     public void setCreadoEn(LocalDateTime creadoEn) { this.creadoEn = creadoEn; }
 
     public String getTokenSesion() { return tokenSesion; }
     public void setTokenSesion(String tokenSesion) { this.tokenSesion = tokenSesion; }
 }
+
+/**
+ * esta clase es una entidad, o sea el
+ * espejo en Java de una tabla. No tiene lógica: solo datos y sus accesos.
+ * Las reglas de negocio (validar el correo, comprobar la contraseña) están
+ * en 'UsuarioService', no acá. Esa separación es a propósito
+ */
