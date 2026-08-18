@@ -65,11 +65,30 @@ public class RutinaController {
 
     //Muestra la pantalla para poder elegir un programa de entrenamiento
     @GetMapping("/programas")
-    public String programas(HttpSession session) {
+    public String programas(HttpSession session, Model model) {
         Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
         if (usuarioId == null) {
             return "redirect:/login";
         }
+
+        /*
+         * La pantalla necesita saber cuál es el programa actual y cuántos
+         * ejercicios tiene la rutina, para avisar antes de cambiarlo que
+         * se van a reajustar las repeticiones y los descansos.
+         */
+        Rutina rutina = rutinaService.obtenerRutinaActiva(usuarioId);
+
+        model.addAttribute(
+                "programaActual",
+                rutina != null ? rutina.getPrograma() : null
+        );
+
+        model.addAttribute(
+                "totalEjercicios",
+                rutina != null && rutina.getEjercicios() != null
+                        ? rutina.getEjercicios().size()
+                        : 0
+        );
 
         return "rutina/programas";
     }
@@ -86,19 +105,40 @@ public class RutinaController {
             return "redirect:/login";
         }
 
-        rutinaService.seleccionarPrograma(usuarioId, programa);
+        RutinaService.ResultadoPrograma resultado =
+                rutinaService.seleccionarPrograma(usuarioId, programa);
 
-        redirectAttributes.addFlashAttribute(
-                "mensaje",
-                "Programa seleccionado correctamente."
-        );
+        /*
+         * Si el cambio de programa reajustó ejercicios se le dice al
+         * usuario, para que no le extrañe ver otras repeticiones.
+         */
+        int ajustados = resultado.ejerciciosAjustados();
+
+        if (ajustados > 0) {
+            RutinaService.ParametrosPrograma parametros =
+                    RutinaService.parametrosDe(programa);
+
+            redirectAttributes.addFlashAttribute(
+                    "mensaje",
+                    "Programa cambiado a " + programa.toLowerCase() + ". Se ajustaron "
+                            + ajustados
+                            + (ajustados == 1 ? " ejercicio a " : " ejercicios a ")
+                            + parametros.repsObjetivo() + " repeticiones y "
+                            + parametros.descansoSeg() + " s de descanso."
+            );
+        } else {
+            redirectAttributes.addFlashAttribute(
+                    "mensaje",
+                    "Programa seleccionado correctamente."
+            );
+        }
 
         return "redirect:/rutinas";
     }
 
-     /**
+    /**
      * Muestra la rutina de hoy, junto con:
-     * -la racha de días entrenados 
+     * - la racha de días entrenados
      * - si toca semana de descarga o no
      * - el catálogo de ejercicios para poder agregarlos a la rutina
      */
@@ -154,14 +194,24 @@ public class RutinaController {
         }
         model.addAttribute("seriesAjustadas", seriesAjustadas);
 
+        /*
+         * Valores que el formulario de "agregar ejercicio" propone por
+         * defecto, según el programa de la rutina.
+         */
+        RutinaService.ParametrosPrograma parametros = RutinaService.parametrosDe(
+                rutina != null ? rutina.getPrograma() : null
+        );
+        model.addAttribute("repsPrograma", parametros.repsObjetivo());
+        model.addAttribute("descansoPrograma", parametros.descansoSeg());
+
         return "rutina/hoy";
     }
-    
-     /**
+
+    /**
      * Revisa si el usuario ya entrenó hoy, comparando la
      * fecha del último entrenamiento con la fecha de hoy.
-     */ 
-        private boolean entrenoHoy(Racha racha) {
+     */
+    private boolean entrenoHoy(Racha racha) {
         return racha != null
                 && racha.getUltimoEntrenamiento() != null
                 && racha.getUltimoEntrenamiento().isEqual(LocalDate.now());

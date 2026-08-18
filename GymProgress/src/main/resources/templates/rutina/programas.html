@@ -21,6 +21,23 @@
                             Volver a rutinas
                         </a>
                     </div>
+                    <div class="alert alert-info d-flex gap-3 align-items-start"
+                         role="alert"
+                         th:if="${totalEjercicios > 0}">
+                        <span class="fs-4">&#9432;</span>
+                        <div>
+                            <strong>Tu rutina actual es de
+                                <span th:text="${#strings.toLowerCase(programaActual)}">hipertrofia</span>
+                                y tiene
+                                <span th:text="${totalEjercicios}">4</span>
+                                <span th:text="${totalEjercicios == 1} ? 'ejercicio' : 'ejercicios'">ejercicios</span>.</strong>
+                            <p class="mb-0">
+                                Si cambias de programa se conservan los mismos ejercicios
+                                (para no perder tu historial de progreso), pero se ajustan
+                                las repeticiones objetivo y el descanso entre series.
+                            </p>
+                        </div>
+                    </div>
                     <div class="row row-cols-1 row-cols-lg-3 g-4">
                         <div class="col">
                             <article class="card h-100">
@@ -43,12 +60,17 @@
                                     </div>
                                     <form class="mt-auto d-grid"
                                           th:action="@{/rutinas/programas/seleccionar}"
-                                          method="post">
+                                          method="post"
+                                          th:attr="onsubmit=${totalEjercicios > 0 and programaActual != 'Fuerza'}
+                                              ? |return confirm('Se ajustarán tus ${totalEjercicios} ejercicios a 5 repeticiones y 180 s de descanso. ¿Continuar?');|
+                                              : null">
                                         <input type="hidden"
                                                name="programa"
                                                value="Fuerza">
                                         <button type="submit"
-                                                class="btn btn-primary">
+                                                class="btn"
+                                                th:classappend="${programaActual == 'Fuerza'} ? 'btn-success' : 'btn-primary'"
+                                                th:text="${programaActual == 'Fuerza'} ? 'Programa actual' : 'Seleccionar'">
                                             Seleccionar
                                         </button>
                                     </form>
@@ -75,12 +97,17 @@
                                     </div>
                                     <form class="mt-auto d-grid"
                                           th:action="@{/rutinas/programas/seleccionar}"
-                                          method="post">
+                                          method="post"
+                                          th:attr="onsubmit=${totalEjercicios > 0 and programaActual != 'Hipertrofia'}
+                                              ? |return confirm('Se ajustarán tus ${totalEjercicios} ejercicios a 10 repeticiones y 90 s de descanso. ¿Continuar?');|
+                                              : null">
                                         <input type="hidden"
                                                name="programa"
                                                value="Hipertrofia">
                                         <button type="submit"
-                                                class="btn btn-primary">
+                                                class="btn"
+                                                th:classappend="${programaActual == 'Hipertrofia'} ? 'btn-success' : 'btn-primary'"
+                                                th:text="${programaActual == 'Hipertrofia'} ? 'Programa actual' : 'Seleccionar'">
                                             Seleccionar
                                         </button>
                                     </form>
@@ -107,12 +134,17 @@
                                     </div>
                                     <form class="mt-auto d-grid"
                                           th:action="@{/rutinas/programas/seleccionar}"
-                                          method="post">
+                                          method="post"
+                                          th:attr="onsubmit=${totalEjercicios > 0 and programaActual != 'Resistencia'}
+                                              ? |return confirm('Se ajustarán tus ${totalEjercicios} ejercicios a 18 repeticiones y 45 s de descanso. ¿Continuar?');|
+                                              : null">
                                         <input type="hidden"
                                                name="programa"
                                                value="Resistencia">
                                         <button type="submit"
-                                                class="btn btn-primary">
+                                                class="btn"
+                                                th:classappend="${programaActual == 'Resistencia'} ? 'btn-success' : 'btn-primary'"
+                                                th:text="${programaActual == 'Resistencia'} ? 'Programa actual' : 'Seleccionar'">
                                             Seleccionar
                                         </button>
                                     </form>
