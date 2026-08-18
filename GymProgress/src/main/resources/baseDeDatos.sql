@@ -130,9 +130,12 @@ create table sesion (
 ) engine=InnoDB;
 
 create table usuario (
+    descanso_automatico bit not null default true,
+    descanso_por_defecto_seg integer not null default 90,
     dias_semana integer,
     minutos_sesion integer,
     unidad_peso varchar(2) not null,
+    tema varchar(10) not null default 'dark',
     creado_en datetime(6) not null,
     id bigint not null auto_increment,
     nivel varchar(50),
@@ -174,14 +177,15 @@ ALTER TABLE rutina_ejercicio ADD CONSTRAINT fk_rutejer_ejercicio
 -- 2. USUARIOS   (contraseña de ambos: 123456)
 
 INSERT INTO usuario
-    (id, nombre, correo, password, unidad_peso, creado_en, objetivo,
+    (id, nombre, correo, password, unidad_peso, tema, descanso_automatico,
+     descanso_por_defecto_seg, creado_en, objetivo,
      nivel, dias_semana, minutos_sesion, equipamiento, lesiones,
      foto_url, token_sesion)
 VALUES
-    (1, 'Katalina Zúñiga', 'kata@gmail.com', '123456', 'kg',
+    (1, 'Katalina Zúñiga', 'kata@gmail.com', '123456', 'kg', 'dark', 1, 90,
      DATE_SUB(NOW(), INTERVAL 60 DAY), 'Hipertrofia', 'Intermedio', 4, 60,
      'Gimnasio', NULL, NULL, NULL),
-    (2, 'Ana Virginia Arias', 'ana@gmail.com', '123456', 'kg',
+    (2, 'Ana Virginia Arias', 'ana@gmail.com', '123456', 'kg', 'light', 1, 90,
      DATE_SUB(NOW(), INTERVAL 45 DAY), 'Fuerza', 'Avanzado', 5, 75,
      'Gimnasio', 'Molestia leve en el hombro derecho', NULL, NULL);
 

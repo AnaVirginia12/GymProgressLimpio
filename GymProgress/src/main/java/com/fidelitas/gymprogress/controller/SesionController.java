@@ -1,10 +1,12 @@
 package com.fidelitas.gymprogress.controller;
 
 import com.fidelitas.gymprogress.domain.Ejercicio;
+import com.fidelitas.gymprogress.domain.Usuario;
 import com.fidelitas.gymprogress.service.AjusteRutinaService;
 import com.fidelitas.gymprogress.service.EjercicioService;
 import com.fidelitas.gymprogress.service.SesionService;
 import com.fidelitas.gymprogress.service.RachaService;
+import com.fidelitas.gymprogress.service.UsuarioService;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
@@ -29,17 +31,20 @@ public class SesionController {
     private final EjercicioService ejercicioService;
     private final RachaService rachaService;
     private final AjusteRutinaService ajusteRutinaService;
+    private final UsuarioService usuarioService;
 
     public SesionController(
             SesionService sesionService,
             EjercicioService ejercicioService,
             RachaService rachaService,
-            AjusteRutinaService ajusteRutinaService
+            AjusteRutinaService ajusteRutinaService,
+            UsuarioService usuarioService
     ) {
         this.sesionService = sesionService;
         this.ejercicioService = ejercicioService;
         this.rachaService = rachaService;
         this.ajusteRutinaService = ajusteRutinaService;
+        this.usuarioService = usuarioService;
     }
 
  /**
@@ -80,6 +85,19 @@ public class SesionController {
         List<Ejercicio> ejercicios = ejercicioService.listar();
         model.addAttribute("sesion", sesion.get());
         model.addAttribute("ejercicios", ejercicios);
+
+        // HU — Descanso manual o automático según la preferencia guardada en ajustes.
+        Usuario usuario = usuarioService.buscarPorId(usuarioId).orElse(null);
+        model.addAttribute(
+                "descansoAutomatico",
+                usuario == null || usuario.getDescansoAutomatico() == null
+                        || usuario.getDescansoAutomatico()
+        );
+        model.addAttribute(
+                "descansoPorDefectoSeg",
+                usuario != null && usuario.getDescansoPorDefectoSeg() != null
+                        ? usuario.getDescansoPorDefectoSeg() : 90
+        );
         return "sesion/activa";
     }
 

@@ -76,6 +76,15 @@ public class UsuarioService {
         if (datosNuevos.getUnidadPeso() != null) {
             u.setUnidadPeso(datosNuevos.getUnidadPeso());
         }
+        if (datosNuevos.getTema() != null) {
+            u.setTema(datosNuevos.getTema());
+        }
+        if (datosNuevos.getDescansoAutomatico() != null) {
+            u.setDescansoAutomatico(datosNuevos.getDescansoAutomatico());
+        }
+        if (datosNuevos.getDescansoPorDefectoSeg() != null) {
+            u.setDescansoPorDefectoSeg(datosNuevos.getDescansoPorDefectoSeg());
+        }
 
         return usuarioRepository.save(u);
     }

@@ -11,14 +11,57 @@
                 <main class="container-xxl p-4">
                     <h1 class="display-6 fw-bold mb-2">Configuración</h1>
                     <p class="text-body-secondary">
-                        En proceso
+                        Personaliza la apariencia y el comportamiento de tus entrenamientos.
                     </p>
-                    <section class="card border-dashed text-center mt-4 p-4">
-                        <div class="card-body">
-                            <h2 class="h4">Vista en construcción</h2>
-                            <p class="text-body-secondary mb-0">
-                                En proceso
+                    <div th:if="${mensaje}" class="alert alert-success" role="alert" th:text="${mensaje}"></div>
+
+                    <section class="card mt-4" style="max-width: 640px;" th:if="${usuario != null}">
+                        <div class="card-body p-4">
+                            <h2 class="fs-6 fw-bold text-uppercase text-body-secondary mb-3">
+                                Apariencia
+                            </h2>
+                            <p class="text-body-secondary small mb-2">
+                                Cambia entre modo oscuro y modo claro. También puedes usar el
+                                interruptor de la esquina superior derecha.
                             </p>
+                            <div th:replace="~{general/fragmentos :: themeSwitch}"></div>
+                        </div>
+                    </section>
+
+                    <section class="card mt-4" style="max-width: 640px;" th:if="${usuario != null}">
+                        <div class="card-body p-4">
+                            <h2 class="fs-6 fw-bold text-uppercase text-body-secondary mb-3">
+                                Descanso entre series
+                            </h2>
+                            <form method="post" th:action="@{/configuracion/descanso}" th:object="${usuario}">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio"
+                                           th:field="*{descansoAutomatico}" value="true" id="descansoAuto">
+                                    <label class="form-check-label" for="descansoAuto">
+                                        Automático — el temporizador inicia solo al guardar una serie
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio"
+                                           th:field="*{descansoAutomatico}" value="false" id="descansoManual">
+                                    <label class="form-check-label" for="descansoManual">
+                                        Manual — yo decido cuándo iniciar el descanso
+                                    </label>
+                                </div>
+                                <div class="mb-4" style="max-width: 220px;">
+                                    <label class="form-label" for="descansoPorDefectoSeg">
+                                        Duración por defecto (segundos)
+                                    </label>
+                                    <input id="descansoPorDefectoSeg"
+                                           type="number"
+                                           class="form-control"
+                                           th:field="*{descansoPorDefectoSeg}"
+                                           min="15" max="600" step="5" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    Guardar preferencias
+                                </button>
+                            </form>
                         </div>
                     </section>
                 </main>

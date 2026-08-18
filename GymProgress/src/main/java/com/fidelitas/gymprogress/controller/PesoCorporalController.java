@@ -52,6 +52,12 @@ public class PesoCorporalController {
 
         model.addAttribute("unidad", unidad);
         model.addAttribute("historial", historial);
+
+        // HU — Registro periódico: recuerda al usuario si lleva tiempo sin pesarse.
+        Long diasDesdeUltimo = pesoCorporalService.diasDesdeUltimoRegistro(usuarioId);
+        model.addAttribute("diasDesdeUltimo", diasDesdeUltimo);
+        model.addAttribute("recordatorioPeso", diasDesdeUltimo != null && diasDesdeUltimo >= 7);
+
         return "progreso/peso";
     }
 
@@ -80,6 +86,27 @@ public class PesoCorporalController {
         });
 
         redirectAttributes.addFlashAttribute("mensaje", "Peso registrado correctamente.");
+        return "redirect:/peso";
+    }
+
+    /**
+     * Elimina un registro de peso del historial (por ejemplo, si se
+     * ingresó por error).
+     */
+    @PostMapping("/{id}/eliminar")
+    public String eliminarPeso(
+            @PathVariable Long id,
+            HttpSession session,
+            RedirectAttributes redirectAttributes
+    ) {
+        Long usuarioId = (Long) session.getAttribute(SESION_USUARIO_ID);
+        if (usuarioId == null) {
+            return "redirect:/login";
+        }
+
+        pesoCorporalService.eliminar(usuarioId, id);
+
+        redirectAttributes.addFlashAttribute("mensaje", "Registro eliminado.");
         return "redirect:/peso";
     }
 }

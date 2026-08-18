@@ -72,6 +72,58 @@
     --bs-btn-active-color: #f5f5f7;
 }
 
+/* Modo claro — misma identidad negro/morado sobre fondo claro */
+[data-bs-theme="light"] {
+    --bs-body-bg: #f6f4fc;
+    --bs-body-color: #14121a;
+    --bs-emphasis-color: #0e0e11;
+    --bs-secondary-color: #5b5768;
+    --bs-tertiary-bg: #ffffff;
+    --bs-tertiary-color: #5b5768;
+    --bs-border-color: #e2dcf5;
+    --bs-border-color-translucent: #e2dcf5;
+
+    --bs-primary: #7c3aed;
+    --bs-primary-rgb: 124, 58, 237;
+    --bs-primary-bg-subtle: rgba(124, 58, 237, 0.12);
+    --bs-primary-border-subtle: rgba(124, 58, 237, 0.35);
+    --bs-primary-text-emphasis: #5b21b6;
+
+    --bs-link-color: #6d28d9;
+    --bs-link-color-rgb: 109, 40, 217;
+    --bs-link-hover-color: #5b21b6;
+    --bs-link-hover-color-rgb: 91, 33, 182;
+}
+
+[data-bs-theme="light"] .card {
+    --bs-card-bg: #ffffff;
+}
+
+[data-bs-theme="light"] .btn-secondary {
+    --bs-btn-bg: #ffffff;
+    --bs-btn-border-color: #e2dcf5;
+    --bs-btn-color: #14121a;
+    --bs-btn-hover-bg: #f0ebfc;
+    --bs-btn-hover-border-color: #d6c9f7;
+    --bs-btn-hover-color: #14121a;
+    --bs-btn-active-bg: #ede4fb;
+    --bs-btn-active-border-color: #d6c9f7;
+    --bs-btn-active-color: #14121a;
+}
+
+[data-bs-theme="light"] .today-card {
+    background-image: linear-gradient(
+        135deg,
+        rgba(124, 58, 237, 0.16),
+        rgba(255, 255, 255, 0.7)
+    );
+    border-color: rgba(124, 58, 237, 0.25);
+}
+
+[data-bs-theme="light"] .sidebar .nav-link:hover {
+    color: #fff;
+}
+
 .form-control:focus,
 .form-select:focus,
 .form-check-input:focus,
@@ -175,4 +227,14 @@
 
 .chart-point:hover {
     r: 6;
+}
+
+/* Slider de modo oscuro/claro */
+.theme-switch .form-check-input {
+    width: 2.5em;
+    cursor: pointer;
+}
+
+.theme-toggle-desktop {
+    z-index: 1040;
 }

@@ -14,6 +14,11 @@
                         Lleva el seguimiento de tu peso corporal.
                     </p>
                     <div th:if="${mensaje}" class="alert alert-success" role="alert" th:text="${mensaje}"></div>
+                    <!-- HU — Registro periódico: recuerda registrar el peso si pasó una semana -->
+                    <div th:if="${recordatorioPeso}" class="alert alert-warning" role="alert">
+                        Han pasado <span th:text="${diasDesdeUltimo}">7</span> días desde tu último registro.
+                        ¡Es un buen momento para actualizar tu peso!
+                    </div>
                     <section class="card mt-4" style="max-width: 480px;">
                         <div class="card-body p-4">
                             <form method="post" th:action="@{/peso}" id="weightForm">
@@ -63,12 +68,22 @@
                                         <th scope="col">Fecha</th>
                                         <th scope="col"
                                             th:text="${unidad == 'lb'} ? 'Peso (lb)' : 'Peso (kg)'">Peso (kg)</th>
+                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr th:each="registro : ${historial}">
                                         <td th:text="${registro.fecha}">2024-01-01</td>
                                         <td th:text="${unidad == 'lb'} ? ${registro.pesoLb} : ${registro.pesoKg}">75.0</td>
+                                        <td class="text-end">
+                                            <form method="post"
+                                                  th:action="@{/peso/{id}/eliminar(id=${registro.id})}"
+                                                  onsubmit="return confirm('¿Eliminar este registro de peso?');">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>

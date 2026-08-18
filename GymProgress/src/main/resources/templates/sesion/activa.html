@@ -33,6 +33,26 @@
                     <div th:if="${serieGuardada}" class="alert alert-success" role="alert">
                         Serie guardada automáticamente.
                     </div>
+                    <!-- HU — Descanso manual o automático, según ajustes -->
+                    <div th:if="${serieGuardada != null and serieGuardada and !descansoAutomatico}" class="mb-4">
+                        <button type="button" class="btn btn-outline-primary" id="descansoIniciarManual">
+                            Iniciar descanso (<span th:text="${descansoPorDefectoSeg}">90</span> s)
+                        </button>
+                    </div>
+                    <section class="card mt-4 mb-4" id="descansoCard" style="max-width: 420px; display: none;">
+                        <div class="card-body p-4 text-center">
+                            <h2 class="h6 text-uppercase text-body-secondary mb-2">Descanso</h2>
+                            <div class="display-4 fw-bold" id="descansoTiempo">00:00</div>
+                            <div class="d-flex justify-content-center gap-2 mt-3">
+                                <button type="button" class="btn btn-outline-primary btn-sm" id="descansoMas15">
+                                    +15 s
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-sm" id="descansoSaltar">
+                                    Saltar
+                                </button>
+                            </div>
+                        </div>
+                    </section>
                     <section th:if="${!#lists.isEmpty(sesion.series)}"
                              class="mt-4">
                         <h2 class="h4 mb-3">Series registradas</h2>
@@ -136,6 +156,76 @@
             document.getElementById('ejercicioNombre').value =
                     opt.getAttribute('data-nombre') || '';
         }
+    </script>
+    <script th:inline="javascript">
+        (function () {
+            const descansoAutomatico = /*[[${descansoAutomatico}]]*/ true;
+            const descansoPorDefectoSeg = /*[[${descansoPorDefectoSeg}]]*/ 90;
+            const serieGuardada = /*[[${serieGuardada}]]*/ false;
+
+            const card = document.getElementById('descansoCard');
+            const tiempoEl = document.getElementById('descansoTiempo');
+            const btnManual = document.getElementById('descansoIniciarManual');
+            const btnSaltar = document.getElementById('descansoSaltar');
+            const btnMas15 = document.getElementById('descansoMas15');
+            if (!card || !tiempoEl) {
+                return;
+            }
+
+            let restante = 0;
+            let intervalId = null;
+
+            function formatear(segundos) {
+                const m = Math.floor(segundos / 60).toString().padStart(2, '0');
+                const s = (segundos % 60).toString().padStart(2, '0');
+                return m + ':' + s;
+            }
+
+            function actualizar() {
+                tiempoEl.textContent = formatear(Math.max(restante, 0));
+                if (restante <= 0) {
+                    detener();
+                }
+            }
+
+            function iniciar(segundos) {
+                restante = segundos;
+                card.style.display = '';
+                if (btnManual) {
+                    btnManual.style.display = 'none';
+                }
+                actualizar();
+                clearInterval(intervalId);
+                intervalId = setInterval(function () {
+                    restante -= 1;
+                    actualizar();
+                }, 1000);
+            }
+
+            function detener() {
+                clearInterval(intervalId);
+                card.style.display = 'none';
+            }
+
+            if (btnSaltar) {
+                btnSaltar.addEventListener('click', detener);
+            }
+            if (btnMas15) {
+                btnMas15.addEventListener('click', function () {
+                    restante += 15;
+                    actualizar();
+                });
+            }
+            if (btnManual) {
+                btnManual.addEventListener('click', function () {
+                    iniciar(descansoPorDefectoSeg);
+                });
+            }
+
+            if (serieGuardada && descansoAutomatico) {
+                iniciar(descansoPorDefectoSeg);
+            }
+        })();
     </script>
 </body>
 </html>
