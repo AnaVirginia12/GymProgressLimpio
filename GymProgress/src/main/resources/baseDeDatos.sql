@@ -1,12 +1,17 @@
 -- GymProgress — base de datos completa con datos de ejemplo
 --
 -- Crea el esquema entero (10 tablas) y lo llena con:
--- 2 usuarios listos para entrar
--- 10 ejercicios en el catálogo
--- 2 rutinas armadas con sus ejercicios
--- rachas de 21 días (3 semanas)
--- 21 días de entrenamientos con sus series
--- registros de peso corporal
+--   · 2 usuarios listos para entrar
+--   · 10 ejercicios en el catálogo
+--   · 2 rutinas armadas con sus ejercicios
+--   · rachas de 21 días (3 semanas)
+--   · 21 días de entrenamientos con sus series
+--   · registros de peso corporal
+--
+-- CÓMO USARLO EN MYSQL WORKBENCH
+--   1. Abre este archivo (File > Open SQL Script)
+--   2. Ejecútalo entero con el rayo (Ctrl+Shift+Enter)
+--   3. Refresca el panel Schemas y verás la base gymprogress
 --
 -- USUARIOS DE PRUEBA
 --   kata@gmail.com / 12345678
@@ -19,6 +24,7 @@ CREATE DATABASE gymprogress
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 USE gymprogress;
+
 
 -- 1. ESQUEMA
 
@@ -130,12 +136,12 @@ create table sesion (
 ) engine=InnoDB;
 
 create table usuario (
-    descanso_automatico bit not null default true,
-    descanso_por_defecto_seg integer not null default 90,
     dias_semana integer,
+    descanso_automatico bit not null,
+    descanso_por_defecto_seg integer not null,
     minutos_sesion integer,
     unidad_peso varchar(2) not null,
-    tema varchar(10) not null default 'dark',
+    tema varchar(10) not null,
     creado_en datetime(6) not null,
     id bigint not null auto_increment,
     nivel varchar(50),
@@ -159,7 +165,7 @@ alter table rutina_ejercicio add constraint FKlbaibt7r0i47yof7mmbdwphay foreign 
 alter table serie_registrada add constraint FKtjjdfyorglrsiitub45awo7s2 foreign key (sesion_id) references sesion (id);
 
 -- Estas relaciones el modelo las guarda como id suelto, así que la
--- integridad se refuerza aquí a mano
+-- integridad se refuerza aquí a mano.
 ALTER TABLE rutina ADD CONSTRAINT fk_rutina_usuario
     FOREIGN KEY (usuario_id) REFERENCES usuario (id) ON DELETE CASCADE;
 ALTER TABLE sesion ADD CONSTRAINT fk_sesion_usuario
@@ -174,26 +180,27 @@ ALTER TABLE rutina_ejercicio ADD CONSTRAINT fk_rutejer_ejercicio
     FOREIGN KEY (ejercicio_id) REFERENCES ejercicio (id);
 
 
--- 2. USUARIOS   (contraseña de ambos: 123456)
+-- 2. USUARIOS   (contraseña de ambos: 12345678)
 
 INSERT INTO usuario
-    (id, nombre, correo, password, unidad_peso, tema, descanso_automatico,
-     descanso_por_defecto_seg, creado_en, objetivo,
+    (id, nombre, correo, password, unidad_peso, creado_en, objetivo,
      nivel, dias_semana, minutos_sesion, equipamiento, lesiones,
-     foto_url, token_sesion)
+     foto_url, token_sesion, tema, descanso_automatico,
+     descanso_por_defecto_seg)
 VALUES
-    (1, 'Katalina Zúñiga', 'kata@gmail.com', '123456', 'kg', 'dark', 1, 90,
+    (1, 'Katalina Zúñiga', 'kata@gmail.com', '12345678', 'kg',
      DATE_SUB(NOW(), INTERVAL 60 DAY), 'Hipertrofia', 'Intermedio', 4, 60,
-     'Gimnasio', NULL, NULL, NULL),
-    (2, 'Ana Virginia Arias', 'ana@gmail.com', '123456', 'kg', 'light', 1, 90,
+     'Gimnasio', NULL, NULL, NULL, 'dark', 1, 90),
+    (2, 'Ana Virginia Arias', 'ana@gmail.com', '12345678', 'kg',
      DATE_SUB(NOW(), INTERVAL 45 DAY), 'Fuerza', 'Avanzado', 5, 75,
-     'Gimnasio', 'Molestia leve en el hombro derecho', NULL, NULL);
+     'Gimnasio', 'Molestia leve en el hombro derecho', NULL, NULL,
+     'dark', 1, 90);
 
 
 -- 3. CATÁLOGO DE EJERCICIOS   (10 ejercicios)
 --
 -- Cada ejercicio de gimnasio tiene su equivalente sin equipo del
--- mismo grupo muscular, para que funcionen las alternativas en casa
+-- mismo grupo muscular, para que funcionen las alternativas en casa.
 
 INSERT INTO ejercicio
     (id, nombre, grupo_muscular, tipo_entrenamiento, descripcion,
@@ -202,34 +209,34 @@ INSERT INTO ejercicio
 VALUES
     (1, 'Press de banca', 'Pecho, Tríceps', 'Gimnasio',
      'Acostado en el banco, baja la barra al pecho de forma controlada y empuja hasta extender los codos.',
-     NULL, 1, 1, 3, 1, 1, 0),
+     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3k7n-7W-gGAhLg0QwYXK6GycOQRIe7_-cKlLJU6Suiw&s=10', 1, 1, 3, 1, 1, 0),
     (2, 'Press militar', 'Hombros, Tríceps', 'Gimnasio',
      'De pie, empuja la barra desde los hombros hasta arriba sin arquear la espalda.',
-     NULL, 0, 1, 2, 1, 1, 0),
+     'https://mundoentrenamiento.com/wp-content/uploads/2019/06/press-militar.jpeg', 0, 1, 2, 1, 1, 0),
     (3, 'Peso muerto', 'Espalda, Isquiotibiales', 'Gimnasio',
      'Levanta la barra del suelo manteniendo la espalda recta y empujando con las piernas.',
-     NULL, 1, 1, 2, 1, 1, 1),
+     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBj3smxKaN8SKN6nJVZ__Gy1iJM1PTuF0Pr5hK7uV2dFANiW0XW4FFCcvm&s=10', 1, 1, 2, 1, 1, 1),
     (4, 'Sentadilla con barra', 'Cuádriceps, Glúteos', 'Gimnasio',
      'Con la barra en la espalda alta, baja hasta que los muslos queden paralelos al suelo.',
-     NULL, 1, 1, 3, 1, 1, 0),
+     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzYZRLsjBF2WmC6c6aNAQ2UlbrXVeaH-cIMskBbhffQw&s=10', 1, 1, 3, 1, 1, 0),
     (5, 'Remo con barra', 'Espalda, Bíceps', 'Gimnasio',
      'Inclinado hacia adelante, lleva la barra hacia el abdomen juntando las escápulas.',
-     NULL, 0, 1, 2, 1, 1, 0),
+     'https://www.lorangebleue.fr/wp-content/uploads/2025/05/mujer-con-tirantes-rosas-haciendo-remo-con-barra.webp', 0, 1, 2, 1, 1, 0),
     (6, 'Curl con mancuernas', 'Bíceps', 'Gimnasio',
      'Flexiona los codos llevando las mancuernas hacia los hombros sin balancear el cuerpo.',
-     NULL, 0, 1, 3, 1, 1, 0),
+     'https://i.blogs.es/d20f07/woman-weights-weight-training-shoulder-physical-fitness-arm-1604352-pxhere.com/840_560.jpeg', 0, 1, 3, 1, 1, 0),
     (7, 'Flexiones de pecho', 'Pecho, Tríceps', 'Calistenia',
      'Con el cuerpo en línea recta, baja hasta rozar el suelo con el pecho y empuja hacia arriba.',
-     NULL, 1, 0, 3, 1, 1, 0),
+     'https://www.lanacion.com.ar/resizer/v2/realizar-ejercicios-de-flexiones-ayuda-a-generar-KPIN2FJHJRDJZE4YOUKPS3KXNI.jpg?auth=ecb1fc8c85003254c34edf9dca9d3ca219132518eccc3119294c3824923258fb&width=1200&height=800&quality=70&smart=true', 1, 0, 3, 1, 1, 0),
     (8, 'Dominadas', 'Espalda, Bíceps', 'Calistenia',
      'Colgado de la barra, tira del cuerpo hasta pasar la barbilla por encima.',
-     NULL, 1, 0, 2, 1, 1, 0),
+     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR04EGqHGM0P91GHMdfZ9Z-d8GaThS3pQ2g6A9vqif4RrqbXz6HAew86bQ&s=10', 1, 0, 2, 1, 1, 0),
     (9, 'Sentadilla libre', 'Cuádriceps, Glúteos', 'Calistenia',
      'Sin peso, baja flexionando rodillas y cadera manteniendo el pecho arriba.',
-     NULL, 0, 0, 3, 1, 1, 0),
+     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7IKNM_rpUya04P5yMpTsw4djf4-uNuCTOQzPL8Lc5an1xb13U9iqUJALT&s=10', 0, 0, 3, 1, 1, 0),
     (10, 'Plancha abdominal', 'Abdomen', 'Calistenia',
      'Apoyado en antebrazos y puntas de los pies, mantén el cuerpo en línea recta y el abdomen apretado.',
-     NULL, 0, 0, NULL, NULL, NULL, NULL);
+     'https://hips.hearstapps.com/hmg-prod/images/hacer-plancha-1550071354.jpg?crop=0.8888888888888888xw:1xh;center,top&resize=1200:*', 0, 0, NULL, NULL, NULL, NULL);
 
 
 -- 4. RUTINAS ACTIVAS
@@ -258,9 +265,7 @@ VALUES
     (2, 8, 4, 4, 8, 120, NULL, NULL, NULL, NULL, NULL);
 
 
--- ============================================================
 -- 5. RACHAS   (28 días seguidos = 4 semanas)
--- ============================================================
 
 INSERT INTO racha (usuario_id, dias_actuales, dias_maximo, ultimo_entrenamiento)
 VALUES
@@ -272,7 +277,7 @@ VALUES
 --
 -- Una sesión por día, de hace 27 días hasta hoy. Las dos primeras
 -- semanas son normales; en las dos últimas se acumula fatiga (más
--- del 30% de series al fallo), que es lo que dispara el deload
+-- del 30% de series al fallo), que es lo que dispara el deload.
 
 INSERT INTO sesion (id, usuario_id, rutina_id, iniciada_en, finalizada_en)
 VALUES
@@ -1374,7 +1379,7 @@ INSERT INTO peso_corporal (usuario_id, fecha, peso_kg) VALUES
 -- 9. AJUSTES DE RUTINA Y SEMANA DE DESCARGA
 --
 -- Dos ejemplos para que las pantallas de HU31 y HU37 tengan algo
--- que mostrar desde el primer arranque
+-- que mostrar desde el primer arranque.
 
 -- Un ejercicio sustituido y otro omitido en la sesión de ayer de Kata
 INSERT INTO cambio_ejercicio
@@ -1385,6 +1390,23 @@ VALUES
      DATE_SUB(NOW(), INTERVAL 1 DAY)),
     (27, 'OMITIDO', 10, 'Plancha abdominal', NULL, NULL, 3,
      DATE_SUB(NOW(), INTERVAL 1 DAY));
+
+-- Nota: no se deja ninguna semana de descarga precargada. Al entrar,
+-- la aplicación analiza las 4 semanas y sugiere la descarga sola.
+-- Si quieres ver también el histórico de una descarga ya cerrada,
+-- descomenta el INSERT de abajo.
+-- Para probar la descarga YA ACTIVA sin esperar, quita los guiones
+-- de las lineas de abajo y vuelve a ejecutar solo ese INSERT.
+-- (Se deja comentado con -- y no con /* */ porque MySQL Workbench se
+--  confunde con el punto y coma que hay dentro de un comentario de bloque.)
+--
+-- INSERT INTO semana_descarga
+--     (usuario_id, estado, motivo, detectada_en, inicio, fin, reintentar_desde)
+-- VALUES
+--     (2, 'ACEPTADA',
+--      'Llevas dos semanas seguidas llegando al fallo en mas del 35% de tus series. Es una senal clara de fatiga acumulada.',
+--      DATE_SUB(NOW(), INTERVAL 14 DAY), DATE_SUB(CURDATE(), INTERVAL 14 DAY),
+--      DATE_SUB(CURDATE(), INTERVAL 8 DAY), NULL);
 
 
 -- 10. COMPROBACIÓN
@@ -1401,7 +1423,7 @@ UNION ALL SELECT 'cambios de ejercicio', COUNT(*) FROM cambio_ejercicio
 UNION ALL SELECT 'semanas de descarga', COUNT(*) FROM semana_descarga;
 
 -- Porcentaje de series al fallo por semana: así se ve la fatiga que
--- hace saltar la sugerencia de descarga
+-- hace saltar la sugerencia de descarga.
 SELECT
     FLOOR(DATEDIFF(CURDATE(), DATE(s.iniciada_en)) / 7) + 1 AS semana,
     COUNT(*) AS series,
