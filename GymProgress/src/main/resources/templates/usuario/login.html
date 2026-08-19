@@ -9,10 +9,7 @@
                 <div class="col-12 col-sm-10 col-md-7 col-lg-5">
                     <div class="card">
                         <div class="card-body p-4 p-md-5">
-                            <div class="d-flex align-items-center gap-2 mb-4">
-                                <span class="avatar rounded-3 bg-primary text-white fw-bold">GP</span>
-                                <strong class="fs-5">GymProgress</strong>
-                            </div>
+                            <div th:replace="~{general/fragmentos :: marca}"></div>
                             <h1 class="h3 mb-4">Iniciar sesión</h1>
                             <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
                             <div th:if="${mensaje}" class="alert alert-success" role="alert" th:text="${mensaje}"></div>

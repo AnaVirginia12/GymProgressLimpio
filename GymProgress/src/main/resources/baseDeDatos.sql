@@ -8,11 +8,6 @@
 --   · 21 días de entrenamientos con sus series
 --   · registros de peso corporal
 --
--- CÓMO USARLO EN MYSQL WORKBENCH
---   1. Abre este archivo (File > Open SQL Script)
---   2. Ejecútalo entero con el rayo (Ctrl+Shift+Enter)
---   3. Refresca el panel Schemas y verás la base gymprogress
---
 -- USUARIOS DE PRUEBA
 --   kata@gmail.com / 12345678
 --   ana@gmail.com  / 12345678
@@ -190,10 +185,11 @@ INSERT INTO usuario
 VALUES
     (1, 'Katalina Zúñiga', 'kata@gmail.com', '12345678', 'kg',
      DATE_SUB(NOW(), INTERVAL 60 DAY), 'Hipertrofia', 'Intermedio', 4, 60,
-     'Gimnasio', NULL, NULL, NULL, 'dark', 1, 90),
+     'Gimnasio', NULL, 'https://static.vecteezy.com/system/resources/previews/002/410/466/large_2x/woman-lifting-weight-in-the-gym-free-photo.jpg', NULL, 'dark', 1, 90),
     (2, 'Ana Virginia Arias', 'ana@gmail.com', '12345678', 'kg',
      DATE_SUB(NOW(), INTERVAL 45 DAY), 'Fuerza', 'Avanzado', 5, 75,
-     'Gimnasio', 'Molestia leve en el hombro derecho', NULL, NULL,
+     'Gimnasio', 'Molestia leve en el hombro derecho',
+     'https://hips.hearstapps.com/hmg-prod/images/elaine-paddor-66f17b0025438.jpg?crop=0.565xw:0.847xh;0.00173xw,0.0907xh&resize=1120:*', NULL,
      'dark', 1, 90);
 
 
@@ -209,7 +205,7 @@ INSERT INTO ejercicio
 VALUES
     (1, 'Press de banca', 'Pecho, Tríceps', 'Gimnasio',
      'Acostado en el banco, baja la barra al pecho de forma controlada y empuja hasta extender los codos.',
-     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3k7n-7W-gGAhLg0QwYXK6GycOQRIe7_-cKlLJU6Suiw&s=10', 1, 1, 3, 1, 1, 0),
+     'https://mundoentrenamiento.com/wp-content/uploads/2020/08/press-banca-1.jpg', 1, 1, 3, 1, 1, 0),
     (2, 'Press militar', 'Hombros, Tríceps', 'Gimnasio',
      'De pie, empuja la barra desde los hombros hasta arriba sin arquear la espalda.',
      'https://mundoentrenamiento.com/wp-content/uploads/2019/06/press-militar.jpeg', 0, 1, 2, 1, 1, 0),

@@ -24,13 +24,19 @@
               th:href="@{/css/app.css}">
     </head>
     <body>
+        <a th:fragment="marca"
+           class="d-flex align-items-center gap-2 mb-4 text-decoration-none text-body"
+           th:href="@{/}">
+            <img class="avatar rounded-3 object-fit-cover"
+                 th:src="@{/img/logo.png}"
+                 alt="GymProgress">
+            <span class="fs-5 fw-bold">GymProgress</span>
+        </a>
+
         <aside th:fragment="sidebar(seccionActiva)"
                class="sidebar d-flex flex-column p-3 border-end"
                id="sidebar">
-            <div class="d-flex align-items-center gap-2 mb-4">
-                <span class="avatar rounded-3 bg-primary text-white fw-bold">GP</span>
-                <span class="fs-5 fw-bold">GymProgress</span>
-            </div>
+            <div th:replace="~{general/fragmentos :: marca}" class="mb-4"></div>
             <ul class="nav nav-pills flex-column gap-1">
                 <li class="nav-item">
                     <a class="nav-link"
@@ -96,16 +102,26 @@
                     </a>
                 </li>
             </ul>
-            <div class="d-flex align-items-center gap-2 mt-auto pt-3 border-top">
+            <a class="d-flex align-items-center gap-2 mt-auto pt-3 border-top text-decoration-none text-body"
+               th:href="@{/perfil}">
 
-                <span class="avatar rounded-circle bg-primary text-white fw-bold">
-                    U
-                </span>
-                <div>
-                    <strong class="d-block">Usuario</strong>
+                <img th:if="${usuarioActual != null and !#strings.isEmpty(usuarioActual.fotoUrl)}"
+                     class="avatar rounded-circle object-fit-cover"
+                     th:src="${usuarioActual.fotoUrl}"
+                     th:alt="${usuarioActual.nombre}">
+
+                <span th:unless="${usuarioActual != null and !#strings.isEmpty(usuarioActual.fotoUrl)}"
+                      class="avatar rounded-circle bg-primary text-white fw-bold"
+                      th:text="${usuarioActual != null and !#strings.isEmpty(usuarioActual.nombre)}
+                               ? ${#strings.toUpperCase(#strings.substring(usuarioActual.nombre, 0, 1))}
+                               : 'U'">U</span>
+
+                <div class="overflow-hidden">
+                    <strong class="d-block text-truncate"
+                            th:text="${usuarioActual != null} ? ${usuarioActual.nombre} : 'Usuario'">Usuario</strong>
                     <small class="d-block text-body-secondary">Ver perfil</small>
                 </div>
-            </div>
+            </a>
         </aside>
         <!--
             Slider de modo oscuro/claro, arriba a la derecha.
@@ -130,7 +146,12 @@
                         aria-label="Abrir menú">
                     ☰
                 </button>
-                <strong>GymProgress</strong>
+                <a class="d-flex align-items-center gap-2 text-decoration-none text-body"
+                   th:href="@{/}">
+                    <img th:src="@{/img/logo.png}" alt="GymProgress"
+                         class="rounded-3 object-fit-cover" width="28" height="28">
+                    <strong>GymProgress</strong>
+                </a>
                 <div class="ms-auto">
                     <div th:replace="~{general/fragmentos :: themeSwitch}"></div>
                 </div>
