@@ -162,6 +162,16 @@ public class RutinaController {
         List<Ejercicio> catalogo = ejercicioService.listar();
         model.addAttribute("catalogoEjercicios", catalogo);
 
+        /**
+         * este mapa de id a nombre resuelve un problema concreto:
+         * 'RutinaEjercicio' guarda solo el ejercicioId, no el nombre, así que la
+         * plantilla escribe ${nombresEjercicios[detalle.ejercicioId]}
+         *
+         * es un truco de rendimiento, no solo de comodidad: sin el mapa, la
+         * plantilla tendría que buscar cada ejercicio uno por uno, con una
+         * consulta por fila. así, con una sola pasada al catálogo, que además ya
+         * se traía para el desplegable, se arma un diccionario en memoria
+         */
         Map<Long, String> nombres = new HashMap<>();
         for (Ejercicio ejercicio : catalogo) {
             nombres.put(ejercicio.getId(), ejercicio.getNombre());
@@ -173,6 +183,19 @@ public class RutinaController {
         model.addAttribute("racha", racha);
         model.addAttribute("entrenoHoy", entrenoHoy(racha));
 
+        /**
+         * esta línea dispara toda la detección de fatiga.
+         *
+         * fijarse en el diseño: la detección no corre en segundo plano ni con
+         * una tarea programada, corre cada vez que el usuario entra a la rutina
+         * de hoy. es pragmático y está bien pensado, porque no hace falta un
+         * @Scheduled ni infraestructura extra, el análisis se hace justo cuando
+         * el usuario va a ver el resultado, y evaluar() es idempotente, así que
+         * si ya hay una sugerencia pendiente devuelve esa sin crear otra
+         */
+        //se llama sin usar lo que devuelve porque lo que interesa es el efecto
+        //secundario, o sea que la sugerencia quede creada; el estado se lee
+        //después con estado()
         //Semana de descarga: evalúa, y si toca deja la sugerencia.
         deloadService.evaluar(usuarioId);
 
@@ -183,6 +206,15 @@ public class RutinaController {
         model.addAttribute("enDescarga", factor < 1.0);
 
         // Series ajustadas por ejercicio durante la descarga.
+        /**
+         * otro mapa precalculado, esta vez de rutinaEjercicioId a las series
+         * ajustadas. con descarga activa el factor es 0.6, así que un ejercicio
+         * de 5 series aparece con 3
+         *
+         * lo importante: las series originales no se modifican en la base, el
+         * ajuste es solo para mostrar. así, cuando la semana de descarga termina,
+         * la rutina vuelve sola a sus valores normales y no hay que deshacer nada
+         */
         Map<Long, Integer> seriesAjustadas = new HashMap<>();
         if (rutina != null && rutina.getEjercicios() != null) {
             for (RutinaEjercicio detalle : rutina.getEjercicios()) {
@@ -257,6 +289,9 @@ public class RutinaController {
         }
 
         try {
+            //un switch con flechas pero que no devuelve valor: es una sentencia
+            //y no una expresión, por eso cada rama abre llaves y el switch no
+            //termina en punto y coma
             switch (decision) {
                 case "aceptar" -> {
                     deloadService.aceptar(usuarioId, id);

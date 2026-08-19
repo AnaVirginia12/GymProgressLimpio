@@ -44,6 +44,9 @@ public class PesoCorporalController {
         }
 
         // Unidad preferida del usuario para pre-seleccionar el toggle
+        //la cadena se lee: buscá el usuario, si está dame su unidad, y si no
+        //hay usuario o su unidad es null usá kg
+        //es mucho más limpio que el equivalente con if anidados
         String unidad = usuarioService.buscarPorId(usuarioId)
                 .map(Usuario::getUnidadPeso)
                 .orElse("kg");
@@ -68,6 +71,8 @@ public class PesoCorporalController {
     @PostMapping
     public String guardarPeso(
             @RequestParam Double peso,
+            //defaultValue quiere decir que si el parámetro no viene, usa "kg".
+            //es distinto de required = false, que dejaría null
             @RequestParam(defaultValue = "kg") String unidad,
             HttpSession session,
             RedirectAttributes redirectAttributes

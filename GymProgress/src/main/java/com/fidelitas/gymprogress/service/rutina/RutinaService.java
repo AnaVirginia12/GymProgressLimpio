@@ -29,18 +29,30 @@ public class RutinaService {
      * programas: fuerza trabaja con pocas repeticiones y descansos largos,
      * resistencia al revés, e hipertrofia queda en el medio.
      */
+    //las dos cifras van siempre juntas y no cambian una vez calculadas, que es
+    //el caso de uso exacto de un record
     public record ParametrosPrograma(int repsObjetivo, int descansoSeg) {
     }
 
+    /**
+     * es static porque no usa ningún campo de la clase, no toca el repositorio
+     * ni nada. así se puede llamar sin tener un objeto:
+     *   RutinaService.parametrosDe("Fuerza")
+     * que es justo lo que hace RutinaController para los valores por defecto
+     * del formulario
+     */
     public static ParametrosPrograma parametrosDe(String programa) {
+        //el if de null antes del switch es imprescindible: un switch sobre null
+        //lanza NullPointerException, el default no lo cubre
         if (programa == null) {
             return new ParametrosPrograma(10, 60);
         }
 
         return switch (programa) {
+            //pocas repeticiones con mucho peso, hace falta recuperarse bien
             case "Fuerza" -> new ParametrosPrograma(5, 180);
             case "Hipertrofia" -> new ParametrosPrograma(10, 90);
-            case "Resistencia" -> new ParametrosPrograma(18, 45);
+            case "Resistencia" -> new ParametrosPrograma(18, 45); //muchas reps, descanso corto
             default -> new ParametrosPrograma(10, 60);
         };
     }
@@ -49,6 +61,8 @@ public class RutinaService {
      * Resultado de cambiar de programa: la rutina y cuántos ejercicios se
      * reajustaron, para poder avisarle al usuario en la pantalla.
      */
+    //hace falta devolver dos cosas: la rutina y cuántos ejercicios se tocaron,
+    //para poder armar el mensaje. un record evita inventar una clase entera
     public record ResultadoPrograma(Rutina rutina, int ejerciciosAjustados) {
     }
 
@@ -70,6 +84,8 @@ public class RutinaService {
                 .findFirstByUsuarioIdAndActivaTrueOrderByCreadaEnDesc(usuarioId)
                 .orElseGet(Rutina::new);
 
+        //hay que capturar el programa anterior antes de pisarlo unas líneas más
+        //abajo, si no después no hay forma de saber si cambió
         String programaAnterior = rutina.getPrograma();
 
         rutina.setUsuarioId(usuarioId);
@@ -80,6 +96,14 @@ public class RutinaService {
 
         int ajustados = 0;
 
+        /**
+         * solo se reajusta si el programa cambió de verdad. así, si el usuario
+         * vuelve a elegir el que ya tenía, no se le pisan los valores que haya
+         * personalizado a mano
+         *
+         * es Objects.equals y no a.equals(b) porque 'programaAnterior' es null
+         * en una rutina recién creada, y null.equals explota
+         */
         if (!Objects.equals(programaAnterior, programa)) {
             ajustados = aplicarParametrosDelPrograma(rutina, programa);
         }
@@ -100,10 +124,24 @@ public class RutinaService {
 
         ParametrosPrograma parametros = parametrosDe(programa);
 
+        /**
+         * lo que no se toca es tan importante como lo que sí:
+         *   se cambia el repsObjetivo y el descansoSeg
+         *   se conserva el ejercicio, las series, el orden y el peso sugerido
+         *
+         * borrar los ejercicios haría perder el historial de progreso de cada
+         * uno, o sea los récords y las gráficas
+         */
         for (RutinaEjercicio detalle : ejercicios) {
             detalle.setRepsObjetivo(parametros.repsObjetivo());
             detalle.setDescansoSeg(parametros.descansoSeg());
         }
+        /**
+         * y no hace falta un save acá: los RutinaEjercicio están gestionados por
+         * hibernate dentro de la transacción, así que cualquier cambio que se
+         * les haga se detecta y se escribe solo al cerrarla. eso se llama
+         * dirty checking, o comprobación de cambios
+         */
 
         return ejercicios.size();
     }
@@ -113,6 +151,9 @@ public class RutinaService {
         return rutinaRepository
                 .findFirstByUsuarioIdAndActivaTrueOrderByCreadaEnDesc(usuarioId)
                 .orElse(null);
+        //devuelve null si no hay rutina, al contrario de RachaService.obtener()
+        //que devuelve un objeto vacío. por eso todos los que lo llaman tienen
+        //que comprobar si es null
     }
 
     @Transactional
@@ -175,6 +216,9 @@ public class RutinaService {
                 ));
 
         detalle.setEjercicioId(nuevoEjercicioId);
+        //toda la sustitución es esta línea: no se borra ni se crea nada. la fila
+        //sigue siendo la misma, con las mismas series, el mismo orden y el mismo
+        //descanso, solo apunta a otro ejercicio del catálogo
         rutinaRepository.save(rutina);
     }
 
@@ -193,6 +237,8 @@ public class RutinaService {
                 .ifPresent(rutina::eliminarEjercicio);
 
         reordenar(rutina);
+        //sin reordenar, borrar el ejercicio 2 de 4 dejaría los órdenes 1, 3 y 4,
+        //y al agregar el siguiente siguienteOrden devolvería 4, que ya existe
         rutinaRepository.save(rutina);
     }
 
@@ -202,6 +248,8 @@ public class RutinaService {
                 : rutina.getEjercicios().size() + 1;
     }
 
+    //renumera de 1 en adelante. el i + 1 es porque las listas empiezan en 0
+    //pero el orden que ve el usuario empieza en 1
     private void reordenar(Rutina rutina) {
         List<RutinaEjercicio> ejercicios = rutina.getEjercicios();
         for (int i = 0; i < ejercicios.size(); i++) {
@@ -255,6 +303,9 @@ public class RutinaService {
             double tiempoEjecucion =
                     series * repeticiones * segundosPorRepeticion;
 
+            //los descansos van entre series, no después de cada una: con 4
+            //series hay 3 descansos. y el Math.max con 0 impide que con una sola
+            //serie dé -1 y reste tiempo
             double tiempoDescanso =
                     Math.max(series - 1, 0) * descansoSegundos;
 
@@ -270,6 +321,8 @@ public class RutinaService {
                     + tiempoTransicion;
         }
 
+        //ceil redondea hacia arriba: 8.2 minutos quedan en 9. para una
+        //estimación de tiempo es lo correcto, mejor que sobre a quedarse corto
         return (int) Math.ceil(totalSegundos / 60);
     }
 
@@ -286,6 +339,8 @@ public class RutinaService {
         };
     }
 
+    //más estricto que el valor() de EjercicioService: no solo rechaza null,
+    //también los ceros y los negativos. una rutina con 0 series no significa nada
     private int valorPositivo(Integer valor, int valorPredeterminado) {
         return valor != null && valor > 0
                 ? valor
@@ -299,6 +354,9 @@ public class RutinaService {
     }
 
     private String generarNombre(String programa) {
+        //este switch no tiene protección contra null, a diferencia de los otros dos
+        //de la clase. hoy no pasa nada porque el controlador siempre recibe el
+        //programa de un formulario con value fijo, pero es una inconsistencia
         return switch (programa) {
             case "Fuerza" -> "Programa de fuerza";
             case "Hipertrofia" -> "Programa de hipertrofia";

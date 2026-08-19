@@ -41,6 +41,8 @@ public class NavegacionController {
             return "redirect:/login";
         }
         model.addAttribute("sesiones", sesionService.historial(usuarioId));
+        //el return no es texto que se le muestre al usuario, es el nombre de la
+        //plantilla: spring lo traduce a templates/historial/index.html
         return "historial/index";
     }
 
@@ -66,6 +68,18 @@ public class NavegacionController {
 
         model.addAttribute("registrosGrafico", registros);
 
+        /**
+         * el mínimo y el máximo se calculan acá por una razón concreta:
+         * thymeleaf tiene #aggregates con sum y avg, pero no tiene min ni max,
+         * o sea que este cálculo no se podía hacer en la plantilla
+         *
+         * sirven para escalar el gráfico:
+         *   posicion_y = (peso - pesoMinimo) / rangoPeso * alto
+         * sin eso, si el peso va de 74 a 76 kg en una escala de 0 a 100, la
+         * línea saldría plana
+         */
+        //se arranca con los valores extremos justamente para que cualquier peso
+        //real los reemplace
         double minPeso = Double.MAX_VALUE;
         double maxPeso = -Double.MAX_VALUE;
 
@@ -75,6 +89,8 @@ public class NavegacionController {
             maxPeso = Math.max(maxPeso, peso);
         }
 
+        //sin esto, con la lista vacía minPeso quedaría en Double.MAX_VALUE, o
+        //sea un número gigante, y el gráfico se volvería loco
         if (registros.isEmpty()) {
             minPeso = 0;
             maxPeso = 0;
@@ -84,6 +100,9 @@ public class NavegacionController {
 
         model.addAttribute(
                 "rangoPeso",
+                //evita la división por cero: si solo hay un registro, o todos
+                //pesan igual, el rango sería 0 y la fórmula del gráfico
+                //dividiría por cero. el mínimo de 1.0 lo impide
                 (maxPeso - minPeso) < 1 ? 1.0 : (maxPeso - minPeso)
         );
 
