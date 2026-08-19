@@ -9,13 +9,13 @@ import jakarta.persistence.*;
  * Una Rutina tiene varios RutinaEjercicio (uno por cada ejercicio
  * que la compone).
  */
-@Entity
-@Table(name = "rutina_ejercicio")
+@Entity //convierte esto de una clase de java común en una tabla
+@Table(name = "rutina_ejercicio") //fija el nombre exacto de la tabla
 public class RutinaEjercicio {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id //marca la llave primaria. toda @Entity necesita una
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //IDENTITY significa "el número lo pone mysql, no java", cuando un usuario nuevo se hace, se manda en null el id, mysql le asigna el siguiente número libre y lo devuelve
+    private Long id; //Long de objeto
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "rutina_id", nullable = false)
@@ -51,9 +51,11 @@ public class RutinaEjercicio {
     @Column(name = "descanso_seg", nullable = false)
     private Integer descansoSeg;
 
+    //constructor vacío
     public RutinaEjercicio() {
     }
 
+    //setters n getters
     public Long getId() {
         return id;
     }
@@ -149,4 +151,11 @@ public class RutinaEjercicio {
     public void setDescansoSeg(Integer descansoSeg) {
         this.descansoSeg = descansoSeg;
     }
+    /**
+     * 'RutinaEjercicio' es una entidad de asociación: no basta con relacionar rutina y ejercicio, hay que guardar
+     * los parámetros de ese ejercicio en esa rutina (series, repeticiones,
+     * descanso). El campo 'activa' de 'Rutina' es el que identifica cuál es la
+     * rutina en uso, y 'programa' determina los valores de 'repsObjetivo' y
+     * 'descansoSeg' de todos sus ejercicios
+     */
 }

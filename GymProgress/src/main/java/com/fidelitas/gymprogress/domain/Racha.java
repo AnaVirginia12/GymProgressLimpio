@@ -8,32 +8,36 @@ import java.time.LocalDate;
  * Se mantiene un único registro por usuario con el contador actual
  * y la racha máxima histórica.
  */
-@Entity
-@Table(name = "racha")
+@Entity //convierte esto de una clase de java común en una tabla
+@Table(name = "racha") //fija el nombre exacto de la tabla
 public class Racha {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id //marca la llave primaria. toda @Entity necesita una
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //IDENTITY significa "el número lo pone mysql, no java", cuando un usuario nuevo se hace, se manda en null el id, mysql le asigna el siguiente número libre y lo devuelve
+    private Long id; //Long de objeto
 
-    @Column(name = "usuario_id", nullable = false, unique = true)
+    @Column(name = "usuario_id", nullable = false, unique = true) //unique indica que no puede haber dos filas con el mismo 'usuario_id' o sea cada usuario tiene exactamente 1 racha
     private Long usuarioId;
 
     //Días consecutivos actuales entrenando
     @Column(name = "dias_actuales", nullable = false)
     private Integer diasActuales = 0;
+    // la racha viva, si falta un día se reinicia a 1
 
     //Máxima racha histórica alcanzada
     @Column(name = "dias_maximo", nullable = false)
     private Integer diasMaximo = 0;
+    //récord histórico, nunca baja el número, siempre sube
 
     //Última fecha en que se registró un entrenamiento
     @Column(name = "ultimo_entrenamiento")
     private LocalDate ultimoEntrenamiento;
 
+    //constructor vacío
     public Racha() {
     }
 
+    //setters n getters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

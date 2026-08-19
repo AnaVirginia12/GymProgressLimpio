@@ -158,7 +158,7 @@ public class Ejercicio {
     @Transient
     /**
      * anotación @Transient: le dice a Hibernate: "ignorá esto, no le busques
-     * una columna" marca lo que se calcula al vuelo en vezde guardarse
+     * una columna" marca lo que se calcula al vuelo en vez de guardarse
      */
     public String getTempoTexto() {
         if (!tieneTempo()) {
